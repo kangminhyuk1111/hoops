@@ -317,10 +317,10 @@ Host가 할 수 없는 것:
 상황: 영희가 신청했는데 Host가 경기를 취소
 
 경기 진행:
-  1. 영희: 신청 (APPLIED)
+  1. 영희: 신청 (PENDING_APPROVAL)
   2. Host가 경기 취소
   3. 경기 상태: RECRUITING → CANCELLED
-  4. 영희의 신청: APPLIED → CANCELLED (자동)
+  4. 영희의 신청: PENDING_APPROVAL → CANCELLED (자동)
 
 신뢰도:
   변동 없음 (취소했으므로)

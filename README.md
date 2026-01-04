@@ -146,6 +146,8 @@ COMPLETED (완료됨)
 | **상태 다이어그램** | 경기/신청 상태 전환 흐름 | [docs/state_diagrams.md](docs/state_diagrams.md) |
 | **개념 가이드** | 헷갈리는 개념 비교 설명 | [docs/concept_guide.md](docs/concept_guide.md) |
 | **유저 플로우** | 핵심 해피 패스 정의 | [docs/user_flow.md](docs/user_flow.md) |
+| **시스템 아키텍처** | 전체 시스템 구조 및 플로우 | [docs/system_architecture.md](docs/system_architecture.md) |
+| **UI/UX 가이드** | 같은 위치 여러 경기 처리 | [docs/ui_ux_guide.md](docs/ui_ux_guide.md) |
 | **커뮤니케이션 가이드** | 팀 대화 방식 | [docs/communication_guide.md](docs/communication_guide.md) |
 
 ---

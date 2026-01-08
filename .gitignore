@@ -1,0 +1,43 @@
+### Gradle ###
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### IntelliJ IDEA ###
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/shelf
+.idea/modules.xml
+.idea/*.iml
+.idea/compiler.xml
+.idea/jarRepositories.xml
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### VS Code ###
+.vscode/
+
+### macOS ###
+.DS_Store
+
+### Spring Boot ###
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### Application ###
+/logs/
+*.log
+
+### Environment ###
+.env
+.env.local
+.env.*.local
+
+### Test ###
+/test-output/

@@ -1,0 +1,100 @@
+package com.hoops.notification.infrastructure;
+
+import com.hoops.notification.domain.NotificationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@Entity
+@Table(name = "notifications")
+@EntityListeners(AuditingEntityListener.class)
+public class NotificationEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private NotificationType type;
+
+    @Column(nullable = false, length = 200)
+    private String title;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String message;
+
+    @Column(name = "related_match_id")
+    private Long relatedMatchId;
+
+    @Column(nullable = false)
+    private Boolean isRead;
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    protected NotificationEntity() {
+    }
+
+    public NotificationEntity(Long userId, NotificationType type, String title, String message,
+            Long relatedMatchId) {
+        this(userId, type, title, message, relatedMatchId, false, LocalDateTime.now());
+    }
+
+    public NotificationEntity(Long userId, NotificationType type, String title, String message,
+            Long relatedMatchId, Boolean isRead, LocalDateTime createdAt) {
+        this.userId = userId;
+        this.type = type;
+        this.title = title;
+        this.message = message;
+        this.relatedMatchId = relatedMatchId;
+        this.isRead = isRead;
+        this.createdAt = createdAt;
+    }
+
+    // Getters
+    public Long getId() {
+        return id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public NotificationType getType() {
+        return type;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Long getRelatedMatchId() {
+        return relatedMatchId;
+    }
+
+    public Boolean getIsRead() {
+        return isRead;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+}

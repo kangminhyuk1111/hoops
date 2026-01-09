@@ -9,7 +9,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.TestPropertySourceUtils;
 import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.lifecycle.Startables;
 
 /**
  * Cucumber와 Spring Boot 통합 설정

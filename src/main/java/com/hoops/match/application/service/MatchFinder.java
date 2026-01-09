@@ -6,7 +6,7 @@ import com.hoops.match.domain.Match;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.hoops.match.exception.MatchNotFoundException;
+import com.hoops.match.application.exception.MatchNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

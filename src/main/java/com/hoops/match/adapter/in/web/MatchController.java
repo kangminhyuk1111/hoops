@@ -1,15 +1,15 @@
 package com.hoops.match.adapter.in.web;
 
+import com.hoops.match.adapter.in.web.dto.CreateMatchRequest;
 import com.hoops.match.adapter.in.web.dto.MatchResponse;
+import com.hoops.match.application.port.in.CreateMatchUseCase;
 import com.hoops.match.application.port.in.MatchQueryUseCase;
 import com.hoops.match.domain.Match;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 경기 관련 REST API Controller
@@ -22,27 +22,40 @@ import org.springframework.web.bind.annotation.RestController;
 public class MatchController {
 
     private final MatchQueryUseCase matchQueryUseCase;
+    private final CreateMatchUseCase createMatchUseCase;
 
-    /**
-     * 생성자 주입을 통한 의존성 주입
-     *
-     * @param matchQueryUseCase 경기 조회 Use Case
-     */
-    public MatchController(MatchQueryUseCase matchQueryUseCase) {
+    public MatchController(MatchQueryUseCase matchQueryUseCase, CreateMatchUseCase createMatchUseCase) {
         this.matchQueryUseCase = matchQueryUseCase;
+        this.createMatchUseCase = createMatchUseCase;
     }
 
     /**
-     * 위치 기반 경기 목록 조회 API
+     * 경기 생성 API
      *
-     * 사용자의 현재 위치(위도, 경도)와 검색 반경(km)을 기준으로
-     * 근처의 경기 목록을 조회합니다.
+     * 사용자가 새로운 경기를 등록합니다.
      *
-     * @param latitude 위도 (예: 37.4980)
-     * @param longitude 경도 (예: 127.0270)
-     * @param distance 검색 반경 (km 단위, 예: 5)
-     * @return 경기 목록 응답
+     * @param request 경기 생성 요청 DTO
+     * @return 생성된 경기 응답 (201 Created)
      */
+    @PostMapping
+    public ResponseEntity<MatchResponse> createMatch(@RequestBody CreateMatchRequest request) {
+        Match match = createMatchUseCase.createMatch(request.toCommand());
+
+        MatchResponse response = MatchResponse.from(match);
+
+        return ResponseEntity.created(URI.create("/api/matches/" + match.getId()))
+                .body(response);
+    }
+
+    @GetMapping("/{matchId}")
+    public ResponseEntity<MatchResponse> findMatchById(@PathVariable("matchId") Long matchId) {
+        Match match = matchQueryUseCase.findMatchById(matchId);
+
+        MatchResponse response = MatchResponse.from(match);
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping
     public ResponseEntity<List<MatchResponse>> findMatchesByLocation(
             @RequestParam BigDecimal latitude,

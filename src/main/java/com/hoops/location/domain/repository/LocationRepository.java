@@ -7,4 +7,6 @@ public interface LocationRepository {
     Location save(Location location);
 
     Optional<Location> findById(Long id);
+
+    boolean existsByName(String name);
 }

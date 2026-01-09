@@ -1,8 +1,8 @@
-package com.hoops.match.exception;
+package com.hoops.match.application.exception;
 
-import com.hoops.common.exception.BusinessException;
+import com.hoops.common.exception.DomainException;
 
-public class MatchNotFoundException extends BusinessException {
+public class MatchNotFoundException extends DomainException {
 
     private static final String DEFAULT_ERROR_CODE = "MATCH_NOT_FOUND";
 

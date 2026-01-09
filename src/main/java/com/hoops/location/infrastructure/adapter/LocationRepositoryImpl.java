@@ -28,4 +28,9 @@ public class LocationRepositoryImpl implements LocationRepository {
     public Optional<Location> findById(Long id) {
         return jpaLocationRepository.findById(id).map(LocationMapper::toDomain);
     }
+
+    @Override
+    public boolean existsByName(String name) {
+        return jpaLocationRepository.existsByAlias(name);
+    }
 }

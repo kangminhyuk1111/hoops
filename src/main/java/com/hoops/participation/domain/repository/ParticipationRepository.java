@@ -7,4 +7,6 @@ public interface ParticipationRepository {
     Participation save(Participation participation);
 
     Optional<Participation> findById(Long id);
+
+    boolean existsByMatchIdAndUserId(Long matchId, Long userId);
 }

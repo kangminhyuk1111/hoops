@@ -52,6 +52,15 @@ public class ParticipationEntity extends BaseTimeEntity {
         this.joinedAt = joinedAt;
     }
 
+    public ParticipationEntity(Long id, Long matchId, Long userId, ParticipationStatus status,
+            LocalDateTime joinedAt) {
+        this.id = id;
+        this.matchId = matchId;
+        this.userId = userId;
+        this.status = status;
+        this.joinedAt = joinedAt;
+    }
+
     // Getters
     public Long getId() {
         return id;

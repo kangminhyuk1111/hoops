@@ -21,6 +21,14 @@ public class ParticipationMapper {
         if (domain == null) {
             return null;
         }
+        if (domain.getId() != null) {
+            return new ParticipationEntity(
+                    domain.getId(),
+                    domain.getMatchId(),
+                    domain.getUserId(),
+                    domain.getStatus(),
+                    domain.getJoinedAt());
+        }
         return new ParticipationEntity(
                 domain.getMatchId(),
                 domain.getUserId(),

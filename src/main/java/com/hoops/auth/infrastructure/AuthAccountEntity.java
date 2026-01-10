@@ -10,9 +10,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "auth_accounts")
+@Table(name = "auth_accounts", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"provider", "provider_id"})
+})
 public class AuthAccountEntity extends BaseTimeEntity {
 
     @Id
@@ -40,6 +43,16 @@ public class AuthAccountEntity extends BaseTimeEntity {
 
     public AuthAccountEntity(Long userId, AuthProvider provider, String providerId,
             String passwordHash, String refreshToken) {
+        this.userId = userId;
+        this.provider = provider;
+        this.providerId = providerId;
+        this.passwordHash = passwordHash;
+        this.refreshToken = refreshToken;
+    }
+
+    public AuthAccountEntity(Long id, Long userId, AuthProvider provider, String providerId,
+            String passwordHash, String refreshToken) {
+        this.id = id;
         this.userId = userId;
         this.provider = provider;
         this.providerId = providerId;

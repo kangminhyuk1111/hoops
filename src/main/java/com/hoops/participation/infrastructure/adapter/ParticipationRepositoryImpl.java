@@ -28,4 +28,9 @@ public class ParticipationRepositoryImpl implements ParticipationRepository {
     public Optional<Participation> findById(Long id) {
         return jpaParticipationRepository.findById(id).map(ParticipationMapper::toDomain);
     }
+
+    @Override
+    public boolean existsByMatchIdAndUserId(Long matchId, Long userId) {
+        return jpaParticipationRepository.existsByMatchIdAndUserId(matchId, userId);
+    }
 }

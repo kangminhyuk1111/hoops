@@ -23,6 +23,7 @@ public class AuthMapper {
             return null;
         }
         return new AuthAccountEntity(
+                domain.getId(),
                 domain.getUserId(),
                 domain.getProvider(),
                 domain.getProviderId(),

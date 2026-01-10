@@ -1,14 +1,16 @@
 package com.hoops.match.adapter.in.web;
 
-import com.hoops.match.adapter.in.web.dto.CreateMatchRequest;
-import com.hoops.match.adapter.in.web.dto.MatchResponse;
+import com.hoops.match.adapter.dto.CreateMatchRequest;
+import com.hoops.match.adapter.dto.MatchResponse;
 import com.hoops.match.application.port.in.CreateMatchUseCase;
 import com.hoops.match.application.port.in.MatchQueryUseCase;
 import com.hoops.match.domain.Match;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -24,36 +26,33 @@ public class MatchController {
     private final MatchQueryUseCase matchQueryUseCase;
     private final CreateMatchUseCase createMatchUseCase;
 
-    public MatchController(MatchQueryUseCase matchQueryUseCase, CreateMatchUseCase createMatchUseCase) {
+    public MatchController(
+            MatchQueryUseCase matchQueryUseCase,
+            CreateMatchUseCase createMatchUseCase) {
         this.matchQueryUseCase = matchQueryUseCase;
         this.createMatchUseCase = createMatchUseCase;
     }
 
     /**
      * 경기 생성 API
-     *
-     * 사용자가 새로운 경기를 등록합니다.
-     *
+     * @param userId 인증된 사용자 ID (JWT에서 추출)
      * @param request 경기 생성 요청 DTO
      * @return 생성된 경기 응답 (201 Created)
      */
     @PostMapping
-    public ResponseEntity<MatchResponse> createMatch(@RequestBody CreateMatchRequest request) {
-        Match match = createMatchUseCase.createMatch(request.toCommand());
-
-        MatchResponse response = MatchResponse.from(match);
+    public ResponseEntity<MatchResponse> createMatch(
+            @AuthenticationPrincipal Long userId,
+            @Valid @RequestBody CreateMatchRequest request) {
+        Match match = createMatchUseCase.createMatch(request.toCommand(userId));
 
         return ResponseEntity.created(URI.create("/api/matches/" + match.getId()))
-                .body(response);
+                .body(MatchResponse.of(match));
     }
 
     @GetMapping("/{matchId}")
     public ResponseEntity<MatchResponse> findMatchById(@PathVariable("matchId") Long matchId) {
         Match match = matchQueryUseCase.findMatchById(matchId);
-
-        MatchResponse response = MatchResponse.from(match);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(MatchResponse.of(match));
     }
 
     @GetMapping
@@ -71,7 +70,7 @@ public class MatchController {
         );
 
         List<MatchResponse> response = matches.stream()
-                .map(MatchResponse::from)
+                .map(MatchResponse::of)
                 .toList();
 
         return ResponseEntity.ok(response);

@@ -6,7 +6,9 @@ import com.hoops.user.infrastructure.UserEntity;
 import com.hoops.user.infrastructure.jpa.JpaUserRepository;
 import com.hoops.user.infrastructure.mapper.UserMapper;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -28,5 +30,17 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findById(Long id) {
         return jpaUserRepository.findById(id).map(UserMapper::toDomain);
+    }
+
+    @Override
+    public List<User> findAllByIds(Set<Long> ids) {
+        return jpaUserRepository.findAllById(ids).stream()
+                .map(UserMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public boolean existsByNickname(String nickname) {
+        return jpaUserRepository.existsByNickname(nickname);
     }
 }

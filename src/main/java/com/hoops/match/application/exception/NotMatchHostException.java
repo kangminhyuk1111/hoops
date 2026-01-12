@@ -8,6 +8,6 @@ public class NotMatchHostException extends DomainException {
 
     public NotMatchHostException(Long matchId, Long userId) {
         super(DEFAULT_ERROR_CODE,
-                String.format("경기 호스트만 취소할 수 있습니다. (matchId: %d, userId: %d)", matchId, userId));
+                String.format("경기 호스트만 수정/취소할 수 있습니다. (matchId: %d, userId: %d)", matchId, userId));
     }
 }

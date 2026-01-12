@@ -2,10 +2,12 @@ package com.hoops.match.adapter.in.web;
 
 import com.hoops.match.adapter.dto.CreateMatchRequest;
 import com.hoops.match.adapter.dto.MatchResponse;
+import com.hoops.match.adapter.dto.UpdateMatchRequest;
 import com.hoops.match.application.port.in.CancelMatchCommand;
 import com.hoops.match.application.port.in.CancelMatchUseCase;
 import com.hoops.match.application.port.in.CreateMatchUseCase;
 import com.hoops.match.application.port.in.MatchQueryUseCase;
+import com.hoops.match.application.port.in.UpdateMatchUseCase;
 import com.hoops.match.domain.Match;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class MatchController {
 
     private final MatchQueryUseCase matchQueryUseCase;
     private final CreateMatchUseCase createMatchUseCase;
+    private final UpdateMatchUseCase updateMatchUseCase;
     private final CancelMatchUseCase cancelMatchUseCase;
 
     @PostMapping
@@ -60,6 +63,15 @@ public class MatchController {
                 .toList();
 
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{matchId}")
+    public ResponseEntity<MatchResponse> updateMatch(
+            @PathVariable("matchId") Long matchId,
+            @AuthenticationPrincipal Long userId,
+            @Valid @RequestBody UpdateMatchRequest request) {
+        Match match = updateMatchUseCase.updateMatch(request.toCommand(matchId, userId));
+        return ResponseEntity.ok(MatchResponse.of(match));
     }
 
     @DeleteMapping("/{matchId}")

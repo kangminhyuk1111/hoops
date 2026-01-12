@@ -91,50 +91,154 @@ public class NotificationNotFoundException extends DomainException {
 
 ---
 
-# 기능 구현 워크플로우
+# 기능 구현 워크플로우 (필수)
 
-> **중요**: 세션이 종료되어도 문서를 통해 이전 컨텍스트를 유지합니다.
-> 새 세션 시작 시 반드시 `/docs/progress.md`와 `/docs/spec/mvp-features.md`를 확인하세요.
+> **핵심 원칙**: 시나리오 먼저, 구현은 나중에 (Scenario First Development)
+>
+> 모든 기능 구현은 반드시 Cucumber 시나리오 작성부터 시작합니다.
+> 시나리오 없이 코드를 작성하지 마세요.
 
-## 1. 컨텍스트 확인 (세션 시작 시)
+## 개발 플로우 (반드시 순서 준수)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  1. 시나리오 작성 (필수 선행)                                   │
+│     └── 요구사항을 Cucumber 시나리오로 변환                     │
+├─────────────────────────────────────────────────────────────┤
+│  2. Step 정의 작성                                            │
+│     └── 시나리오 실행을 위한 Step 구현                          │
+├─────────────────────────────────────────────────────────────┤
+│  3. 테스트 실행 (Red)                                         │
+│     └── 실패 확인 후 구현 시작                                  │
+├─────────────────────────────────────────────────────────────┤
+│  4. 기능 구현 (Green)                                         │
+│     └── 테스트 통과를 목표로 최소 구현                          │
+├─────────────────────────────────────────────────────────────┤
+│  5. 리팩토링 (Refactor)                                       │
+│     └── 테스트 통과 유지하며 코드 개선                          │
+├─────────────────────────────────────────────────────────────┤
+│  6. 문서 업데이트 & 커밋                                       │
+│     └── mvp-features.md 체크, PR 생성                         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 1단계: 시나리오 작성 (필수 선행)
+
+**파일 위치**: `src/test/resources/features/{feature-name}.feature`
+
+```gherkin
+# language: ko
+기능: 경기 수정
+
+  배경:
+    먼저 사용자 "호스트"가 로그인되어 있다
+    그리고 경기 "주말 농구"가 존재한다
+
+  시나리오: 호스트가 경기 정보를 수정한다
+    만일 경기 제목을 "평일 농구"로 수정 요청한다
+    그러면 응답 코드는 200 이다
+    그리고 경기 제목이 "평일 농구"로 변경되어 있다
+
+  시나리오: 호스트가 아닌 사용자가 수정을 시도한다
+    먼저 다른 사용자 "참가자"가 로그인되어 있다
+    만일 경기 제목을 "변경 시도"로 수정 요청한다
+    그러면 응답 코드는 403 이다
+```
+
+**시나리오 작성 규칙**:
+- 한글로 작성 (`# language: ko`)
+- Given-When-Then 패턴 준수 (먼저-만일-그러면)
+- 성공/실패 케이스 모두 작성
+- 비즈니스 관점에서 작성 (기술 용어 최소화)
+
+## 2단계: Step 정의 작성
+
+**파일 위치**: `src/test/java/com/hoops/acceptance/steps/{Feature}StepDefs.java`
+
+```java
+public class MatchUpdateStepDefs {
+
+    private final TestAdapter testAdapter;
+    private final SharedTestContext sharedContext;
+
+    @만일("경기 제목을 {string}로 수정 요청한다")
+    public void 경기_제목을_수정_요청한다(String newTitle) {
+        Long matchId = sharedContext.getTestMatch().getId();
+        String token = sharedContext.getAccessToken();
+
+        Map<String, Object> request = Map.of("title", newTitle);
+        TestResponse response = testAdapter.putWithAuth(
+            "/api/matches/" + matchId, request, token);
+
+        sharedContext.setLastResponse(response);
+    }
+
+    @그리고("경기 제목이 {string}로 변경되어 있다")
+    public void 경기_제목이_변경되어_있다(String expectedTitle) {
+        TestResponse response = sharedContext.getLastResponse();
+        String actualTitle = (String) response.getJsonValue("title");
+        assertThat(actualTitle).isEqualTo(expectedTitle);
+    }
+}
+```
+
+## 3단계: 테스트 실행 (Red)
+
+```bash
+./gradlew test --tests "com.hoops.acceptance.*"
+```
+
+- 시나리오가 실패하는 것을 확인
+- 실패 원인 파악 후 구현 계획 수립
+
+## 4단계: 기능 구현 (Green)
+
+**구현 순서**:
+```
+1. UseCase 인터페이스 정의
+   └── application/port/in/UpdateMatchUseCase.java
+
+2. Command 정의
+   └── application/port/in/UpdateMatchCommand.java
+
+3. 도메인 로직 추가
+   └── domain/Match.java (canUpdate, update 메서드)
+
+4. Service 구현
+   └── application/service/MatchUpdater.java
+
+5. Controller 엔드포인트 추가
+   └── adapter/in/web/MatchController.java
+
+6. DTO 작성
+   └── adapter/dto/UpdateMatchRequest.java
+```
+
+## 5단계: 리팩토링 (Refactor)
+
+- 테스트가 통과하는 상태에서 코드 개선
+- 중복 제거, 네이밍 개선, 구조 정리
+- 리팩토링 후 테스트 재실행하여 통과 확인
+
+## 6단계: 문서 업데이트 & 커밋
+
+1. `/docs/spec/mvp-features.md` 체크리스트 업데이트
+2. `/docs/progress.md` 완료 항목 추가
+3. 새 API인 경우 `/docs/api/` 문서 작성
+4. 커밋 & PR 생성
+
+---
+
+## 컨텍스트 확인 (세션 시작 시)
+
 ```
 1. /docs/progress.md → 현재 진행 상황 확인
 2. /docs/spec/mvp-features.md → 남은 기능 확인
 3. 관련 API 문서 → /docs/api/*.md
 ```
 
-## 2. 기능 구현 순서 (BDD 기반)
+## 브랜치 전략
 
-```
-1. Cucumber 시나리오 작성 (.feature)
-   └── src/test/resources/features/{feature-name}.feature
-
-2. Step Definitions 작성
-   └── src/test/java/com/hoops/acceptance/steps/{Feature}StepDefs.java
-
-3. 도메인 로직 구현
-   ├── domain/ → 순수 비즈니스 로직 (POJO)
-   ├── application/port/in/ → UseCase 인터페이스
-   ├── application/port/out/ → Repository 인터페이스
-   └── application/service/ → UseCase 구현체
-
-4. 인프라 계층 구현
-   ├── adapter/out/ → Repository 구현체
-   └── adapter/in/web/ → Controller, DTO
-
-5. 테스트 실행 및 검증
-   └── ./gradlew test --tests "com.hoops.acceptance.*"
-
-6. 커밋 & 푸시
-   └── /docs/git/commit.md 템플릿 준수
-```
-
-## 3. 문서 업데이트
-- 기능 완료 후 `/docs/spec/mvp-features.md` 체크리스트 업데이트
-- 새 API 추가 시 `/docs/api/` 문서 작성
-- 트러블슈팅 발생 시 `/docs/troubleshooting/` 기록
-
-## 4. 브랜치 전략
 ```
 main ← PR merge
   └── feat/{feature-name} ← 기능 개발

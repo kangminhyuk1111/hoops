@@ -1,14 +1,21 @@
 package com.hoops.notification.application.service;
 
+import com.hoops.notification.application.exception.NotificationAccessDeniedException;
+import com.hoops.notification.application.exception.NotificationNotFoundException;
+import com.hoops.notification.application.port.in.CreateNotificationUseCase;
 import com.hoops.notification.application.port.in.GetNotificationsUseCase;
 import com.hoops.notification.application.port.in.GetUnreadCountUseCase;
 import com.hoops.notification.application.port.in.MarkNotificationAsReadUseCase;
 import com.hoops.notification.domain.Notification;
+import com.hoops.notification.domain.NotificationType;
 import com.hoops.notification.domain.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -17,7 +24,10 @@ import java.util.List;
 public class NotificationService implements
         GetNotificationsUseCase,
         MarkNotificationAsReadUseCase,
-        GetUnreadCountUseCase {
+        GetUnreadCountUseCase,
+        CreateNotificationUseCase {
+
+    private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
     private final NotificationRepository notificationRepository;
 
@@ -30,10 +40,10 @@ public class NotificationService implements
     @Transactional
     public void markAsRead(Long notificationId, Long userId) {
         Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new IllegalArgumentException("알림을 찾을 수 없습니다: " + notificationId));
+                .orElseThrow(() -> new NotificationNotFoundException(notificationId));
 
         if (!notification.getUserId().equals(userId)) {
-            throw new IllegalArgumentException("해당 알림에 대한 권한이 없습니다");
+            throw new NotificationAccessDeniedException(notificationId, userId);
         }
 
         notification.markAsRead();
@@ -43,5 +53,24 @@ public class NotificationService implements
     @Override
     public int getUnreadCount(Long userId) {
         return notificationRepository.countUnreadByUserId(userId);
+    }
+
+    @Override
+    @Transactional
+    public Notification createNotification(Long userId, NotificationType type, String title,
+                                           String message, Long relatedMatchId) {
+        Notification notification = Notification.builder()
+                .userId(userId)
+                .type(type)
+                .title(title)
+                .message(message)
+                .relatedMatchId(relatedMatchId)
+                .isRead(false)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        Notification saved = notificationRepository.save(notification);
+        log.info("알림 생성 완료: userId={}, type={}, matchId={}", userId, type, relatedMatchId);
+        return saved;
     }
 }

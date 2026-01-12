@@ -27,6 +27,7 @@ public class MatchParticipationAdapter implements MatchParticipationPort {
                 .map(match -> new MatchParticipationData(
                         match.getId(),
                         match.getHostId(),
+                        match.getTitle(),
                         match.getStatus().name(),
                         match.getCurrentParticipants(),
                         match.getMaxParticipants(),

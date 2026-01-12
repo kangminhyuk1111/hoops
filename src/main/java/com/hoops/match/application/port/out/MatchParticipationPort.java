@@ -41,6 +41,7 @@ public interface MatchParticipationPort {
     record MatchParticipationData(
             Long matchId,
             Long hostId,
+            String title,
             String status,
             Integer currentParticipants,
             Integer maxParticipants,

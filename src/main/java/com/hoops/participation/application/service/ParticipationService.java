@@ -1,5 +1,7 @@
 package com.hoops.participation.application.service;
 
+import com.hoops.common.event.ParticipationCancelledEvent;
+import com.hoops.common.event.ParticipationCreatedEvent;
 import com.hoops.common.exception.BusinessException;
 import com.hoops.participation.application.exception.AlreadyParticipatingException;
 import com.hoops.participation.application.exception.CancellationConflictException;
@@ -18,6 +20,7 @@ import com.hoops.participation.application.port.in.ParticipateInMatchCommand;
 import com.hoops.participation.application.port.in.ParticipateInMatchUseCase;
 import com.hoops.participation.application.port.out.MatchInfo;
 import com.hoops.participation.application.port.out.MatchInfoProvider;
+import com.hoops.participation.application.port.out.ParticipationEventPublisher;
 import com.hoops.participation.domain.Participation;
 import com.hoops.participation.domain.ParticipationStatus;
 import com.hoops.participation.domain.repository.ParticipationRepository;
@@ -39,6 +42,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
 
     private final ParticipationRepository participationRepository;
     private final MatchInfoProvider matchInfoProvider;
+    private final ParticipationEventPublisher eventPublisher;
 
     @Override
     @Retryable(
@@ -72,7 +76,16 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
                 savedParticipation.getJoinedAt()
         );
 
-        return participationRepository.save(confirmedParticipation);
+        Participation result = participationRepository.save(confirmedParticipation);
+
+        eventPublisher.publish(new ParticipationCreatedEvent(
+                result.getId(),
+                result.getMatchId(),
+                result.getUserId(),
+                matchInfo.title()
+        ));
+
+        return result;
     }
 
     private void validateParticipation(MatchInfo matchInfo, Long userId) {
@@ -122,6 +135,13 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
         participationRepository.save(cancelledParticipation);
 
         matchInfoProvider.removeParticipant(command.matchId());
+
+        eventPublisher.publish(new ParticipationCancelledEvent(
+                participation.getId(),
+                participation.getMatchId(),
+                participation.getUserId(),
+                matchInfo.title()
+        ));
     }
 
     @Recover

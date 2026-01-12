@@ -53,11 +53,11 @@ services:
       timeout: 5s
       retries: 5
 
-  app:
+  backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
-    container_name: hoops-app
+    container_name: hoops-backend
     depends_on:
       mysql:
         condition: service_healthy
@@ -66,7 +66,7 @@ services:
     ports:
       - "8080:8080"
     env_file:
-      - .env
+      - ./backend/.env
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/hoops?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true

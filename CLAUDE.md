@@ -53,15 +53,20 @@ public class NotificationNotFoundException extends DomainException {
 }
 ```
 
-# Project Map & Indexing
-- **최상위 패키지**: `src/main/java/{domain_name}`
-- **비즈니스 로직**: `src/main/java/{domain_name}/domain/model` (Pure POJO)
-- **도메인 서비스**: `src/main/java/{domain_name}/domain/service`
-- **포트 정의**: `src/main/java/{domain_name}/port/` (인바운드/아웃바운드 인터페이스)
-- **JPA Entity**: `src/main/java/{domain_name}/infrastructure/persistence/entity` (JPA Annotation 허용)
-- **Adapter 구현**: `src/main/java/{domain_name}/infrastructure/adapter` (Repository, Kafka 등)
-- **Mapper**: `src/main/java/{domain_name}/infrastructure/mapper` (Entity ↔ Domain Model 변환)
-- **Presentation**: `src/main/java/{domain_name}/adapter/in/web` (REST Controller, DTO)
+# Project Structure (Monorepo)
+- **Backend**: `backend/` - Spring Boot 애플리케이션
+- **Frontend**: `frontend/` - Next.js 애플리케이션 (예정)
+- **Documentation**: `docs/` - 공유 문서
+
+# Backend Project Map & Indexing
+- **최상위 패키지**: `backend/src/main/java/{domain_name}`
+- **비즈니스 로직**: `backend/src/main/java/{domain_name}/domain/model` (Pure POJO)
+- **도메인 서비스**: `backend/src/main/java/{domain_name}/domain/service`
+- **포트 정의**: `backend/src/main/java/{domain_name}/port/` (인바운드/아웃바운드 인터페이스)
+- **JPA Entity**: `backend/src/main/java/{domain_name}/infrastructure/persistence/entity` (JPA Annotation 허용)
+- **Adapter 구현**: `backend/src/main/java/{domain_name}/infrastructure/adapter` (Repository, Kafka 등)
+- **Mapper**: `backend/src/main/java/{domain_name}/infrastructure/mapper` (Entity ↔ Domain Model 변환)
+- **Presentation**: `backend/src/main/java/{domain_name}/adapter/in/web` (REST Controller, DTO)
 - **상세 아키텍처 규칙**: `/docs/architecture/architecture.md`를 참고.
 - **코드 네이밍 및 에러 가이드**: `/docs/convention/convention.md`를 참고.
 
@@ -77,6 +82,7 @@ public class NotificationNotFoundException extends DomainException {
 - `/docs/git/` - Git 가이드 (commit, pull-request)
 - `/docs/testing/` - 테스트 가이드
 - `/docs/troubleshooting/` - 트러블슈팅
+- `/docs/frontend/` - 프론트엔드 (화면 목록, 라우팅)
 
 # Git Rules
 
@@ -89,7 +95,7 @@ public class NotificationNotFoundException extends DomainException {
 - **스텝 작성 전 검증 (필수)**: 새로운 스텝을 작성하기 전, 반드시 기존 StepDefs 파일들을 검색하여 동일한 스텝이 존재하는지 확인한다. 중복 스텝은 `DuplicateStepDefinitionException`을 발생시킨다.
   ```bash
   # 스텝 검색 예시
-  grep -r "사용자가 회원가입되어 있다" src/test/java/com/hoops/acceptance/steps/
+  grep -r "사용자가 회원가입되어 있다" backend/src/test/java/com/hoops/acceptance/steps/
   ```
 - **공통 스텝**: 여러 feature에서 사용하는 스텝은 `CommonStepDefs`에 정의 (DuplicateStepDefinitionException 방지)
 - **상태 공유**: StepDefs 간 상태 공유는 `SharedTestContext` 사용
@@ -158,7 +164,7 @@ public class NotificationNotFoundException extends DomainException {
 
 ## 1단계: 시나리오 작성 (필수 선행)
 
-**파일 위치**: `src/test/resources/features/{feature-name}.feature`
+**파일 위치**: `backend/src/test/resources/features/{feature-name}.feature`
 
 ```gherkin
 # language: ko
@@ -187,7 +193,7 @@ public class NotificationNotFoundException extends DomainException {
 
 ## 2단계: Step 정의 작성
 
-**파일 위치**: `src/test/java/com/hoops/acceptance/steps/{Feature}StepDefs.java`
+**파일 위치**: `backend/src/test/java/com/hoops/acceptance/steps/{Feature}StepDefs.java`
 
 ```java
 public class MatchUpdateStepDefs {
@@ -219,7 +225,7 @@ public class MatchUpdateStepDefs {
 ## 3단계: 테스트 실행 (Red)
 
 ```bash
-./gradlew test --tests "com.hoops.acceptance.*"
+cd backend && ./gradlew test --tests "com.hoops.acceptance.*"
 ```
 
 - 시나리오가 실패하는 것을 확인

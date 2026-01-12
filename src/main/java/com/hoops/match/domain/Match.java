@@ -51,6 +51,41 @@ public class Match {
         return LocalDateTime.now().isAfter(matchStartDateTime);
     }
 
+    public boolean hasEnded() {
+        LocalDateTime matchEndDateTime = LocalDateTime.of(this.matchDate, this.endTime);
+        return LocalDateTime.now().isAfter(matchEndDateTime);
+    }
+
+    public boolean shouldStartNow() {
+        return hasStarted() && !hasEnded() && canTransitionToInProgress();
+    }
+
+    public boolean shouldEndNow() {
+        return hasEnded() && canTransitionToEnded();
+    }
+
+    public boolean canTransitionToInProgress() {
+        return this.status == MatchStatus.PENDING
+                || this.status == MatchStatus.CONFIRMED
+                || this.status == MatchStatus.FULL;
+    }
+
+    public boolean canTransitionToEnded() {
+        return this.status == MatchStatus.IN_PROGRESS;
+    }
+
+    public void startMatch() {
+        if (canTransitionToInProgress()) {
+            this.status = MatchStatus.IN_PROGRESS;
+        }
+    }
+
+    public void endMatch() {
+        if (canTransitionToEnded()) {
+            this.status = MatchStatus.ENDED;
+        }
+    }
+
     public boolean canParticipate() {
         return (this.status == MatchStatus.PENDING || this.status == MatchStatus.CONFIRMED)
                 && this.currentParticipants < this.maxParticipants;

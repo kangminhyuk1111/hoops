@@ -2,11 +2,16 @@
 
 > 마지막 업데이트: 2025-01-10
 > 현재 브랜치: `feat/participation`
+> 관련 문서: [PRD](../prd.md) | [아키텍처](../architecture/architecture.md) | [DB 스키마](./schema.md)
 
 ## 개요
 
 농구 경기 매칭 플랫폼 Hoops의 MVP(Minimum Viable Product) 구현을 위한 기능 목록입니다.
 각 기능의 구현 상태를 체크리스트로 관리합니다.
+
+**문서 역할 분담**:
+- **PRD** (`docs/prd.md`): 문제 정의, 해결 범위, 사용자, 성공 지표
+- **본 문서**: 상세 기능 체크리스트 및 구현 현황 추적
 
 ---
 

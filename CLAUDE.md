@@ -18,7 +18,38 @@
 3. **Lombok 사용**: Lombok을 적극 사용한다. 단, `/docs/convention/lombok.md`의 주의사항을 반드시 숙지한다.
 4. **Constructor Injection**: 모든 의존성은 명시적 생성자 주입을 사용한다. (`@Autowired` 필드 주입 엄금)
 5. **DTO vs Entity**: Entity를 Controller에서 직접 반환하지 마라. Java 17 `record` 타입을 활용한 DTO로 변환한다.
-6. **Exception Handling**: `RuntimeException`으로 퉁치지 말고, `docs/convention.md`에 정의된 `BusinessException` 체계를 따른다.
+6. **Exception Handling**: 아래 예외 규칙을 반드시 준수한다. 상세 내용은 `/docs/convention/convention.md` 참고.
+
+# Exception 규칙 (필수)
+
+> **절대 금지**: `RuntimeException`, `IllegalArgumentException`, `IllegalStateException` 직접 사용 금지
+
+## 예외 계층
+```
+BusinessException (추상)
+├── DomainException (도메인 규칙 위반)
+└── ApplicationException (유스케이스 실패)
+```
+
+## 네이밍 규칙
+- `{Entity}{Reason}Exception` 형식 사용
+- 예: `NotificationNotFoundException`, `MatchAlreadyStartedException`
+
+## 예외 생성 시 필수 사항
+1. `DomainException` 또는 `ApplicationException` 상속
+2. `errorCode` 필드 포함 (UPPER_SNAKE_CASE)
+3. `{domain}/application/exception/` 패키지에 위치
+
+## 예시
+```java
+public class NotificationNotFoundException extends DomainException {
+    private static final String ERROR_CODE = "NOTIFICATION_NOT_FOUND";
+
+    public NotificationNotFoundException(Long id) {
+        super(ERROR_CODE, "알림을 찾을 수 없습니다: " + id);
+    }
+}
+```
 
 # Project Map & Indexing
 - **최상위 패키지**: `src/main/java/{domain_name}`

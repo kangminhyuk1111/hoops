@@ -67,4 +67,16 @@ public class NotificationEntity {
         this.isRead = isRead;
         this.createdAt = createdAt;
     }
+
+    public NotificationEntity(Long id, Long userId, NotificationType type, String title, String message,
+            Long relatedMatchId, Boolean isRead, LocalDateTime createdAt) {
+        this.id = id;
+        this.userId = userId;
+        this.type = type;
+        this.title = title;
+        this.message = message;
+        this.relatedMatchId = relatedMatchId;
+        this.isRead = isRead;
+        this.createdAt = createdAt;
+    }
 }

@@ -13,6 +13,7 @@ import java.time.LocalTime;
 public record MatchInfo(
         Long matchId,
         Long hostId,
+        String title,
         String status,
         Integer currentParticipants,
         Integer maxParticipants,

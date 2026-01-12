@@ -30,6 +30,7 @@ public class MatchInfoAdapter implements MatchInfoProvider {
         return new MatchInfo(
                 data.matchId(),
                 data.hostId(),
+                data.title(),
                 data.status(),
                 data.currentParticipants(),
                 data.maxParticipants(),

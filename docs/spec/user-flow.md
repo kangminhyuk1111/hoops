@@ -3,263 +3,160 @@
 > 마지막 업데이트: 2026-01-12
 > 관련 문서: [MVP 기능](./mvp-features.md) | [API 명세](../api/)
 
-## 핵심 사용자 플로우
+---
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         농구 경기 참가 플로우                              │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                         │
-│  1. 회원가입          2. 로그인           3. 매치 조회                    │
-│  ┌─────────┐        ┌─────────┐        ┌─────────┐                     │
-│  │ 카카오   │───────▶│ JWT     │───────▶│ 목록    │                     │
-│  │ OAuth   │        │ 발급    │        │ 조회    │                     │
-│  └─────────┘        └─────────┘        └─────────┘                     │
-│       │                                      │                          │
-│       ▼                                      ▼                          │
-│  ┌─────────┐                           ┌─────────┐                     │
-│  │ 닉네임   │                           │ 상세    │ 4. 매치 상세 조회    │
-│  │ 설정    │                           │ 조회    │                     │
-│  └─────────┘                           └─────────┘                     │
-│                                              │                          │
-│                                              ▼                          │
-│                                        ┌─────────┐                     │
-│                                        │ 참가    │ 5. 참가 신청         │
-│                                        │ 신청    │                     │
-│                                        └─────────┘                     │
-│                                              │                          │
-│                                              ▼                          │
-│                                        ┌─────────┐                     │
-│                                        │ 호스트   │ 6. 승인/거절 ✅ 구현됨│
-│                                        │ 승인    │                     │
-│                                        └─────────┘                     │
-│                                              │                          │
-│                                              ▼                          │
-│                                        ┌─────────┐                     │
-│                                        │ 최종    │ 7. 참가 확정         │
-│                                        │ 참가    │                     │
-│                                        └─────────┘                     │
-│                                                                         │
-└─────────────────────────────────────────────────────────────────────────┘
-```
+## Happy Path (E2E 핵심 플로우)
+
+경기 참가의 핵심 성공 시나리오입니다. 이 플로우는 Cucumber E2E 테스트로 검증됩니다.
+
+### 플로우 단계
+
+| 단계 | 액터 | 행위 | API | 결과 |
+|------|------|------|-----|------|
+| 1 | 사용자 | 로그인 (없으면 회원가입) | `POST /api/auth/signup` | JWT 토큰 발급 |
+| 2 | 사용자 | 근처 매치 목록 조회 (반경 N km) | `GET /api/matches?lat=&lng=&distance=` | 매치 목록 반환 |
+| 3 | 사용자 | 매치 상세 조회 | `GET /api/matches/{matchId}` | 매치 상세 정보 |
+| 4 | 사용자 | 매치 참가 신청 | `POST /api/matches/{matchId}/participations` | 상태: PENDING |
+| 5 | 사용자 | 승인 대기 | - | 호스트 승인 대기 |
+| 6 | 호스트 | 신청자 목록 조회 | `GET /api/matches/{matchId}/participants` | 신청자 목록 |
+| 7 | 호스트 | 참가 승인 | `PUT /api/.../participations/{id}/approve` | 상태: CONFIRMED |
+| 8 | 시스템 | 매치 시작 (스케줄러) | 자동 처리 | 상태: IN_PROGRESS |
+
+### 테스트 파일
+
+- Feature: `src/test/resources/features/e2e-happy-path.feature`
+- StepDefs: `src/test/java/com/hoops/acceptance/steps/E2EHappyPathStepDefs.java`
 
 ---
 
-## 플로우 단계별 분석
+## 플로우 단계별 상세
 
-### 1단계: 회원가입
+### 1단계: 로그인/회원가입
 
 | 항목 | 상태 | 설명 |
 |------|------|------|
-| API | ✅ 구현됨 | `POST /api/auth/signup` |
-| Cucumber 시나리오 | ⚠️ 미작성 | 회원가입 플로우 시나리오 필요 |
-| 비고 | - | 카카오 OAuth 연동 후 닉네임 설정으로 완료 |
+| API | 구현됨 | 카카오 OAuth + JWT |
+| Cucumber 테스트 | 작성됨 | auth-login.feature, auth-signup.feature |
 
 **관련 API**:
 - `GET /api/auth/kakao` - 카카오 인증 URL 조회
 - `GET /api/auth/kakao/callback` - 카카오 콜백 처리
 - `POST /api/auth/signup` - 회원가입 완료
-
----
-
-### 2단계: 로그인
-
-| 항목 | 상태 | 설명 |
-|------|------|------|
-| API | ✅ 구현됨 | 카카오 OAuth + JWT 발급 |
-| Cucumber 시나리오 | ⚠️ 미작성 | 로그인 플로우 시나리오 필요 |
-| 비고 | - | 기존 회원은 콜백에서 바로 토큰 발급 |
-
-**관련 API**:
-- `GET /api/auth/kakao` - 카카오 인증 URL 조회
-- `GET /api/auth/kakao/callback` - 로그인 처리 및 토큰 발급
 - `POST /api/auth/refresh` - 토큰 갱신
 
 ---
 
-### 3단계: 매치 조회 (목록)
+### 2단계: 매치 목록 조회
 
 | 항목 | 상태 | 설명 |
 |------|------|------|
-| API | ✅ 구현됨 | `GET /api/matches` |
-| Cucumber 시나리오 | ✅ 작성됨 | 위치 기반 필터링 포함 |
-| 비고 | - | 인증 없이 접근 가능 |
+| API | 구현됨 | `GET /api/matches` |
+| Cucumber 테스트 | 작성됨 | 위치 기반 필터링 포함 |
 
-**관련 API**:
-- `GET /api/matches?latitude=&longitude=&distance=` - 위치 기반 경기 목록 조회
+**요청 파라미터**:
+- `latitude`: 사용자 위도
+- `longitude`: 사용자 경도
+- `distance`: 검색 반경 (km)
 
 ---
 
-### 4단계: 매치 상세 조회
+### 3단계: 매치 상세 조회
 
 | 항목 | 상태 | 설명 |
 |------|------|------|
-| API | ✅ 구현됨 | `GET /api/matches/{matchId}` |
-| Cucumber 시나리오 | ✅ 작성됨 | 상세 조회 시나리오 존재 |
-| 비고 | - | 인증 없이 접근 가능 |
+| API | 구현됨 | `GET /api/matches/{matchId}` |
+| Cucumber 테스트 | 작성됨 | match-detail.feature |
 
-**관련 API**:
-- `GET /api/matches/{matchId}` - 경기 상세 조회
-- `GET /api/matches/{matchId}/participants` - 참가자 목록 조회
+**추가 조회**:
+- `GET /api/matches/{matchId}/participants` - 참가자 목록
 
 ---
 
-### 5단계: 참가 신청
+### 4단계: 참가 신청
 
 | 항목 | 상태 | 설명 |
 |------|------|------|
-| API | ✅ 구현됨 | `POST /api/matches/{matchId}/participations` |
-| Cucumber 시나리오 | ⚠️ 미작성 | 참가 신청 시나리오 필요 |
-| 비고 | ⚠️ 현재 자동 승인 | 신청 즉시 CONFIRMED 상태로 변경됨 |
+| API | 구현됨 | `POST /api/matches/{matchId}/participations` |
+| Cucumber 테스트 | 작성됨 | participation.feature |
 
-**현재 동작** (자동 승인 - MVP 편의를 위해 유지):
-```
-참가 신청 → PENDING → (즉시) → CONFIRMED
-```
+**신청 후 상태**: PENDING (호스트 승인 대기)
 
-**호스트 승인 플로우** (✅ 구현됨):
-```
-참가 신청 → PENDING → 호스트 승인 → CONFIRMED
-                   → 호스트 거절 → REJECTED
-```
-
-> 참고: 현재 참가 신청 시 자동으로 CONFIRMED 되지만, 호스트가 approve/reject API를 통해 상태를 변경할 수 있습니다.
+> 참고: 2026-01-12 이전에는 자동 승인(즉시 CONFIRMED) 방식이었으나, 현재는 호스트 승인 플로우로 변경됨
 
 ---
 
-### 6단계: 호스트 승인/거절 ✅ 구현됨
+### 5단계: 승인 대기
+
+사용자는 호스트가 승인할 때까지 PENDING 상태로 대기합니다.
+
+**알림**: 호스트에게 참가 신청 알림 발송 (Kafka 이벤트)
+
+---
+
+### 6단계: 신청자 목록 조회 (호스트)
 
 | 항목 | 상태 | 설명 |
 |------|------|------|
-| API | ✅ 구현됨 | 승인/거절 API 완료 |
-| Cucumber 시나리오 | ✅ 작성됨 | participation-approval.feature |
-| 비고 | - | 호스트만 승인/거절 가능 |
-
-**구현된 API**:
-| API | Method | 설명 |
-|-----|--------|------|
-| `/api/matches/{matchId}/participations/{id}/approve` | PUT | 참가 승인 |
-| `/api/matches/{matchId}/participations/{id}/reject` | PUT | 참가 거절 |
-
-**필요한 알림**:
-- 참가 신청 시 → 호스트에게 알림
-- 승인 시 → 신청자에게 알림
-- 거절 시 → 신청자에게 알림
+| API | 구현됨 | `GET /api/matches/{matchId}/participants` |
+| 응답 | 닉네임, 프로필 이미지 포함 | ParticipantDetailResponse |
 
 ---
 
-### 7단계: 최종 참가
+### 7단계: 참가 승인 (호스트)
 
 | 항목 | 상태 | 설명 |
 |------|------|------|
-| API | ⚠️ 6단계 의존 | 승인 후 CONFIRMED 상태 |
-| Cucumber 시나리오 | ❌ 미작성 | - |
-| 비고 | - | 6단계 구현 후 완성 |
+| API | 구현됨 | `PUT /api/.../participations/{id}/approve` |
+| Cucumber 테스트 | 작성됨 | participation-approval.feature |
+
+**승인 후 상태**: CONFIRMED
+
+**알림**: 신청자에게 승인 알림 발송 (Kafka 이벤트)
 
 ---
 
-## 누락된 API 목록
+### 8단계: 매치 시작 (스케줄러)
 
-### 필수 (핵심 플로우) - ✅ 모두 구현됨
+| 항목 | 상태 | 설명 |
+|------|------|------|
+| 스케줄러 | 구현됨 | MatchStatusScheduler |
+| 동작 | 매치 시작 시간 도달 시 자동 상태 변경 | PENDING -> IN_PROGRESS |
 
-| 우선순위 | API | Method | 설명 | 상태 |
-|----------|-----|--------|------|------|
-| ~~🔴 P0~~ | `/api/matches/{matchId}/participations/{id}/approve` | PUT | 참가 승인 | ✅ 구현됨 |
-| ~~🔴 P0~~ | `/api/matches/{matchId}/participations/{id}/reject` | PUT | 참가 거절 | ✅ 구현됨 |
-
-### 권장 (사용자 경험 개선)
-
-| 우선순위 | API | Method | 설명 |
-|----------|-----|--------|------|
-| 🟡 P1 | `/api/users/me/matches` | GET | 내가 생성한 경기 목록 |
-| 🟡 P1 | `/api/users/{userId}` | GET | 다른 사용자 프로필 조회 |
-| 🟢 P2 | `/api/users/me` | PUT | 프로필 수정 |
-| 🟢 P2 | `/api/locations` | GET | 장소 목록 조회 |
+**상태 전이**:
+- 매치 시작 시간 -> IN_PROGRESS
+- 매치 종료 시간 -> ENDED
 
 ---
 
 ## ParticipationStatus 상태 전이
 
-### 현재 구현
-```
-PENDING ──(즉시)──▶ CONFIRMED ──(취소)──▶ CANCELLED
-```
-
-### 목표 구현
-```
-                    ┌──(승인)──▶ CONFIRMED ──(취소)──▶ CANCELLED
-                    │
-PENDING ────────────┤
-                    │
-                    └──(거절)──▶ REJECTED
-
-* 경기 취소 시: CONFIRMED ──▶ MATCH_CANCELLED
-```
+| 현재 상태 | 이벤트 | 다음 상태 |
+|-----------|--------|-----------|
+| (없음) | 참가 신청 | PENDING |
+| PENDING | 호스트 승인 | CONFIRMED |
+| PENDING | 호스트 거절 | REJECTED |
+| CONFIRMED | 참가자 취소 | CANCELLED |
+| CONFIRMED | 매치 취소 | MATCH_CANCELLED |
 
 **상태 정의**:
 | 상태 | 설명 |
 |------|------|
 | PENDING | 참가 신청 대기 (호스트 승인 대기) |
 | CONFIRMED | 참가 확정 |
-| REJECTED | 호스트에 의해 거절됨 (신규) |
+| REJECTED | 호스트에 의해 거절됨 |
 | CANCELLED | 참가자 본인이 취소 |
 | MATCH_CANCELLED | 경기 자체가 취소됨 |
 
 ---
 
-## 필요한 Cucumber 시나리오
+## MatchStatus 상태 전이
 
-### 참가 승인/거절 플로우 (신규)
-
-```gherkin
-# language: ko
-기능: 경기 참가 승인/거절
-  경기 호스트로서
-  참가 신청을 승인하거나 거절할 수 있다
-
-  배경:
-    먼저 호스트가 로그인되어 있다
-    그리고 호스트가 생성한 경기가 있다
-
-  시나리오: 호스트가 참가 신청을 승인한다
-    먼저 다른 사용자가 해당 경기에 참가 신청했다
-    만일 호스트가 해당 참가 신청을 승인한다
-    그러면 응답 상태 코드는 200 이다
-    그리고 참가 상태가 CONFIRMED 이다
-    그리고 신청자에게 승인 알림이 발송된다
-
-  시나리오: 호스트가 참가 신청을 거절한다
-    먼저 다른 사용자가 해당 경기에 참가 신청했다
-    만일 호스트가 해당 참가 신청을 거절한다
-    그러면 응답 상태 코드는 200 이다
-    그리고 참가 상태가 REJECTED 이다
-    그리고 신청자에게 거절 알림이 발송된다
-
-  시나리오: 호스트가 아닌 사용자가 승인 시도
-    먼저 다른 사용자가 해당 경기에 참가 신청했다
-    그리고 제3의 사용자가 로그인했다
-    만일 제3의 사용자가 해당 참가 신청을 승인한다
-    그러면 응답 상태 코드는 403 이다
-```
-
----
-
-## 구현 우선순위
-
-### Phase 1: 핵심 승인 플로우 (즉시)
-1. ParticipationStatus에 `REJECTED` 추가
-2. 참가 신청 시 자동 승인 로직 제거 (PENDING 유지)
-3. 승인/거절 API 구현
-4. 호스트용 대기 목록 조회 API 구현
-5. 관련 알림 이벤트 추가
-
-### Phase 2: 사용자 경험 (다음)
-1. 내가 생성한 경기 목록 API
-2. 다른 사용자 프로필 조회 API
-
-### Phase 3: 부가 기능 (이후)
-1. 프로필 수정 API
-2. 장소 목록/검색 API
+| 현재 상태 | 이벤트 | 다음 상태 |
+|-----------|--------|-----------|
+| (없음) | 매치 생성 | PENDING |
+| PENDING | 시작 시간 도달 (스케줄러) | IN_PROGRESS |
+| IN_PROGRESS | 종료 시간 도달 (스케줄러) | ENDED |
+| PENDING | 호스트 취소 | CANCELLED |
 
 ---
 
@@ -267,4 +164,6 @@ PENDING ────────────┤
 
 | 날짜 | 변경 내용 | 작성자 |
 |------|----------|--------|
+| 2026-01-12 | E2E Happy Path 테스트 추가, 자동 승인 → 호스트 승인 플로우로 변경 | Claude |
+| 2026-01-12 | Happy Path 섹션 추가, 시각적 다이어그램 텍스트 기반으로 변경 | Claude |
 | 2026-01-12 | 최초 작성 - 사용자 플로우 분석 | Claude |

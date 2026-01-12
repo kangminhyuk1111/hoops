@@ -69,7 +69,6 @@
 ### 2.4 경기 상태 관리
 - [x] MatchStatus Enum (PENDING, IN_PROGRESS, ENDED, CANCELLED)
 - [x] 상태 변경 스케줄러 (PENDING → IN_PROGRESS → ENDED)
-- [ ] 상태 변경 이벤트 발행
 
 ### 2.5 테스트
 - [x] Match 도메인 테스트
@@ -105,7 +104,7 @@
 
 ### 3.5 참가자 조회
 - [x] 참가자 목록 조회 API (`GET /api/matches/{matchId}/participants`)
-- [ ] 참가자 상세 정보 (닉네임, 프로필 등)
+- [x] 참가자 상세 정보 (닉네임, 프로필 등)
 
 ### 3.6 테스트
 - [x] Participation 도메인 테스트
@@ -114,6 +113,7 @@
 - [x] 참가 신청 Cucumber 테스트 (participation.feature)
 - [x] 참가 취소 Cucumber 테스트 (participation-cancel.feature)
 - [x] 참가 승인/거절 Cucumber 테스트 (participation-approval.feature)
+- [x] E2E Happy Path 테스트 (e2e-happy-path.feature)
 - [ ] 동시성 테스트 (낙관적 락)
 
 ---
@@ -173,10 +173,8 @@
 ## 7. 이벤트 (Kafka)
 
 ### 7.1 이벤트 발행
-- [ ] 경기 생성 이벤트
 - [x] 참가 신청 이벤트 (ParticipationCreatedEvent)
 - [x] 참가 취소 이벤트 (ParticipationCancelledEvent)
-- [ ] 경기 상태 변경 이벤트
 
 ### 7.2 이벤트 구독
 - [x] 알림 생성 Consumer (NotificationEventConsumer)
@@ -226,14 +224,14 @@
 | 카테고리 | 완료 | 미완료 | 진행률 |
 |----------|------|--------|--------|
 | 인증 (Auth) | 15 | 0 | 100% |
-| 경기 (Match) | 17 | 2 | 89% |
-| 참가 (Participation) | 21 | 2 | 91% |
+| 경기 (Match) | 17 | 1 | 94% |
+| 참가 (Participation) | 23 | 1 | 96% |
 | 장소 (Location) | 6 | 2 | 75% |
 | 사용자 (User) | 7 | 1 | 88% |
 | 알림 (Notification) | 6 | 1 | 86% |
-| 이벤트 (Kafka) | 4 | 3 | 57% |
+| 이벤트 (Kafka) | 4 | 2 | 67% |
 | 인프라/공통 | 12 | 4 | 75% |
-| **전체** | **88** | **15** | **85%** |
+| **전체** | **90** | **12** | **88%** |
 
 ---
 
@@ -265,10 +263,9 @@ MVP 출시를 위한 최소 필수 기능입니다.
 
 ## 다음 작업 권장 순서
 
-1. **경기 수정 API** - 호스트가 경기 정보 수정 (`PUT /api/matches/{matchId}`)
-2. **프로필 조회/수정** - 사용자 프로필 조회 및 수정 기능
-3. **테스트 보강** - WireMock 적용, 동시성 테스트
-4. **이벤트 발행** - 경기 생성/상태 변경 이벤트
+1. **테스트 보강** - WireMock 적용, 동시성 테스트
+2. **참가자 존재 시 취소 정책** - 경기 취소 시 참가자 처리
+3. **도메인 테스트** - Location, User 도메인 단위 테스트
 
 ---
 
@@ -276,6 +273,8 @@ MVP 출시를 위한 최소 필수 기능입니다.
 
 | 날짜 | 변경 내용 | 작성자 |
 |------|----------|--------|
+| 2026-01-12 | E2E Happy Path 테스트 추가, 참가 플로우 호스트 승인 방식으로 변경, 진행률 88% | Claude |
+| 2026-01-12 | 경기 생성/상태 변경 이벤트 항목 제거 (불필요), 진행률 87% | Claude |
 | 2026-01-12 | 프로필 조회/수정 API 구현 반영 (85% 진행) | Claude |
 | 2026-01-12 | 장소 조회/검색 API 구현 반영 | Claude |
 | 2026-01-12 | 인증 테스트, 참가 승인/거절, 내 호스팅 경기 목록 구현 반영 | Claude |

@@ -27,6 +27,9 @@ public class SharedTestContext {
     private User testUser;
     private User hostUser;
     private List<Match> testMatches = new ArrayList<>();
+    private Long participationId;
+    private String userAccessToken;
+    private String hostAccessToken;
 
     public TestResponse getLastResponse() {
         return lastResponse;
@@ -102,5 +105,29 @@ public class SharedTestContext {
 
     public void clearTestMatches() {
         this.testMatches.clear();
+    }
+
+    public Long getParticipationId() {
+        return participationId;
+    }
+
+    public void setParticipationId(Long participationId) {
+        this.participationId = participationId;
+    }
+
+    public String getUserAccessToken() {
+        return userAccessToken;
+    }
+
+    public void setUserAccessToken(String userAccessToken) {
+        this.userAccessToken = userAccessToken;
+    }
+
+    public String getHostAccessToken() {
+        return hostAccessToken;
+    }
+
+    public void setHostAccessToken(String hostAccessToken) {
+        this.hostAccessToken = hostAccessToken;
     }
 }

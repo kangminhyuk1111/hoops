@@ -72,26 +72,14 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
 
         Participation savedParticipation = participationRepository.save(participation);
 
-        matchInfoProvider.addParticipant(command.matchId());
-
-        Participation confirmedParticipation = new Participation(
+        eventPublisher.publish(new ParticipationCreatedEvent(
                 savedParticipation.getId(),
                 savedParticipation.getMatchId(),
                 savedParticipation.getUserId(),
-                ParticipationStatus.CONFIRMED,
-                savedParticipation.getJoinedAt()
-        );
-
-        Participation result = participationRepository.save(confirmedParticipation);
-
-        eventPublisher.publish(new ParticipationCreatedEvent(
-                result.getId(),
-                result.getMatchId(),
-                result.getUserId(),
                 matchInfo.title()
         ));
 
-        return result;
+        return savedParticipation;
     }
 
     private void validateParticipation(MatchInfo matchInfo, Long userId) {
@@ -137,10 +125,14 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
             throw new MatchAlreadyStartedException(command.matchId());
         }
 
+        boolean wasConfirmed = participation.getStatus() == ParticipationStatus.CONFIRMED;
+
         Participation cancelledParticipation = participation.cancel();
         participationRepository.save(cancelledParticipation);
 
-        matchInfoProvider.removeParticipant(command.matchId());
+        if (wasConfirmed) {
+            matchInfoProvider.removeParticipant(command.matchId());
+        }
 
         eventPublisher.publish(new ParticipationCancelledEvent(
                 participation.getId(),
@@ -200,7 +192,11 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
         }
 
         Participation approvedParticipation = participation.approve();
-        return participationRepository.save(approvedParticipation);
+        Participation savedParticipation = participationRepository.save(approvedParticipation);
+
+        matchInfoProvider.addParticipant(command.matchId());
+
+        return savedParticipation;
     }
 
     @Override
@@ -219,7 +215,6 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
         }
 
         Participation rejectedParticipation = participation.reject();
-        matchInfoProvider.removeParticipant(command.matchId());
         return participationRepository.save(rejectedParticipation);
     }
 

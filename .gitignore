@@ -41,3 +41,6 @@ out/
 
 ### Test ###
 /test-output/
+
+### Claude ###
+.claude/settings.local.json

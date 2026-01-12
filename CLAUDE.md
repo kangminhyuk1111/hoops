@@ -34,6 +34,7 @@
 
 # Documentation Map
 
+- `/docs/progress.md` - **진행 상황 (세션 시작 시 필독)**
 - `/docs/prd.md` - PRD
 - `/docs/architecture/` - 아키텍처
 - `/docs/convention/` - 코드 컨벤션

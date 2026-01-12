@@ -7,10 +7,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "locations")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LocationEntity extends BaseTimeEntity {
 
     @Id
@@ -32,9 +38,6 @@ public class LocationEntity extends BaseTimeEntity {
     @Column(length = 500)
     private String address;
 
-    protected LocationEntity() {
-    }
-
     public LocationEntity(Long userId, String alias, BigDecimal latitude, BigDecimal longitude,
             String address) {
         this.userId = userId;
@@ -42,30 +45,5 @@ public class LocationEntity extends BaseTimeEntity {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
-    }
-
-    // Getters
-    public Long getId() {
-        return id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public String getAlias() {
-        return alias;
-    }
-
-    public BigDecimal getLatitude() {
-        return latitude;
-    }
-
-    public BigDecimal getLongitude() {
-        return longitude;
-    }
-
-    public String getAddress() {
-        return address;
     }
 }

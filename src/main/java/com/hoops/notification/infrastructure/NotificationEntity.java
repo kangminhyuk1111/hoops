@@ -10,13 +10,19 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notifications")
 @EntityListeners(AuditingEntityListener.class)
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NotificationEntity {
 
     @Id
@@ -46,9 +52,6 @@ public class NotificationEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    protected NotificationEntity() {
-    }
-
     public NotificationEntity(Long userId, NotificationType type, String title, String message,
             Long relatedMatchId) {
         this(userId, type, title, message, relatedMatchId, false, LocalDateTime.now());
@@ -63,38 +66,5 @@ public class NotificationEntity {
         this.relatedMatchId = relatedMatchId;
         this.isRead = isRead;
         this.createdAt = createdAt;
-    }
-
-    // Getters
-    public Long getId() {
-        return id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public NotificationType getType() {
-        return type;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public Long getRelatedMatchId() {
-        return relatedMatchId;
-    }
-
-    public Boolean getIsRead() {
-        return isRead;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 }

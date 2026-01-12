@@ -1,15 +1,18 @@
 package com.hoops.user.domain;
 
+import lombok.Getter;
+
 import java.math.BigDecimal;
 
+@Getter
 public class User {
 
-    private Long id;
-    private String email;
-    private String nickname;
-    private String profileImage;
-    private BigDecimal rating;
-    private Integer totalMatches;
+    private final Long id;
+    private final String email;
+    private final String nickname;
+    private final String profileImage;
+    private final BigDecimal rating;
+    private final Integer totalMatches;
 
     public User(Long id, String email, String nickname, String profileImage, BigDecimal rating,
             Integer totalMatches) {
@@ -19,32 +22,5 @@ public class User {
         this.profileImage = profileImage;
         this.rating = rating;
         this.totalMatches = totalMatches;
-    }
-
-    // Domain Logic - None strictly required yet as per YAGNI
-
-    // Getters
-    public Long getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getProfileImage() {
-        return profileImage;
-    }
-
-    public BigDecimal getRating() {
-        return rating;
-    }
-
-    public Integer getTotalMatches() {
-        return totalMatches;
     }
 }

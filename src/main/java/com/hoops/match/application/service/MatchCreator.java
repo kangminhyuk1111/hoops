@@ -10,27 +10,21 @@ import com.hoops.match.application.port.out.MatchRepository;
 import com.hoops.match.domain.Match;
 import com.hoops.match.domain.MatchStatus;
 import com.hoops.match.domain.policy.MatchPolicyValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class MatchCreator implements CreateMatchUseCase {
 
-    private static final int INITIAL_PARTICIPANTS = 1; // 호스트 포함
+    private static final int INITIAL_PARTICIPANTS = 1;
 
     private final MatchRepository matchRepository;
     private final HostInfoProvider hostInfoProvider;
     private final LocationInfoProvider locationInfoProvider;
     private final MatchPolicyValidator policyValidator;
-
-    public MatchCreator(MatchRepository matchRepository, HostInfoProvider hostInfoProvider,
-            LocationInfoProvider locationInfoProvider, MatchPolicyValidator policyValidator) {
-        this.matchRepository = matchRepository;
-        this.hostInfoProvider = hostInfoProvider;
-        this.locationInfoProvider = locationInfoProvider;
-        this.policyValidator = policyValidator;
-    }
 
     @Override
     public Match createMatch(CreateMatchCommand command) {
@@ -41,7 +35,7 @@ public class MatchCreator implements CreateMatchUseCase {
 
         Match match = new Match(
                 null,
-                null,  // version - 새로 생성 시 null
+                null,
                 host.hostId(),
                 host.nickname(),
                 command.title(),

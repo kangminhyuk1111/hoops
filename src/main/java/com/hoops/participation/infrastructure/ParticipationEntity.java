@@ -11,13 +11,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "participations", uniqueConstraints = {
-        @UniqueConstraint(name = "idx_participation_unique", columnNames = { "match_id",
-                "user_id" })
+        @UniqueConstraint(name = "idx_participation_unique", columnNames = {"match_id", "user_id"})
 })
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ParticipationEntity extends BaseTimeEntity {
 
     @Id
@@ -36,9 +41,6 @@ public class ParticipationEntity extends BaseTimeEntity {
 
     @Column(nullable = false)
     private LocalDateTime joinedAt;
-
-    protected ParticipationEntity() {
-    }
 
     public ParticipationEntity(Long matchId, Long userId) {
         this(matchId, userId, ParticipationStatus.PENDING, LocalDateTime.now());
@@ -59,26 +61,5 @@ public class ParticipationEntity extends BaseTimeEntity {
         this.userId = userId;
         this.status = status;
         this.joinedAt = joinedAt;
-    }
-
-    // Getters
-    public Long getId() {
-        return id;
-    }
-
-    public Long getMatchId() {
-        return matchId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public ParticipationStatus getStatus() {
-        return status;
-    }
-
-    public LocalDateTime getJoinedAt() {
-        return joinedAt;
     }
 }

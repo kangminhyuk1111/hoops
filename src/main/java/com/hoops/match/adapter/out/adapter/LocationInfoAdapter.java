@@ -4,6 +4,7 @@ import com.hoops.location.application.port.out.LocationQueryPort;
 import com.hoops.match.application.exception.MatchLocationNotFoundException;
 import com.hoops.match.application.port.out.LocationInfo;
 import com.hoops.match.application.port.out.LocationInfoProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,13 +17,10 @@ import org.springframework.stereotype.Component;
  * Location Context가 외부에 제공하는 Port만 사용합니다.
  */
 @Component
+@RequiredArgsConstructor
 public class LocationInfoAdapter implements LocationInfoProvider {
 
     private final LocationQueryPort locationQueryPort;
-
-    public LocationInfoAdapter(LocationQueryPort locationQueryPort) {
-        this.locationQueryPort = locationQueryPort;
-    }
 
     @Override
     public LocationInfo getLocationInfo(Long locationId) {

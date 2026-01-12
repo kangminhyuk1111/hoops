@@ -4,6 +4,7 @@ import com.hoops.match.application.exception.HostNotFoundException;
 import com.hoops.match.application.port.out.HostInfo;
 import com.hoops.match.application.port.out.HostInfoProvider;
 import com.hoops.user.application.port.out.UserQueryPort;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,13 +17,10 @@ import org.springframework.stereotype.Component;
  * User Context가 외부에 제공하는 Port만 사용합니다.
  */
 @Component
+@RequiredArgsConstructor
 public class UserHostInfoAdapter implements HostInfoProvider {
 
     private final UserQueryPort userQueryPort;
-
-    public UserHostInfoAdapter(UserQueryPort userQueryPort) {
-        this.userQueryPort = userQueryPort;
-    }
 
     @Override
     public HostInfo getHostInfo(Long hostId) {

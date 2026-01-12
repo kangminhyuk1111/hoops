@@ -6,16 +6,14 @@ import com.hoops.location.infrastructure.LocationEntity;
 import com.hoops.location.infrastructure.jpa.JpaLocationRepository;
 import com.hoops.location.infrastructure.mapper.LocationMapper;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class LocationRepositoryImpl implements LocationRepository {
 
     private final JpaLocationRepository jpaLocationRepository;
-
-    public LocationRepositoryImpl(JpaLocationRepository jpaLocationRepository) {
-        this.jpaLocationRepository = jpaLocationRepository;
-    }
 
     @Override
     public Location save(Location location) {

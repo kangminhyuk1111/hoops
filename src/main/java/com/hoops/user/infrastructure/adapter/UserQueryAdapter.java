@@ -4,6 +4,7 @@ import com.hoops.user.application.port.out.UserQueryPort;
 import com.hoops.user.domain.User;
 import com.hoops.user.domain.repository.UserRepository;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,13 +14,10 @@ import org.springframework.stereotype.Component;
  * 내부적으로 UserRepository를 사용하지만, 외부에는 필요한 정보만 노출합니다.
  */
 @Component
+@RequiredArgsConstructor
 public class UserQueryAdapter implements UserQueryPort {
 
     private final UserRepository userRepository;
-
-    public UserQueryAdapter(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public Optional<String> findNicknameById(Long userId) {

@@ -11,11 +11,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "auth_accounts", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"provider", "provider_id"})
 })
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AuthAccountEntity extends BaseTimeEntity {
 
     @Id
@@ -38,9 +43,6 @@ public class AuthAccountEntity extends BaseTimeEntity {
     @Column(length = 500)
     private String refreshToken;
 
-    protected AuthAccountEntity() {
-    }
-
     public AuthAccountEntity(Long userId, AuthProvider provider, String providerId,
             String passwordHash, String refreshToken) {
         this.userId = userId;
@@ -62,30 +64,5 @@ public class AuthAccountEntity extends BaseTimeEntity {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
-    }
-
-    // Getters
-    public Long getId() {
-        return id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public AuthProvider getProvider() {
-        return provider;
-    }
-
-    public String getProviderId() {
-        return providerId;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
     }
 }

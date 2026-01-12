@@ -6,25 +6,18 @@ import com.hoops.location.application.port.in.CreateLocationCommand;
 import com.hoops.location.application.port.in.CreateLocationUseCase;
 import com.hoops.location.domain.Location;
 import com.hoops.location.domain.repository.LocationRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * 장소 생성 서비스
- *
- * CreateLocationUseCase를 구현하여 장소 생성 비즈니스 로직을 처리합니다.
- */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class LocationCreator implements CreateLocationUseCase {
 
     private static final int MIN_NAME_LENGTH = 2;
 
     private final LocationRepository locationRepository;
-
-    public LocationCreator(LocationRepository locationRepository) {
-        this.locationRepository = locationRepository;
-    }
 
     @Override
     public Location createLocation(CreateLocationCommand command) {

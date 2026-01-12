@@ -15,7 +15,7 @@
 # Strict Constraints (절대 규칙)
 1. **No Mocking (내부 코드)**: 내부 비즈니스 로직 테스트 시 Mocking을 지양하고 실제 동작하는 코드를 지향한다. DB는 H2 또는 Testcontainers를 활용한다. 단, **외부 API(카카오, 결제 등) 통신은 WireMock을 사용하여 Mocking**한다.
 2. **Pure Domain**: `domain/` 패키지 내 클래스는 외부 라이브러리(Spring, JPA, JSON 등) 의존성이 전혀 없는 **Pure Java(POJO)**여야 한다. JPA Entity는 `infrastructure/persistence/entity/` 패키지에 분리하며, Domain Model과 매핑한다.
-3. **No Lombok**: Lombok 사용을 금지한다. 모든 코드는 순수 Java로 작성하며, 생성자/Getter/Setter는 명시적으로 작성한다.
+3. **Lombok 사용**: Lombok을 적극 사용한다. 단, `/docs/convention/lombok.md`의 주의사항을 반드시 숙지한다.
 4. **Constructor Injection**: 모든 의존성은 명시적 생성자 주입을 사용한다. (`@Autowired` 필드 주입 엄금)
 5. **DTO vs Entity**: Entity를 Controller에서 직접 반환하지 마라. Java 17 `record` 타입을 활용한 DTO로 변환한다.
 6. **Exception Handling**: `RuntimeException`으로 퉁치지 말고, `docs/convention.md`에 정의된 `BusinessException` 체계를 따른다.

@@ -42,7 +42,8 @@ public class CucumberSpringConfiguration {
                 "spring.datasource.url=" + mysql.getJdbcUrl(),
                 "spring.datasource.username=" + mysql.getUsername(),
                 "spring.datasource.password=" + mysql.getPassword(),
-                "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver"
+                "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver",
+                "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect"
             );
         }
     }

@@ -11,7 +11,7 @@
   - Mapper: `{domain}.infrastructure.mapper` (예: `UserEntityMapper`)
 
 ### 2. Code Style
-- **No Lombok**: Lombok 사용을 전면 금지한다. 모든 생성자, Getter, Setter는 명시적으로 작성한다.
+- **No Lombok**: Lombok 사용을 전면 금지한다. 모든 생성자, Getter, Setter는 명시적으로 작성한다.(왜? 인지 정의)
 - **Constructor Injection**: 의존성 주입은 생성자 방식만 허용한다. `@Autowired` 필드 주입 금지.
 - **DTO with Record**: DTO는 Java 17 `record` 타입을 사용한다.
 

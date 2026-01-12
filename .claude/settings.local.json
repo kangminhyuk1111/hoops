@@ -10,7 +10,21 @@
       "Bash(./gradlew build:*)",
       "Bash(ls:*)",
       "Bash(docker-compose down:*)",
-      "Bash(docker-compose logs:*)"
+      "Bash(docker-compose logs:*)",
+      "Bash(curl:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker exec:*)",
+      "Bash(./gradlew compileTestJava:*)",
+      "Bash(./gradlew clean:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git config:*)",
+      "Bash(gh pr create:*)",
+      "Bash(git -C /Users/kangminhyuk/IdeaProjects/hoops log --oneline -20)",
+      "Bash(git -C /Users/kangminhyuk/IdeaProjects/hoops status)"
     ]
   }
 }

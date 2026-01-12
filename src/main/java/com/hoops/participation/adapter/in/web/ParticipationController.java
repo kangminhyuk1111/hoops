@@ -1,5 +1,6 @@
 package com.hoops.participation.adapter.in.web;
 
+import com.hoops.participation.adapter.in.web.dto.ParticipantDetailResponse;
 import com.hoops.participation.adapter.in.web.dto.ParticipationResponse;
 import com.hoops.participation.application.port.in.ApproveParticipationCommand;
 import com.hoops.participation.application.port.in.ApproveParticipationUseCase;
@@ -10,6 +11,8 @@ import com.hoops.participation.application.port.in.ParticipateInMatchCommand;
 import com.hoops.participation.application.port.in.ParticipateInMatchUseCase;
 import com.hoops.participation.application.port.in.RejectParticipationCommand;
 import com.hoops.participation.application.port.in.RejectParticipationUseCase;
+import com.hoops.participation.application.port.out.UserInfo;
+import com.hoops.participation.application.port.out.UserInfoProvider;
 import com.hoops.participation.domain.Participation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Participation", description = "경기 참가 관련 API")
 @RestController
@@ -41,6 +45,7 @@ public class ParticipationController {
     private final ApproveParticipationUseCase approveParticipationUseCase;
     private final RejectParticipationUseCase rejectParticipationUseCase;
     private final GetMatchParticipantsUseCase getMatchParticipantsUseCase;
+    private final UserInfoProvider userInfoProvider;
 
     @Operation(summary = "경기 참가 신청", description = "경기에 참가를 신청합니다.")
     @ApiResponses({
@@ -87,11 +92,17 @@ public class ParticipationController {
             @ApiResponse(responseCode = "404", description = "경기를 찾을 수 없음")
     })
     @GetMapping("/{matchId}/participants")
-    public ResponseEntity<List<ParticipationResponse>> getMatchParticipants(
+    public ResponseEntity<List<ParticipantDetailResponse>> getMatchParticipants(
             @Parameter(description = "경기 ID") @PathVariable("matchId") Long matchId) {
         List<Participation> participants = getMatchParticipantsUseCase.getMatchParticipants(matchId);
-        List<ParticipationResponse> response = participants.stream()
-                .map(ParticipationResponse::of)
+
+        List<Long> userIds = participants.stream()
+                .map(Participation::getUserId)
+                .toList();
+        Map<Long, UserInfo> userInfoMap = userInfoProvider.getUserInfoByIds(userIds);
+
+        List<ParticipantDetailResponse> response = participants.stream()
+                .map(p -> ParticipantDetailResponse.of(p, userInfoMap.get(p.getUserId())))
                 .toList();
         return ResponseEntity.ok(response);
     }

@@ -93,4 +93,37 @@ public class MatchParticipantsStepDefs {
                 .as("참가자 수가 %d명 이어야 합니다", expectedCount)
                 .isEqualTo(expectedCount);
     }
+
+    @그리고("{string}라는 닉네임의 사용자가 해당 경기에 참가했다")
+    public void 닉네임의_사용자가_해당_경기에_참가했다(String nickname) {
+        Match match = sharedContext.getTestMatches().get(0);
+
+        User participant = User.builder()
+                .email("participant" + System.currentTimeMillis() + "@example.com")
+                .nickname(nickname)
+                .rating(BigDecimal.valueOf(3.5))
+                .totalMatches(2)
+                .build();
+        User savedParticipant = userRepository.save(participant);
+
+        Participation participation = Participation.builder()
+                .matchId(match.getId())
+                .userId(savedParticipant.getId())
+                .status(ParticipationStatus.CONFIRMED)
+                .joinedAt(LocalDateTime.now())
+                .build();
+        participationRepository.save(participation);
+    }
+
+    @그리고("첫번째 참가자의 닉네임이 {string} 이다")
+    public void 첫번째_참가자의_닉네임이_이다(String expectedNickname) {
+        TestResponse response = sharedContext.getLastResponse();
+        var participants = response.getJsonList("$");
+        assertThat(participants).isNotEmpty();
+
+        Object nickname = participants.get(0).get("nickname");
+        assertThat(nickname)
+                .as("첫번째 참가자의 닉네임이 %s 이어야 합니다", expectedNickname)
+                .isEqualTo(expectedNickname);
+    }
 }

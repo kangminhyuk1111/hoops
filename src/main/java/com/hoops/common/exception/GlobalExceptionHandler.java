@@ -131,7 +131,7 @@ public class GlobalExceptionHandler {
         }
 
         // 권한 없음 (본인이 아닌 경우) → 403 Forbidden
-        if (errorCode.equals("NOT_PARTICIPANT")) {
+        if (errorCode.equals("NOT_PARTICIPANT") || errorCode.contains("NOT_HOST")) {
             return HttpStatus.FORBIDDEN;
         }
 

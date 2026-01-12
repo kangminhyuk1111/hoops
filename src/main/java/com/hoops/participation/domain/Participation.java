@@ -1,10 +1,14 @@
 package com.hoops.participation.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
+@AllArgsConstructor
 public class Participation {
 
     private final Long id;
@@ -13,23 +17,14 @@ public class Participation {
     private final ParticipationStatus status;
     private final LocalDateTime joinedAt;
 
-    public Participation(Long id, Long matchId, Long userId, ParticipationStatus status,
-            LocalDateTime joinedAt) {
-        this.id = id;
-        this.matchId = matchId;
-        this.userId = userId;
-        this.status = status;
-        this.joinedAt = joinedAt;
-    }
-
     public Participation cancel() {
-        return new Participation(
-                this.id,
-                this.matchId,
-                this.userId,
-                ParticipationStatus.CANCELLED,
-                this.joinedAt
-        );
+        return Participation.builder()
+                .id(this.id)
+                .matchId(this.matchId)
+                .userId(this.userId)
+                .status(ParticipationStatus.CANCELLED)
+                .joinedAt(this.joinedAt)
+                .build();
     }
 
     public boolean canCancel() {

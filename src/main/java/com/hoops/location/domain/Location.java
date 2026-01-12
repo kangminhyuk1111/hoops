@@ -1,10 +1,14 @@
 package com.hoops.location.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
 
 @Getter
+@Builder
+@AllArgsConstructor
 public class Location {
 
     private final Long id;
@@ -13,14 +17,4 @@ public class Location {
     private final BigDecimal latitude;
     private final BigDecimal longitude;
     private final String address;
-
-    public Location(Long id, Long userId, String alias, BigDecimal latitude, BigDecimal longitude,
-            String address) {
-        this.id = id;
-        this.userId = userId;
-        this.alias = alias;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.address = address;
-    }
 }

@@ -3,6 +3,7 @@ package com.hoops.participation.adapter.in.web;
 import com.hoops.participation.adapter.in.web.dto.ParticipationResponse;
 import com.hoops.participation.application.port.in.CancelParticipationCommand;
 import com.hoops.participation.application.port.in.CancelParticipationUseCase;
+import com.hoops.participation.application.port.in.GetMatchParticipantsUseCase;
 import com.hoops.participation.application.port.in.ParticipateInMatchCommand;
 import com.hoops.participation.application.port.in.ParticipateInMatchUseCase;
 import com.hoops.participation.domain.Participation;
@@ -10,12 +11,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/matches")
@@ -24,6 +27,7 @@ public class ParticipationController {
 
     private final ParticipateInMatchUseCase participateInMatchUseCase;
     private final CancelParticipationUseCase cancelParticipationUseCase;
+    private final GetMatchParticipantsUseCase getMatchParticipantsUseCase;
 
     @PostMapping("/{matchId}/participations")
     public ResponseEntity<ParticipationResponse> participateInMatch(
@@ -49,5 +53,15 @@ public class ParticipationController {
         cancelParticipationUseCase.cancelParticipation(command);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{matchId}/participants")
+    public ResponseEntity<List<ParticipationResponse>> getMatchParticipants(
+            @PathVariable("matchId") Long matchId) {
+        List<Participation> participants = getMatchParticipantsUseCase.getMatchParticipants(matchId);
+        List<ParticipationResponse> response = participants.stream()
+                .map(ParticipationResponse::of)
+                .toList();
+        return ResponseEntity.ok(response);
     }
 }

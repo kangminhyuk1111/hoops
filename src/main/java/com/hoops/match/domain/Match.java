@@ -1,5 +1,7 @@
 package com.hoops.match.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -8,6 +10,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
+@Builder
+@AllArgsConstructor
 public class Match {
 
     private final Long id;
@@ -25,27 +29,6 @@ public class Match {
     private final Integer maxParticipants;
     private Integer currentParticipants;
     private MatchStatus status;
-
-    public Match(Long id, Long version, Long hostId, String hostNickname, String title, String description,
-            BigDecimal latitude, BigDecimal longitude, String address, LocalDate matchDate,
-            LocalTime startTime, LocalTime endTime, Integer maxParticipants,
-            Integer currentParticipants, MatchStatus status) {
-        this.id = id;
-        this.version = version;
-        this.hostId = hostId;
-        this.hostNickname = hostNickname;
-        this.title = title;
-        this.description = description;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.address = address;
-        this.matchDate = matchDate;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.maxParticipants = maxParticipants;
-        this.currentParticipants = currentParticipants;
-        this.status = status;
-    }
 
     public void addParticipant() {
         this.currentParticipants++;
@@ -75,5 +58,15 @@ public class Match {
 
     public boolean isHost(Long userId) {
         return this.hostId.equals(userId);
+    }
+
+    public void cancel() {
+        this.status = MatchStatus.CANCELLED;
+    }
+
+    public boolean canCancel() {
+        return this.status != MatchStatus.IN_PROGRESS
+                && this.status != MatchStatus.ENDED
+                && this.status != MatchStatus.CANCELLED;
     }
 }

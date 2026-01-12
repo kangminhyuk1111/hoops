@@ -48,3 +48,4 @@
 
 - **커밋 전**: `/docs/git/commit.md` 확인 후 템플릿에 맞게 작성
 - **PR 생성 전**: `/docs/git/pull-request.md` 확인 후 템플릿에 맞게 작성
+- **커밋 제외 파일**: 로컬 설정, 민감 정보 등 커밋하면 안 되는 파일은 `.gitignore`에 추가

@@ -24,6 +24,17 @@ public class NotificationMapper {
         if (domain == null) {
             return null;
         }
+        if (domain.getId() != null) {
+            return new NotificationEntity(
+                    domain.getId(),
+                    domain.getUserId(),
+                    domain.getType(),
+                    domain.getTitle(),
+                    domain.getMessage(),
+                    domain.getRelatedMatchId(),
+                    domain.getIsRead(),
+                    domain.getCreatedAt());
+        }
         return new NotificationEntity(
                 domain.getUserId(),
                 domain.getType(),

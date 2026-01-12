@@ -101,6 +101,23 @@ public class RestTestAdapter implements TestAdapter {
     }
 
     @Override
+    public TestResponse putWithAuth(String path, Object body, String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
+
+        HttpEntity<Object> request = new HttpEntity<>(body, headers);
+        ResponseEntity<String> response = restTemplate.exchange(
+                path,
+                HttpMethod.PUT,
+                request,
+                String.class
+        );
+
+        return createTestResponse(response);
+    }
+
+    @Override
     public boolean isApplicationRunning() {
         try {
             TestResponse response = get("/actuator/health");

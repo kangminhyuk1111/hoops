@@ -3,7 +3,11 @@ package com.hoops.user.infrastructure.adapter;
 import com.hoops.user.application.port.out.UserQueryPort;
 import com.hoops.user.domain.User;
 import com.hoops.user.domain.repository.UserRepository;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -23,5 +27,28 @@ public class UserQueryAdapter implements UserQueryPort {
     public Optional<String> findNicknameById(Long userId) {
         return userRepository.findById(userId)
                 .map(User::getNickname);
+    }
+
+    @Override
+    public Optional<UserDetails> findUserDetailsById(Long userId) {
+        return userRepository.findById(userId)
+                .map(this::toUserDetails);
+    }
+
+    @Override
+    public Map<Long, UserDetails> findUserDetailsByIds(List<Long> userIds) {
+        return userRepository.findAllByIds(new java.util.HashSet<>(userIds)).stream()
+                .map(this::toUserDetails)
+                .collect(Collectors.toMap(UserDetails::userId, Function.identity()));
+    }
+
+    private UserDetails toUserDetails(User user) {
+        return new UserDetails(
+                user.getId(),
+                user.getNickname(),
+                user.getProfileImage(),
+                user.getRating(),
+                user.getTotalMatches()
+        );
     }
 }

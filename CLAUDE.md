@@ -86,6 +86,11 @@ public class NotificationNotFoundException extends DomainException {
 
 # Cucumber Test Rules
 
+- **스텝 작성 전 검증 (필수)**: 새로운 스텝을 작성하기 전, 반드시 기존 StepDefs 파일들을 검색하여 동일한 스텝이 존재하는지 확인한다. 중복 스텝은 `DuplicateStepDefinitionException`을 발생시킨다.
+  ```bash
+  # 스텝 검색 예시
+  grep -r "사용자가 회원가입되어 있다" src/test/java/com/hoops/acceptance/steps/
+  ```
 - **공통 스텝**: 여러 feature에서 사용하는 스텝은 `CommonStepDefs`에 정의 (DuplicateStepDefinitionException 방지)
 - **상태 공유**: StepDefs 간 상태 공유는 `SharedTestContext` 사용
 - **DB 격리**: 시나리오 간 데이터 격리는 `DatabaseCleanupHook`이 처리

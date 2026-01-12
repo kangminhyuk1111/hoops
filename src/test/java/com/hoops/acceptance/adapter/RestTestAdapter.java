@@ -85,6 +85,22 @@ public class RestTestAdapter implements TestAdapter {
     }
 
     @Override
+    public TestResponse deleteWithAuth(String path, String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(
+                path,
+                HttpMethod.DELETE,
+                request,
+                String.class
+        );
+
+        return createTestResponse(response);
+    }
+
+    @Override
     public boolean isApplicationRunning() {
         try {
             TestResponse response = get("/actuator/health");

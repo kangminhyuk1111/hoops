@@ -2,6 +2,8 @@ package com.hoops.match.adapter.in.web;
 
 import com.hoops.match.adapter.dto.CreateMatchRequest;
 import com.hoops.match.adapter.dto.MatchResponse;
+import com.hoops.match.application.port.in.CancelMatchCommand;
+import com.hoops.match.application.port.in.CancelMatchUseCase;
 import com.hoops.match.application.port.in.CreateMatchUseCase;
 import com.hoops.match.application.port.in.MatchQueryUseCase;
 import com.hoops.match.domain.Match;
@@ -22,6 +24,7 @@ public class MatchController {
 
     private final MatchQueryUseCase matchQueryUseCase;
     private final CreateMatchUseCase createMatchUseCase;
+    private final CancelMatchUseCase cancelMatchUseCase;
 
     @PostMapping
     public ResponseEntity<MatchResponse> createMatch(
@@ -57,5 +60,14 @@ public class MatchController {
                 .toList();
 
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{matchId}")
+    public ResponseEntity<Void> cancelMatch(
+            @PathVariable("matchId") Long matchId,
+            @AuthenticationPrincipal Long userId) {
+        CancelMatchCommand command = new CancelMatchCommand(matchId, userId);
+        cancelMatchUseCase.cancelMatch(command);
+        return ResponseEntity.noContent().build();
     }
 }

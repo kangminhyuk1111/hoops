@@ -59,4 +59,14 @@ public class Match {
     public boolean isHost(Long userId) {
         return this.hostId.equals(userId);
     }
+
+    public void cancel() {
+        this.status = MatchStatus.CANCELLED;
+    }
+
+    public boolean canCancel() {
+        return this.status != MatchStatus.IN_PROGRESS
+                && this.status != MatchStatus.ENDED
+                && this.status != MatchStatus.CANCELLED;
+    }
 }

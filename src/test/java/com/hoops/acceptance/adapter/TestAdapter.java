@@ -45,6 +45,15 @@ public interface TestAdapter {
     TestResponse postWithAuth(String path, Object body, String token);
 
     /**
+     * 인증 헤더와 함께 HTTP DELETE 요청을 수행합니다.
+     *
+     * @param path 요청 경로
+     * @param token JWT 토큰
+     * @return HTTP 응답
+     */
+    TestResponse deleteWithAuth(String path, String token);
+
+    /**
      * 애플리케이션이 실행 중인지 확인합니다.
      *
      * @return 실행 중이면 true, 아니면 false

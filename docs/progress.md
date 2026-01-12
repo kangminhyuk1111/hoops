@@ -7,9 +7,9 @@
 
 ## 현재 상태
 
-**Phase**: 3 - 사용자 경험 개선
-**브랜치**: `feat/participation`
-**전체 진행률**: 55%
+**Phase**: 4 - 부가 기능 (완료)
+**브랜치**: `main`
+**전체 진행률**: 73%
 
 ---
 
@@ -25,21 +25,22 @@
 
 ## 다음 작업 (우선순위 순)
 
-1. **내 프로필 조회 API** (`GET /api/users/me`)
-   - User 도메인에서 현재 로그인 사용자 정보 반환
-   - SecurityContext에서 userId 추출
+1. **테스트 보강**
+   - WireMock을 통한 카카오 API 테스트
+   - Cucumber 참가 신청/취소 테스트
+   - 동시성 테스트 (낙관적 락)
 
-2. **내 참가 경기 목록 API** (`GET /api/users/me/participations`)
-   - 사용자가 참가 신청한 경기 목록 조회
-   - Participation → Match 조인
+2. **경기 수정 API** (`PUT /api/matches/{matchId}`)
+   - Host 권한 검증
+   - 참가자 존재 시 수정 정책
 
-3. **참가자 목록 조회 API** (`GET /api/matches/{matchId}/participants`)
-   - 특정 경기의 참가자 목록 조회
-   - 닉네임, 참가 상태 포함
+3. **장소 조회/검색**
+   - 장소 목록 조회 API (`GET /api/locations`)
+   - 장소 검색 API (이름/주소 기반)
 
-4. **경기 상태 자동 변경 스케줄러**
-   - PENDING → IN_PROGRESS → ENDED 자동 전환
-   - @Scheduled 사용
+4. **프로필 수정** (`PUT /api/users/{userId}`)
+   - 닉네임 변경
+   - 프로필 이미지 변경
 
 ---
 
@@ -47,9 +48,11 @@
 
 | 날짜 | 작업 | PR |
 |------|------|-----|
+| 2026-01-12 | Kafka 이벤트 기반 알림 시스템 | #9 |
+| 2026-01-12 | 알림 조회 및 관리 API | - |
+| 2026-01-12 | 경기 상태 자동 변경 스케줄러 | #8 |
 | 2025-01-12 | Lombok 허용 및 가이드 문서 | #5 |
 | 2025-01-12 | 문서 구조 정리, Git 컨벤션 추가 | #4 |
-| 2025-01-12 | health-check 테스트 수정 (SecurityConfig) | #4 |
 | 2025-01-10 | 경기 참가 신청/취소 구현 | - |
 | 2025-01-10 | 카카오 OAuth 로그인 구현 | - |
 
@@ -59,18 +62,63 @@
 
 | Phase | 내용 | 상태 |
 |-------|------|------|
-| 1 | 핵심 인프라 (프로젝트 셋업, 인증) | 완료 |
-| 2 | 핵심 기능 (경기 CRUD, 참가) | 완료 |
-| **3** | **사용자 경험 (프로필, 내 경기)** | **진행 중** |
-| 4 | 운영 필수 (경기 취소, 스케줄러) | 대기 |
-| 5 | 알림 시스템 | 대기 |
-| 6 | 테스트 & 배포 | 대기 |
+| 1 | 핵심 인프라 (프로젝트 셋업, 인증) | 완료 ✅ |
+| 2 | 핵심 기능 (경기 CRUD, 참가) | 완료 ✅ |
+| 3 | 사용자 경험 (프로필, 내 경기) | 완료 ✅ |
+| 4 | 운영 필수 (경기 취소, 스케줄러, 알림) | 완료 ✅ |
+| **5** | **테스트 & 배포** | **대기** |
+
+---
+
+## 구현된 API 목록
+
+### Auth
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| GET | `/api/auth/kakao` | 카카오 인증 URL 요청 |
+| GET | `/api/auth/kakao/callback` | 카카오 콜백 처리 |
+| POST | `/api/auth/signup` | 회원가입 완료 |
+| POST | `/api/auth/refresh` | 토큰 갱신 |
+
+### Match
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| POST | `/api/matches` | 경기 생성 |
+| GET | `/api/matches` | 경기 목록 조회 |
+| GET | `/api/matches/{matchId}` | 경기 상세 조회 |
+| DELETE | `/api/matches/{matchId}` | 경기 취소 |
+
+### Participation
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| POST | `/api/matches/{matchId}/participations` | 참가 신청 |
+| DELETE | `/api/matches/{matchId}/participations/{id}` | 참가 취소 |
+| GET | `/api/matches/{matchId}/participants` | 참가자 목록 |
+
+### User
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| GET | `/api/users/me` | 내 프로필 조회 |
+| GET | `/api/users/me/participations` | 내 참가 경기 목록 |
+
+### Location
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| POST | `/api/locations` | 장소 추가 |
+
+### Notification
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| GET | `/api/notifications` | 알림 목록 조회 |
+| PUT | `/api/notifications/{id}/read` | 알림 읽음 처리 |
+| GET | `/api/notifications/unread-count` | 읽지 않은 알림 개수 |
 
 ---
 
 ## 참고 문서
 
 - 전체 기능 목록: `/docs/spec/mvp-features.md`
+- 프로젝트 구조: `/docs/architecture/project-structure.md`
 - PRD: `/docs/prd.md`
 - 아키텍처: `/docs/architecture/architecture.md`
 

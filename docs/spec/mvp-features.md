@@ -1,7 +1,7 @@
 # Hoops MVP 기능 목록
 
-> 마지막 업데이트: 2025-01-10
-> 현재 브랜치: `feat/participation`
+> 마지막 업데이트: 2026-01-12
+> 현재 브랜치: `main`
 > 관련 문서: [PRD](../prd.md) | [아키텍처](../architecture/architecture.md) | [DB 스키마](./schema.md)
 
 ## 개요
@@ -61,13 +61,13 @@
 
 ### 2.3 경기 수정/취소
 - [ ] 경기 수정 API (`PUT /api/matches/{matchId}`)
-- [ ] 경기 취소 API (`DELETE /api/matches/{matchId}`)
-- [ ] 호스트 권한 검증
+- [x] 경기 취소 API (`DELETE /api/matches/{matchId}`)
+- [x] 호스트 권한 검증
 - [ ] 참가자 존재 시 취소 정책
 
 ### 2.4 경기 상태 관리
 - [x] MatchStatus Enum (PENDING, IN_PROGRESS, ENDED, CANCELLED)
-- [ ] 상태 변경 스케줄러 (PENDING → IN_PROGRESS → ENDED)
+- [x] 상태 변경 스케줄러 (PENDING → IN_PROGRESS → ENDED)
 - [ ] 상태 변경 이벤트 발행
 
 ### 2.5 테스트
@@ -97,7 +97,7 @@
 - [x] Match 참가자 수 감소
 
 ### 3.3 참가자 조회
-- [ ] 참가자 목록 조회 API (`GET /api/matches/{matchId}/participants`)
+- [x] 참가자 목록 조회 API (`GET /api/matches/{matchId}/participants`)
 - [ ] 참가자 상세 정보 (닉네임, 프로필 등)
 
 ### 3.4 테스트
@@ -128,12 +128,12 @@
 
 ### 5.1 사용자 프로필
 - [x] User 도메인 모델
+- [x] 내 정보 조회 API (`GET /api/users/me`)
 - [ ] 프로필 조회 API (`GET /api/users/{userId}`)
 - [ ] 프로필 수정 API (`PUT /api/users/{userId}`)
-- [ ] 내 정보 조회 API (`GET /api/users/me`)
 
 ### 5.2 참가 이력
-- [ ] 내 참가 경기 목록 API (`GET /api/users/me/participations`)
+- [x] 내 참가 경기 목록 API (`GET /api/users/me/participations`)
 - [ ] 내가 생성한 경기 목록 API (`GET /api/users/me/matches`)
 
 ### 5.3 테스트
@@ -145,17 +145,17 @@
 ## 6. 알림 (Notification)
 
 ### 6.1 알림 발송
-- [ ] Notification 도메인 모델
-- [ ] 알림 생성 로직
-- [ ] 알림 타입 정의 (참가 신청, 경기 시작 등)
+- [x] Notification 도메인 모델
+- [x] 알림 생성 로직 (CreateNotificationUseCase)
+- [x] 알림 타입 정의 (참가 신청, 참가 취소, 경기 시작 등)
 
 ### 6.2 알림 조회
-- [ ] 알림 목록 조회 API (`GET /api/notifications`)
-- [ ] 알림 읽음 처리 API (`PUT /api/notifications/{id}/read`)
-- [ ] 읽지 않은 알림 개수 API
+- [x] 알림 목록 조회 API (`GET /api/notifications`)
+- [x] 알림 읽음 처리 API (`PUT /api/notifications/{id}/read`)
+- [x] 읽지 않은 알림 개수 API (`GET /api/notifications/unread-count`)
 
 ### 6.3 테스트
-- [ ] Notification 도메인 테스트
+- [x] Notification 도메인 테스트 (Cucumber)
 - [ ] 알림 발송 통합 테스트
 
 ---
@@ -164,13 +164,13 @@
 
 ### 7.1 이벤트 발행
 - [ ] 경기 생성 이벤트
-- [ ] 참가 신청 이벤트
-- [ ] 참가 취소 이벤트
+- [x] 참가 신청 이벤트 (ParticipationCreatedEvent)
+- [x] 참가 취소 이벤트 (ParticipationCancelledEvent)
 - [ ] 경기 상태 변경 이벤트
 
 ### 7.2 이벤트 구독
-- [ ] 알림 생성 Consumer
-- [ ] 이벤트 처리 로직
+- [x] 알림 생성 Consumer (NotificationEventConsumer)
+- [x] 이벤트 처리 로직
 
 ### 7.3 테스트
 - [ ] Kafka 이벤트 발행 테스트
@@ -198,12 +198,14 @@
 - [x] DB 스키마 (`docs/spec/schema.md`)
 - [x] API 명세서 (`docs/api/`)
 - [x] 시퀀스 다이어그램 (`docs/sequence/`)
-- [ ] API Swagger/OpenAPI 연동
+- [x] 알림 테스트 가이드 (`docs/testing/notification-testing.md`)
+- [x] API Swagger/OpenAPI 연동
 
 ### 8.4 테스트 인프라
 - [x] IntegrationTestSupport 기본 클래스
 - [x] Cucumber 설정
 - [x] H2 인메모리 DB
+- [x] MockParticipationEventPublisher (테스트용)
 - [ ] Testcontainers MySQL
 - [ ] WireMock 설정
 
@@ -214,14 +216,14 @@
 | 카테고리 | 완료 | 미완료 | 진행률 |
 |----------|------|--------|--------|
 | 인증 (Auth) | 13 | 2 | 87% |
-| 경기 (Match) | 14 | 7 | 67% |
-| 참가 (Participation) | 11 | 4 | 73% |
+| 경기 (Match) | 15 | 4 | 79% |
+| 참가 (Participation) | 12 | 3 | 80% |
 | 장소 (Location) | 2 | 4 | 33% |
-| 사용자 (User) | 1 | 6 | 14% |
-| 알림 (Notification) | 0 | 7 | 0% |
-| 이벤트 (Kafka) | 0 | 7 | 0% |
-| 인프라/공통 | 11 | 5 | 69% |
-| **전체** | **52** | **42** | **55%** |
+| 사용자 (User) | 3 | 4 | 43% |
+| 알림 (Notification) | 6 | 1 | 86% |
+| 이벤트 (Kafka) | 4 | 3 | 57% |
+| 인프라/공통 | 12 | 4 | 75% |
+| **전체** | **67** | **25** | **73%** |
 
 ---
 
@@ -229,34 +231,34 @@
 
 MVP 출시를 위한 최소 필수 기능입니다.
 
-### Phase 1: 핵심 플로우 (현재 완료)
+### Phase 1: 핵심 플로우 (완료 ✅)
 - [x] 카카오 로그인/회원가입
 - [x] 경기 생성
 - [x] 경기 목록/상세 조회
 - [x] 경기 참가 신청/취소
 - [x] 장소 추가
 
-### Phase 2: 사용자 경험 개선
-- [ ] 내 프로필 조회
-- [ ] 내 참가 경기 목록
-- [ ] 참가자 목록 조회
+### Phase 2: 사용자 경험 개선 (완료 ✅)
+- [x] 내 프로필 조회
+- [x] 내 참가 경기 목록
+- [x] 참가자 목록 조회
 
-### Phase 3: 운영 필수
-- [ ] 경기 상태 자동 변경 (스케줄러)
-- [ ] 경기 취소 기능
+### Phase 3: 운영 필수 (완료 ✅)
+- [x] 경기 상태 자동 변경 (스케줄러)
+- [x] 경기 취소 기능
 
-### Phase 4: 부가 기능
-- [ ] 알림 기능
-- [ ] 이벤트 기반 아키텍처 (Kafka)
+### Phase 4: 부가 기능 (완료 ✅)
+- [x] 알림 기능
+- [x] 이벤트 기반 아키텍처 (Kafka)
 
 ---
 
 ## 다음 작업 권장 순서
 
 1. **테스트 보강** - WireMock 적용, Cucumber 테스트 추가
-2. **사용자 프로필** - 내 정보 조회/수정 API
-3. **경기 상태 스케줄러** - 자동 상태 전환
-4. **알림 기능** - 기본 알림 발송/조회
+2. **경기 수정 API** - 호스트가 경기 정보 수정
+3. **장소 조회/검색** - 장소 목록 조회 및 검색 기능
+4. **프로필 수정** - 사용자 프로필 수정 기능
 
 ---
 
@@ -264,4 +266,5 @@ MVP 출시를 위한 최소 필수 기능입니다.
 
 | 날짜 | 변경 내용 | 작성자 |
 |------|----------|--------|
+| 2026-01-12 | 알림, Kafka, 스케줄러 구현 반영 | Claude |
 | 2025-01-10 | 최초 작성 | Claude |

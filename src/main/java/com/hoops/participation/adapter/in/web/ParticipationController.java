@@ -7,6 +7,11 @@ import com.hoops.participation.application.port.in.GetMatchParticipantsUseCase;
 import com.hoops.participation.application.port.in.ParticipateInMatchCommand;
 import com.hoops.participation.application.port.in.ParticipateInMatchUseCase;
 import com.hoops.participation.domain.Participation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.List;
 
+@Tag(name = "Participation", description = "경기 참가 관련 API")
 @RestController
 @RequestMapping("/api/matches")
 @RequiredArgsConstructor
@@ -29,10 +35,17 @@ public class ParticipationController {
     private final CancelParticipationUseCase cancelParticipationUseCase;
     private final GetMatchParticipantsUseCase getMatchParticipantsUseCase;
 
+    @Operation(summary = "경기 참가 신청", description = "경기에 참가를 신청합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "참가 신청 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 (정원 초과, 중복 신청 등)"),
+            @ApiResponse(responseCode = "401", description = "인증 필요"),
+            @ApiResponse(responseCode = "404", description = "경기를 찾을 수 없음")
+    })
     @PostMapping("/{matchId}/participations")
     public ResponseEntity<ParticipationResponse> participateInMatch(
-            @PathVariable("matchId") Long matchId,
-            @AuthenticationPrincipal Long userId) {
+            @Parameter(description = "경기 ID") @PathVariable("matchId") Long matchId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
 
         ParticipateInMatchCommand command = new ParticipateInMatchCommand(matchId, userId);
         Participation participation = participateInMatchUseCase.participateInMatch(command);
@@ -42,11 +55,17 @@ public class ParticipationController {
                 .body(ParticipationResponse.of(participation));
     }
 
+    @Operation(summary = "경기 참가 취소", description = "경기 참가를 취소합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "참가 취소 성공"),
+            @ApiResponse(responseCode = "403", description = "권한 없음 (본인이 아님)"),
+            @ApiResponse(responseCode = "404", description = "참가 정보를 찾을 수 없음")
+    })
     @DeleteMapping("/{matchId}/participations/{participationId}")
     public ResponseEntity<Void> cancelParticipation(
-            @PathVariable("matchId") Long matchId,
-            @PathVariable("participationId") Long participationId,
-            @AuthenticationPrincipal Long userId) {
+            @Parameter(description = "경기 ID") @PathVariable("matchId") Long matchId,
+            @Parameter(description = "참가 ID") @PathVariable("participationId") Long participationId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
 
         CancelParticipationCommand command = new CancelParticipationCommand(
                 matchId, participationId, userId);
@@ -55,9 +74,14 @@ public class ParticipationController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "경기 참가자 목록 조회", description = "특정 경기의 참가자 목록을 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "404", description = "경기를 찾을 수 없음")
+    })
     @GetMapping("/{matchId}/participants")
     public ResponseEntity<List<ParticipationResponse>> getMatchParticipants(
-            @PathVariable("matchId") Long matchId) {
+            @Parameter(description = "경기 ID") @PathVariable("matchId") Long matchId) {
         List<Participation> participants = getMatchParticipantsUseCase.getMatchParticipants(matchId);
         List<ParticipationResponse> response = participants.stream()
                 .map(ParticipationResponse::of)

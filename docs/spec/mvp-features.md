@@ -60,7 +60,8 @@
 - [x] MatchFinder UseCase
 
 ### 2.3 경기 수정/취소
-- [ ] 경기 수정 API (`PUT /api/matches/{matchId}`)
+- [x] 경기 수정 API (`PUT /api/matches/{matchId}`)
+- [x] 경기 수정 Cucumber 테스트 (match-update.feature)
 - [x] 경기 취소 API (`DELETE /api/matches/{matchId}`)
 - [x] 호스트 권한 검증
 - [ ] 참가자 존재 시 취소 정책
@@ -122,10 +123,12 @@
 ### 4.1 장소 관리
 - [x] 장소 추가 API (`POST /api/locations`)
 - [x] Location 도메인 모델
-- [ ] 장소 목록 조회 API (`GET /api/locations`)
-- [ ] 장소 검색 API (이름/주소 기반)
+- [x] 장소 목록 조회 API (`GET /api/locations`)
+- [x] 장소 검색 API (`GET /api/locations/search?keyword=xxx`)
+- [x] 장소 상세 조회 API (`GET /api/locations/{id}`)
 
 ### 4.2 테스트
+- [x] 장소 조회/검색 Cucumber 테스트 (location-query.feature)
 - [ ] Location 도메인 테스트
 - [ ] 장소 추가 통합 테스트
 
@@ -136,16 +139,16 @@
 ### 5.1 사용자 프로필
 - [x] User 도메인 모델
 - [x] 내 정보 조회 API (`GET /api/users/me`)
-- [ ] 프로필 조회 API (`GET /api/users/{userId}`)
-- [ ] 프로필 수정 API (`PUT /api/users/{userId}`)
+- [x] 프로필 조회 API (`GET /api/users/{userId}`)
+- [x] 프로필 수정 API (`PUT /api/users/{userId}`)
 
 ### 5.2 참가 이력
 - [x] 내 참가 경기 목록 API (`GET /api/users/me/participations`)
 - [x] 내가 호스팅한 경기 목록 API (`GET /api/matches/hosted`)
 
 ### 5.3 테스트
+- [x] 프로필 조회/수정 Cucumber 테스트 (user-profile.feature)
 - [ ] User 도메인 테스트
-- [ ] 프로필 조회 통합 테스트
 
 ---
 
@@ -223,14 +226,14 @@
 | 카테고리 | 완료 | 미완료 | 진행률 |
 |----------|------|--------|--------|
 | 인증 (Auth) | 15 | 0 | 100% |
-| 경기 (Match) | 15 | 4 | 79% |
+| 경기 (Match) | 17 | 2 | 89% |
 | 참가 (Participation) | 21 | 2 | 91% |
-| 장소 (Location) | 2 | 4 | 33% |
-| 사용자 (User) | 4 | 4 | 50% |
+| 장소 (Location) | 6 | 2 | 75% |
+| 사용자 (User) | 7 | 1 | 88% |
 | 알림 (Notification) | 6 | 1 | 86% |
 | 이벤트 (Kafka) | 4 | 3 | 57% |
 | 인프라/공통 | 12 | 4 | 75% |
-| **전체** | **79** | **22** | **78%** |
+| **전체** | **88** | **15** | **85%** |
 
 ---
 
@@ -262,10 +265,10 @@ MVP 출시를 위한 최소 필수 기능입니다.
 
 ## 다음 작업 권장 순서
 
-1. **테스트 보강** - WireMock 적용, Cucumber 테스트 추가
-2. **경기 수정 API** - 호스트가 경기 정보 수정
-3. **장소 조회/검색** - 장소 목록 조회 및 검색 기능
-4. **프로필 수정** - 사용자 프로필 수정 기능
+1. **경기 수정 API** - 호스트가 경기 정보 수정 (`PUT /api/matches/{matchId}`)
+2. **프로필 조회/수정** - 사용자 프로필 조회 및 수정 기능
+3. **테스트 보강** - WireMock 적용, 동시성 테스트
+4. **이벤트 발행** - 경기 생성/상태 변경 이벤트
 
 ---
 
@@ -273,6 +276,8 @@ MVP 출시를 위한 최소 필수 기능입니다.
 
 | 날짜 | 변경 내용 | 작성자 |
 |------|----------|--------|
+| 2026-01-12 | 프로필 조회/수정 API 구현 반영 (85% 진행) | Claude |
+| 2026-01-12 | 장소 조회/검색 API 구현 반영 | Claude |
 | 2026-01-12 | 인증 테스트, 참가 승인/거절, 내 호스팅 경기 목록 구현 반영 | Claude |
 | 2026-01-12 | 알림, Kafka, 스케줄러 구현 반영 | Claude |
 | 2025-01-10 | 최초 작성 | Claude |

@@ -20,7 +20,16 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        UserEntity entity = UserMapper.toEntity(user);
+        UserEntity entity;
+        if (user.getId() != null) {
+            // 업데이트: 기존 엔티티를 로드하고 필드 업데이트
+            entity = jpaUserRepository.findById(user.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found: " + user.getId()));
+            entity.update(user.getNickname(), user.getProfileImage(), user.getRating(), user.getTotalMatches());
+        } else {
+            // 신규 생성
+            entity = UserMapper.toEntity(user);
+        }
         UserEntity savedEntity = jpaUserRepository.save(entity);
         return UserMapper.toDomain(savedEntity);
     }

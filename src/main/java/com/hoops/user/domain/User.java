@@ -17,4 +17,15 @@ public class User {
     private final String profileImage;
     private final BigDecimal rating;
     private final Integer totalMatches;
+
+    public User updateProfile(String nickname, String profileImage) {
+        return new User(
+                this.id,
+                this.email,
+                nickname != null ? nickname : this.nickname,
+                profileImage != null ? profileImage : this.profileImage,
+                this.rating,
+                this.totalMatches
+        );
+    }
 }

@@ -50,3 +50,10 @@
 - **커밋 전**: `/docs/git/commit.md` 확인 후 템플릿에 맞게 작성
 - **PR 생성 전**: `/docs/git/pull-request.md` 확인 후 템플릿에 맞게 작성
 - **커밋 제외 파일**: 로컬 설정, 민감 정보 등 커밋하면 안 되는 파일은 `.gitignore`에 추가
+
+# Cucumber Test Rules
+
+- **공통 스텝**: 여러 feature에서 사용하는 스텝은 `CommonStepDefs`에 정의 (DuplicateStepDefinitionException 방지)
+- **상태 공유**: StepDefs 간 상태 공유는 `SharedTestContext` 사용
+- **DB 격리**: 시나리오 간 데이터 격리는 `DatabaseCleanupHook`이 처리
+- **트러블슈팅**: `/docs/troubleshooting/cucumber.md` 참고

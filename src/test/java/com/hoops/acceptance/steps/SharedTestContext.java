@@ -20,7 +20,12 @@ public class SharedTestContext {
 
     private TestResponse lastResponse;
     private String accessToken;
+    private String refreshToken;
+    private String tempToken;
+    private String kakaoCode;
+    private String kakaoId;
     private User testUser;
+    private User hostUser;
     private List<Match> testMatches = new ArrayList<>();
 
     public TestResponse getLastResponse() {
@@ -39,12 +44,52 @@ public class SharedTestContext {
         this.accessToken = accessToken;
     }
 
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getTempToken() {
+        return tempToken;
+    }
+
+    public void setTempToken(String tempToken) {
+        this.tempToken = tempToken;
+    }
+
+    public String getKakaoCode() {
+        return kakaoCode;
+    }
+
+    public void setKakaoCode(String kakaoCode) {
+        this.kakaoCode = kakaoCode;
+    }
+
+    public String getKakaoId() {
+        return kakaoId;
+    }
+
+    public void setKakaoId(String kakaoId) {
+        this.kakaoId = kakaoId;
+    }
+
     public User getTestUser() {
         return testUser;
     }
 
     public void setTestUser(User testUser) {
         this.testUser = testUser;
+    }
+
+    public User getHostUser() {
+        return hostUser;
+    }
+
+    public void setHostUser(User hostUser) {
+        this.hostUser = hostUser;
     }
 
     public List<Match> getTestMatches() {

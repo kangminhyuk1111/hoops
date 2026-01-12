@@ -27,8 +27,32 @@ public class Participation {
                 .build();
     }
 
+    public Participation approve() {
+        return Participation.builder()
+                .id(this.id)
+                .matchId(this.matchId)
+                .userId(this.userId)
+                .status(ParticipationStatus.CONFIRMED)
+                .joinedAt(this.joinedAt)
+                .build();
+    }
+
+    public Participation reject() {
+        return Participation.builder()
+                .id(this.id)
+                .matchId(this.matchId)
+                .userId(this.userId)
+                .status(ParticipationStatus.REJECTED)
+                .joinedAt(this.joinedAt)
+                .build();
+    }
+
     public boolean canCancel() {
         return this.status == ParticipationStatus.CONFIRMED;
+    }
+
+    public boolean canBeApprovedOrRejected() {
+        return this.status == ParticipationStatus.PENDING;
     }
 
     public boolean isOwner(Long userId) {

@@ -10,14 +10,19 @@ import com.hoops.participation.application.exception.InvalidMatchStatusException
 import com.hoops.participation.application.exception.InvalidParticipationStatusException;
 import com.hoops.participation.application.exception.MatchAlreadyStartedException;
 import com.hoops.participation.application.exception.MatchFullException;
+import com.hoops.participation.application.exception.NotHostException;
 import com.hoops.participation.application.exception.NotParticipantException;
 import com.hoops.participation.application.exception.ParticipationNotFoundException;
+import com.hoops.participation.application.port.in.ApproveParticipationCommand;
+import com.hoops.participation.application.port.in.ApproveParticipationUseCase;
 import com.hoops.participation.application.port.in.CancelParticipationCommand;
 import com.hoops.participation.application.port.in.CancelParticipationUseCase;
 import com.hoops.participation.application.port.in.GetMatchParticipantsUseCase;
 import com.hoops.participation.application.port.in.GetMyParticipationsUseCase;
 import com.hoops.participation.application.port.in.ParticipateInMatchCommand;
 import com.hoops.participation.application.port.in.ParticipateInMatchUseCase;
+import com.hoops.participation.application.port.in.RejectParticipationCommand;
+import com.hoops.participation.application.port.in.RejectParticipationUseCase;
 import com.hoops.participation.application.port.out.MatchInfo;
 import com.hoops.participation.application.port.out.MatchInfoProvider;
 import com.hoops.participation.application.port.out.ParticipationEventPublisher;
@@ -38,7 +43,8 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ParticipationService implements ParticipateInMatchUseCase, CancelParticipationUseCase, GetMyParticipationsUseCase, GetMatchParticipantsUseCase {
+public class ParticipationService implements ParticipateInMatchUseCase, CancelParticipationUseCase,
+        ApproveParticipationUseCase, RejectParticipationUseCase, GetMyParticipationsUseCase, GetMatchParticipantsUseCase {
 
     private final ParticipationRepository participationRepository;
     private final MatchInfoProvider matchInfoProvider;
@@ -176,5 +182,50 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
     public List<Participation> getMatchParticipants(Long matchId) {
         matchInfoProvider.getMatchInfo(matchId);
         return participationRepository.findByMatchIdAndNotCancelled(matchId);
+    }
+
+    @Override
+    public Participation approveParticipation(ApproveParticipationCommand command) {
+        MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
+
+        validateHostPermission(matchInfo, command.hostUserId());
+
+        Participation participation = participationRepository.findById(command.participationId())
+                .orElseThrow(() -> new ParticipationNotFoundException(command.participationId()));
+
+        if (!participation.canBeApprovedOrRejected()) {
+            throw new InvalidParticipationStatusException(
+                    command.participationId(),
+                    participation.getStatus().name());
+        }
+
+        Participation approvedParticipation = participation.approve();
+        return participationRepository.save(approvedParticipation);
+    }
+
+    @Override
+    public Participation rejectParticipation(RejectParticipationCommand command) {
+        MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
+
+        validateHostPermission(matchInfo, command.hostUserId());
+
+        Participation participation = participationRepository.findById(command.participationId())
+                .orElseThrow(() -> new ParticipationNotFoundException(command.participationId()));
+
+        if (!participation.canBeApprovedOrRejected()) {
+            throw new InvalidParticipationStatusException(
+                    command.participationId(),
+                    participation.getStatus().name());
+        }
+
+        Participation rejectedParticipation = participation.reject();
+        matchInfoProvider.removeParticipant(command.matchId());
+        return participationRepository.save(rejectedParticipation);
+    }
+
+    private void validateHostPermission(MatchInfo matchInfo, Long userId) {
+        if (!matchInfo.isHost(userId)) {
+            throw new NotHostException(matchInfo.matchId(), userId);
+        }
     }
 }

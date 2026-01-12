@@ -2,14 +2,18 @@ package com.hoops.match.adapter.out.adapter;
 
 import com.hoops.match.application.port.out.MatchRepository;
 import com.hoops.match.domain.Match;
+import com.hoops.match.domain.MatchStatus;
 import com.hoops.match.adapter.out.MatchEntity;
 import com.hoops.match.adapter.out.jpa.JpaMatchRepository;
 import com.hoops.match.adapter.out.mapper.MatchMapper;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -32,6 +36,20 @@ public class MatchRepositoryImpl implements MatchRepository {
     @Override
     public List<Match> findAllByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance) {
         return jpaMatchRepository.findAllByLocation(latitude, longitude, distance).stream()
+                .map(MatchMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Match> findMatchesToStart(LocalDate date, LocalTime time, List<MatchStatus> statuses) {
+        return jpaMatchRepository.findMatchesToStart(date, time, statuses).stream()
+                .map(MatchMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Match> findMatchesToEnd(LocalDate date, LocalTime time, MatchStatus status) {
+        return jpaMatchRepository.findMatchesToEnd(date, time, status).stream()
                 .map(MatchMapper::toDomain)
                 .toList();
     }

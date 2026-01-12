@@ -57,3 +57,63 @@
 - **상태 공유**: StepDefs 간 상태 공유는 `SharedTestContext` 사용
 - **DB 격리**: 시나리오 간 데이터 격리는 `DatabaseCleanupHook`이 처리
 - **트러블슈팅**: `/docs/troubleshooting/cucumber.md` 참고
+
+---
+
+# 기능 구현 워크플로우
+
+> **중요**: 세션이 종료되어도 문서를 통해 이전 컨텍스트를 유지합니다.
+> 새 세션 시작 시 반드시 `/docs/progress.md`와 `/docs/spec/mvp-features.md`를 확인하세요.
+
+## 1. 컨텍스트 확인 (세션 시작 시)
+```
+1. /docs/progress.md → 현재 진행 상황 확인
+2. /docs/spec/mvp-features.md → 남은 기능 확인
+3. 관련 API 문서 → /docs/api/*.md
+```
+
+## 2. 기능 구현 순서 (BDD 기반)
+
+```
+1. Cucumber 시나리오 작성 (.feature)
+   └── src/test/resources/features/{feature-name}.feature
+
+2. Step Definitions 작성
+   └── src/test/java/com/hoops/acceptance/steps/{Feature}StepDefs.java
+
+3. 도메인 로직 구현
+   ├── domain/ → 순수 비즈니스 로직 (POJO)
+   ├── application/port/in/ → UseCase 인터페이스
+   ├── application/port/out/ → Repository 인터페이스
+   └── application/service/ → UseCase 구현체
+
+4. 인프라 계층 구현
+   ├── adapter/out/ → Repository 구현체
+   └── adapter/in/web/ → Controller, DTO
+
+5. 테스트 실행 및 검증
+   └── ./gradlew test --tests "com.hoops.acceptance.*"
+
+6. 커밋 & 푸시
+   └── /docs/git/commit.md 템플릿 준수
+```
+
+## 3. 문서 업데이트
+- 기능 완료 후 `/docs/spec/mvp-features.md` 체크리스트 업데이트
+- 새 API 추가 시 `/docs/api/` 문서 작성
+- 트러블슈팅 발생 시 `/docs/troubleshooting/` 기록
+
+## 4. 브랜치 전략
+```
+main ← PR merge
+  └── feat/{feature-name} ← 기능 개발
+```
+
+---
+
+# 세션 간 컨텍스트 유지 원칙
+
+1. **문서가 진실의 원천**: 코드보다 문서를 먼저 확인
+2. **진행 상황 기록**: `/docs/progress.md`에 현재 작업 상태 기록
+3. **MVP 체크리스트**: `/docs/spec/mvp-features.md`로 완료/미완료 추적
+4. **결정 사항 문서화**: 중요한 아키텍처 결정은 문서에 기록

@@ -13,8 +13,8 @@ import com.hoops.auth.application.port.in.KakaoLoginUseCase;
 import com.hoops.auth.application.port.in.RefreshTokenUseCase;
 import com.hoops.auth.application.port.in.SignupUseCase;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,33 +24,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * 인증 컨트롤러
- */
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
-
-    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final KakaoLoginUseCase kakaoLoginUseCase;
     private final SignupUseCase signupUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
 
-    public AuthController(
-            KakaoLoginUseCase kakaoLoginUseCase,
-            SignupUseCase signupUseCase,
-            RefreshTokenUseCase refreshTokenUseCase) {
-        this.kakaoLoginUseCase = kakaoLoginUseCase;
-        this.signupUseCase = signupUseCase;
-        this.refreshTokenUseCase = refreshTokenUseCase;
-    }
-
-    /**
-     * 카카오 인증 URL 반환
-     *
-     * @return 카카오 인증 페이지 URL
-     */
     @GetMapping("/kakao")
     public ResponseEntity<KakaoAuthUrlResponse> getKakaoAuthUrl() {
         log.info("[카카오 인증] 인증 URL 요청");
@@ -59,12 +42,6 @@ public class AuthController {
         return ResponseEntity.ok(new KakaoAuthUrlResponse(authUrl));
     }
 
-    /**
-     * 카카오 콜백 처리
-     *
-     * @param code 카카오 인가코드
-     * @return 신규 회원: 202 + 임시토큰, 기존 회원: 200 + JWT
-     */
     @GetMapping("/kakao/callback")
     public ResponseEntity<KakaoCallbackResponse> handleKakaoCallback(
             @RequestParam("code") String code) {
@@ -78,12 +55,6 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 회원가입 완료
-     *
-     * @param request 임시 토큰 + 닉네임
-     * @return JWT 토큰 + 사용자 정보
-     */
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> signup(
             @Valid @RequestBody SignupRequest request) {
@@ -91,12 +62,6 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(AuthResponse.from(result));
     }
 
-    /**
-     * 토큰 갱신
-     *
-     * @param request 리프레시 토큰
-     * @return 새로운 토큰
-     */
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponse> refresh(
             @Valid @RequestBody RefreshTokenRequest request) {

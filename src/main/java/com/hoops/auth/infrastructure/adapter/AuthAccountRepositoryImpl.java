@@ -7,16 +7,14 @@ import com.hoops.auth.infrastructure.AuthAccountEntity;
 import com.hoops.auth.infrastructure.jpa.JpaAuthAccountRepository;
 import com.hoops.auth.infrastructure.mapper.AuthMapper;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class AuthAccountRepositoryImpl implements AuthAccountRepository {
 
     private final JpaAuthAccountRepository jpaAuthAccountRepository;
-
-    public AuthAccountRepositoryImpl(JpaAuthAccountRepository jpaAuthAccountRepository) {
-        this.jpaAuthAccountRepository = jpaAuthAccountRepository;
-    }
 
     @Override
     public AuthAccount save(AuthAccount authAccount) {

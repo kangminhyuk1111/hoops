@@ -5,20 +5,18 @@ import com.hoops.user.domain.repository.UserRepository;
 import com.hoops.user.infrastructure.UserEntity;
 import com.hoops.user.infrastructure.jpa.JpaUserRepository;
 import com.hoops.user.infrastructure.mapper.UserMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
 
     private final JpaUserRepository jpaUserRepository;
-
-    public UserRepositoryImpl(JpaUserRepository jpaUserRepository) {
-        this.jpaUserRepository = jpaUserRepository;
-    }
 
     @Override
     public User save(User user) {

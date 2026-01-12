@@ -5,6 +5,7 @@ import com.hoops.match.application.port.out.MatchParticipationPort;
 import com.hoops.match.application.port.out.MatchRepository;
 import com.hoops.match.domain.Match;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,13 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
  * 경기 참가 관련 기능을 제공합니다.
  */
 @Component
+@RequiredArgsConstructor
 public class MatchParticipationAdapter implements MatchParticipationPort {
 
     private final MatchRepository matchRepository;
-
-    public MatchParticipationAdapter(MatchRepository matchRepository) {
-        this.matchRepository = matchRepository;
-    }
 
     @Override
     public Optional<MatchParticipationData> findMatchForParticipation(Long matchId) {

@@ -6,16 +6,14 @@ import com.hoops.participation.infrastructure.ParticipationEntity;
 import com.hoops.participation.infrastructure.jpa.JpaParticipationRepository;
 import com.hoops.participation.infrastructure.mapper.ParticipationMapper;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class ParticipationRepositoryImpl implements ParticipationRepository {
 
     private final JpaParticipationRepository jpaParticipationRepository;
-
-    public ParticipationRepositoryImpl(JpaParticipationRepository jpaParticipationRepository) {
-        this.jpaParticipationRepository = jpaParticipationRepository;
-    }
 
     @Override
     public Participation save(Participation participation) {

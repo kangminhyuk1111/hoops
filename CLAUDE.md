@@ -15,7 +15,7 @@
 # Strict Constraints (절대 규칙)
 1. **No Mocking (내부 코드)**: 내부 비즈니스 로직 테스트 시 Mocking을 지양하고 실제 동작하는 코드를 지향한다. DB는 H2 또는 Testcontainers를 활용한다. 단, **외부 API(카카오, 결제 등) 통신은 WireMock을 사용하여 Mocking**한다.
 2. **Pure Domain**: `domain/` 패키지 내 클래스는 외부 라이브러리(Spring, JPA, JSON 등) 의존성이 전혀 없는 **Pure Java(POJO)**여야 한다. JPA Entity는 `infrastructure/persistence/entity/` 패키지에 분리하며, Domain Model과 매핑한다.
-3. **No Lombok**: Lombok 사용을 금지한다. 모든 코드는 순수 Java로 작성하며, 생성자/Getter/Setter는 명시적으로 작성한다.
+3. **Lombok 사용**: Lombok을 적극 사용한다. 단, `/docs/convention/lombok.md`의 주의사항을 반드시 숙지한다.
 4. **Constructor Injection**: 모든 의존성은 명시적 생성자 주입을 사용한다. (`@Autowired` 필드 주입 엄금)
 5. **DTO vs Entity**: Entity를 Controller에서 직접 반환하지 마라. Java 17 `record` 타입을 활용한 DTO로 변환한다.
 6. **Exception Handling**: `RuntimeException`으로 퉁치지 말고, `docs/convention.md`에 정의된 `BusinessException` 체계를 따른다.
@@ -34,6 +34,7 @@
 
 # Documentation Map
 
+- `/docs/progress.md` - **진행 상황 (세션 시작 시 필독)**
 - `/docs/prd.md` - PRD
 - `/docs/architecture/` - 아키텍처
 - `/docs/convention/` - 코드 컨벤션
@@ -49,3 +50,10 @@
 - **커밋 전**: `/docs/git/commit.md` 확인 후 템플릿에 맞게 작성
 - **PR 생성 전**: `/docs/git/pull-request.md` 확인 후 템플릿에 맞게 작성
 - **커밋 제외 파일**: 로컬 설정, 민감 정보 등 커밋하면 안 되는 파일은 `.gitignore`에 추가
+
+# Cucumber Test Rules
+
+- **공통 스텝**: 여러 feature에서 사용하는 스텝은 `CommonStepDefs`에 정의 (DuplicateStepDefinitionException 방지)
+- **상태 공유**: StepDefs 간 상태 공유는 `SharedTestContext` 사용
+- **DB 격리**: 시나리오 간 데이터 격리는 `DatabaseCleanupHook`이 처리
+- **트러블슈팅**: `/docs/troubleshooting/cucumber.md` 참고

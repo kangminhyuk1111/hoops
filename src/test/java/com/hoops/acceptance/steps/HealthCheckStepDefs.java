@@ -2,9 +2,9 @@ package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
-import io.cucumber.java.ko.그러면;
 import io.cucumber.java.ko.먼저;
 import io.cucumber.java.ko.만일;
+import io.cucumber.java.ko.그러면;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,14 +17,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class HealthCheckStepDefs {
 
     private final TestAdapter testAdapter;
-    private TestResponse lastResponse;
+    private final SharedTestContext sharedContext;
 
     /**
-     * Spring에서 TestAdapter를 주입받습니다.
+     * Spring에서 TestAdapter와 SharedTestContext를 주입받습니다.
      * CucumberSpringConfiguration에서 설정한 Spring 컨텍스트를 사용합니다.
      */
-    public HealthCheckStepDefs(TestAdapter testAdapter) {
+    public HealthCheckStepDefs(TestAdapter testAdapter, SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;
+        this.sharedContext = sharedContext;
     }
 
     /**
@@ -49,21 +50,8 @@ public class HealthCheckStepDefs {
      */
     @만일("헬스 체크 API를 호출한다")
     public void 헬스_체크_API를_호출한다() {
-        lastResponse = testAdapter.get("/actuator/health");
-    }
-
-    /**
-     * Then: 응답 상태 코드는 200 이다
-     *
-     * HTTP 응답 상태 코드가 200 OK인지 검증합니다.
-     *
-     * @param expectedStatusCode 기대하는 상태 코드
-     */
-    @그러면("응답 상태 코드는 {int} 이다")
-    public void 응답_상태_코드는_이다(int expectedStatusCode) {
-        assertThat(lastResponse.statusCode())
-                .as("HTTP 상태 코드가 %d 이어야 합니다", expectedStatusCode)
-                .isEqualTo(expectedStatusCode);
+        TestResponse response = testAdapter.get("/actuator/health");
+        sharedContext.setLastResponse(response);
     }
 
     /**
@@ -75,7 +63,7 @@ public class HealthCheckStepDefs {
      */
     @그러면("응답 본문의 status 필드는 {string} 이다")
     public void 응답_본문의_status_필드는_이다(String expectedStatus) {
-        Object actualStatus = lastResponse.getJsonValue("status");
+        Object actualStatus = sharedContext.getLastResponse().getJsonValue("status");
 
         assertThat(actualStatus)
                 .as("응답 본문에 status 필드가 존재해야 합니다")
@@ -108,6 +96,8 @@ public class HealthCheckStepDefs {
      */
     @그러면("응답에 데이터베이스 연결 정보가 포함되어 있다")
     public void 응답에_데이터베이스_연결_정보가_포함되어_있다() {
+        TestResponse lastResponse = sharedContext.getLastResponse();
+
         // components 필드가 존재하는지 확인
         assertThat(lastResponse.hasJsonField("components"))
                 .as("응답에 components 필드가 존재해야 합니다")

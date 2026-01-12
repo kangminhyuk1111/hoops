@@ -4,6 +4,7 @@ import com.hoops.match.application.port.out.MatchParticipationPort;
 import com.hoops.participation.application.exception.ParticipationMatchNotFoundException;
 import com.hoops.participation.application.port.out.MatchInfo;
 import com.hoops.participation.application.port.out.MatchInfoProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,13 +17,10 @@ import org.springframework.stereotype.Component;
  * Match Context가 외부에 제공하는 Port만 사용합니다.
  */
 @Component
+@RequiredArgsConstructor
 public class MatchInfoAdapter implements MatchInfoProvider {
 
     private final MatchParticipationPort matchParticipationPort;
-
-    public MatchInfoAdapter(MatchParticipationPort matchParticipationPort) {
-        this.matchParticipationPort = matchParticipationPort;
-    }
 
     @Override
     public MatchInfo getMatchInfo(Long matchId) {

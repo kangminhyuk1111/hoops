@@ -6,16 +6,14 @@ import com.hoops.notification.infrastructure.NotificationEntity;
 import com.hoops.notification.infrastructure.jpa.JpaNotificationRepository;
 import com.hoops.notification.infrastructure.mapper.NotificationMapper;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class NotificationRepositoryImpl implements NotificationRepository {
 
     private final JpaNotificationRepository jpaNotificationRepository;
-
-    public NotificationRepositoryImpl(JpaNotificationRepository jpaNotificationRepository) {
-        this.jpaNotificationRepository = jpaNotificationRepository;
-    }
 
     @Override
     public Notification save(Notification notification) {

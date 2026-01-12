@@ -1,24 +1,22 @@
 package com.hoops.match.application.service;
 
+import com.hoops.match.application.exception.MatchNotFoundException;
 import com.hoops.match.application.port.in.MatchQueryUseCase;
 import com.hoops.match.application.port.out.MatchRepository;
 import com.hoops.match.domain.Match;
-import java.math.BigDecimal;
-import java.util.List;
-
-import com.hoops.match.application.exception.MatchNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class MatchFinder implements MatchQueryUseCase {
 
     private final MatchRepository matchRepository;
-
-    public MatchFinder(MatchRepository matchRepository) {
-        this.matchRepository = matchRepository;
-    }
 
     @Override
     public Match findMatchById(Long matchId) {

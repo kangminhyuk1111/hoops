@@ -23,3 +23,14 @@
 | `/actuator/**` | GET |
 | `/api/matches/**` | GET |
 | `/api/locations/**` | GET |
+
+## 인증 실패 응답 코드
+
+Spring Security 기본 설정은 인증 없는 요청에 `403 Forbidden`을 반환한다.
+`401 Unauthorized`를 반환하려면 `authenticationEntryPoint` 설정 필요:
+
+```java
+.exceptionHandling(exception -> exception
+    .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+)
+```

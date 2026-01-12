@@ -3,6 +3,7 @@ package com.hoops.location.infrastructure.adapter;
 import com.hoops.location.application.port.out.LocationQueryPort;
 import com.hoops.location.domain.repository.LocationRepository;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,13 +13,10 @@ import org.springframework.stereotype.Component;
  * 내부적으로 LocationRepository를 사용하지만, 외부에는 필요한 정보만 노출합니다.
  */
 @Component
+@RequiredArgsConstructor
 public class LocationQueryAdapter implements LocationQueryPort {
 
     private final LocationRepository locationRepository;
-
-    public LocationQueryAdapter(LocationRepository locationRepository) {
-        this.locationRepository = locationRepository;
-    }
 
     @Override
     public Optional<LocationData> findById(Long locationId) {

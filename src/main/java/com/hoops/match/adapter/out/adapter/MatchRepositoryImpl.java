@@ -8,16 +8,14 @@ import com.hoops.match.adapter.out.mapper.MatchMapper;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class MatchRepositoryImpl implements MatchRepository {
 
     private final JpaMatchRepository jpaMatchRepository;
-
-    public MatchRepositoryImpl(JpaMatchRepository jpaMatchRepository) {
-        this.jpaMatchRepository = jpaMatchRepository;
-    }
 
     @Override
     public Match save(Match match) {

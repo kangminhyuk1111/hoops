@@ -12,6 +12,8 @@ import com.hoops.participation.application.exception.NotParticipantException;
 import com.hoops.participation.application.exception.ParticipationNotFoundException;
 import com.hoops.participation.application.port.in.CancelParticipationCommand;
 import com.hoops.participation.application.port.in.CancelParticipationUseCase;
+import com.hoops.participation.application.port.in.GetMatchParticipantsUseCase;
+import com.hoops.participation.application.port.in.GetMyParticipationsUseCase;
 import com.hoops.participation.application.port.in.ParticipateInMatchCommand;
 import com.hoops.participation.application.port.in.ParticipateInMatchUseCase;
 import com.hoops.participation.application.port.out.MatchInfo;
@@ -28,11 +30,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ParticipationService implements ParticipateInMatchUseCase, CancelParticipationUseCase {
+public class ParticipationService implements ParticipateInMatchUseCase, CancelParticipationUseCase, GetMyParticipationsUseCase, GetMatchParticipantsUseCase {
 
     private final ParticipationRepository participationRepository;
     private final MatchInfoProvider matchInfoProvider;
@@ -140,5 +143,18 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
             BusinessException e,
             ParticipateInMatchCommand command) {
         throw e;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Participation> getMyParticipations(Long userId) {
+        return participationRepository.findByUserIdAndNotCancelled(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Participation> getMatchParticipants(Long matchId) {
+        matchInfoProvider.getMatchInfo(matchId);
+        return participationRepository.findByMatchIdAndNotCancelled(matchId);
     }
 }

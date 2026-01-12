@@ -1,10 +1,14 @@
 package com.hoops.notification.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
+@AllArgsConstructor
 public class Notification {
 
     private final Long id;
@@ -15,18 +19,6 @@ public class Notification {
     private final Long relatedMatchId;
     private Boolean isRead;
     private final LocalDateTime createdAt;
-
-    public Notification(Long id, Long userId, NotificationType type, String title, String message,
-            Long relatedMatchId, Boolean isRead, LocalDateTime createdAt) {
-        this.id = id;
-        this.userId = userId;
-        this.type = type;
-        this.title = title;
-        this.message = message;
-        this.relatedMatchId = relatedMatchId;
-        this.isRead = isRead;
-        this.createdAt = createdAt;
-    }
 
     public void markAsRead() {
         this.isRead = true;

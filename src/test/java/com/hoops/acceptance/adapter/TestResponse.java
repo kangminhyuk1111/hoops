@@ -42,4 +42,13 @@ public record TestResponse(int statusCode, String body, Map<String, Object> json
             return Collections.emptyList();
         }
     }
+
+    /**
+     * JSON 배열 응답의 크기를 반환합니다.
+     *
+     * @return JSON 배열의 크기
+     */
+    public int getJsonArraySize() {
+        return getJsonList("$").size();
+    }
 }

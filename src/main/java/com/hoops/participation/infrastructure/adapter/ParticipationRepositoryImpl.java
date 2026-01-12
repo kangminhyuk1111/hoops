@@ -1,13 +1,16 @@
 package com.hoops.participation.infrastructure.adapter;
 
 import com.hoops.participation.domain.Participation;
+import com.hoops.participation.domain.ParticipationStatus;
 import com.hoops.participation.domain.repository.ParticipationRepository;
 import com.hoops.participation.infrastructure.ParticipationEntity;
 import com.hoops.participation.infrastructure.jpa.JpaParticipationRepository;
 import com.hoops.participation.infrastructure.mapper.ParticipationMapper;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,5 +33,23 @@ public class ParticipationRepositoryImpl implements ParticipationRepository {
     @Override
     public boolean existsByMatchIdAndUserId(Long matchId, Long userId) {
         return jpaParticipationRepository.existsByMatchIdAndUserId(matchId, userId);
+    }
+
+    @Override
+    public List<Participation> findByUserIdAndNotCancelled(Long userId) {
+        return jpaParticipationRepository
+                .findByUserIdAndStatusNot(userId, ParticipationStatus.CANCELLED)
+                .stream()
+                .map(ParticipationMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Participation> findByMatchIdAndNotCancelled(Long matchId) {
+        return jpaParticipationRepository
+                .findByMatchIdAndStatusNot(matchId, ParticipationStatus.CANCELLED)
+                .stream()
+                .map(ParticipationMapper::toDomain)
+                .toList();
     }
 }

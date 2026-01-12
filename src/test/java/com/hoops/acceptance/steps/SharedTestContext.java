@@ -1,7 +1,12 @@
 package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestResponse;
+import com.hoops.match.domain.Match;
+import com.hoops.user.domain.User;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 테스트 간 공유되는 컨텍스트
@@ -15,6 +20,8 @@ public class SharedTestContext {
 
     private TestResponse lastResponse;
     private String accessToken;
+    private User testUser;
+    private List<Match> testMatches = new ArrayList<>();
 
     public TestResponse getLastResponse() {
         return lastResponse;
@@ -30,5 +37,25 @@ public class SharedTestContext {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public User getTestUser() {
+        return testUser;
+    }
+
+    public void setTestUser(User testUser) {
+        this.testUser = testUser;
+    }
+
+    public List<Match> getTestMatches() {
+        return testMatches;
+    }
+
+    public void addTestMatch(Match match) {
+        this.testMatches.add(match);
+    }
+
+    public void clearTestMatches() {
+        this.testMatches.clear();
     }
 }

@@ -39,8 +39,8 @@
 ### 1.4 테스트
 - [x] AuthService 단위 테스트
 - [x] JwtTokenProvider 테스트
-- [ ] 카카오 API WireMock 테스트
-- [ ] 인증 플로우 통합 테스트
+- [x] 카카오 API WireMock 테스트 (MockKakaoOAuthClient)
+- [x] 인증 플로우 통합 테스트 (auth-signup.feature, auth-login.feature)
 
 ---
 
@@ -96,16 +96,23 @@
 - [x] 취소 가능 상태 검증
 - [x] Match 참가자 수 감소
 
-### 3.3 참가자 조회
+### 3.3 참가 승인/거절 (호스트)
+- [x] 참가 승인 API (`PUT /api/matches/{matchId}/participations/{participationId}/approve`)
+- [x] 참가 거절 API (`PUT /api/matches/{matchId}/participations/{participationId}/reject`)
+- [x] 호스트 권한 검증
+- [x] ParticipationStatus.REJECTED 상태 추가
+
+### 3.5 참가자 조회
 - [x] 참가자 목록 조회 API (`GET /api/matches/{matchId}/participants`)
 - [ ] 참가자 상세 정보 (닉네임, 프로필 등)
 
-### 3.4 테스트
+### 3.6 테스트
 - [x] Participation 도메인 테스트
 - [x] ParticipationService 테스트
 - [x] ParticipationCancellation 테스트
-- [ ] 참가 신청 Cucumber 테스트
-- [ ] 참가 취소 Cucumber 테스트
+- [x] 참가 신청 Cucumber 테스트 (participation.feature)
+- [x] 참가 취소 Cucumber 테스트 (participation-cancel.feature)
+- [x] 참가 승인/거절 Cucumber 테스트 (participation-approval.feature)
 - [ ] 동시성 테스트 (낙관적 락)
 
 ---
@@ -134,7 +141,7 @@
 
 ### 5.2 참가 이력
 - [x] 내 참가 경기 목록 API (`GET /api/users/me/participations`)
-- [ ] 내가 생성한 경기 목록 API (`GET /api/users/me/matches`)
+- [x] 내가 호스팅한 경기 목록 API (`GET /api/matches/hosted`)
 
 ### 5.3 테스트
 - [ ] User 도메인 테스트
@@ -215,15 +222,15 @@
 
 | 카테고리 | 완료 | 미완료 | 진행률 |
 |----------|------|--------|--------|
-| 인증 (Auth) | 13 | 2 | 87% |
+| 인증 (Auth) | 15 | 0 | 100% |
 | 경기 (Match) | 15 | 4 | 79% |
-| 참가 (Participation) | 12 | 3 | 80% |
+| 참가 (Participation) | 21 | 2 | 91% |
 | 장소 (Location) | 2 | 4 | 33% |
-| 사용자 (User) | 3 | 4 | 43% |
+| 사용자 (User) | 4 | 4 | 50% |
 | 알림 (Notification) | 6 | 1 | 86% |
 | 이벤트 (Kafka) | 4 | 3 | 57% |
 | 인프라/공통 | 12 | 4 | 75% |
-| **전체** | **67** | **25** | **73%** |
+| **전체** | **79** | **22** | **78%** |
 
 ---
 
@@ -266,5 +273,6 @@ MVP 출시를 위한 최소 필수 기능입니다.
 
 | 날짜 | 변경 내용 | 작성자 |
 |------|----------|--------|
+| 2026-01-12 | 인증 테스트, 참가 승인/거절, 내 호스팅 경기 목록 구현 반영 | Claude |
 | 2026-01-12 | 알림, Kafka, 스케줄러 구현 반영 | Claude |
 | 2025-01-10 | 최초 작성 | Claude |

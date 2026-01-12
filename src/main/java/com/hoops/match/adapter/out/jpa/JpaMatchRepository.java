@@ -34,4 +34,6 @@ public interface JpaMatchRepository extends JpaRepository<MatchEntity, Long> {
             @Param("date") LocalDate date,
             @Param("time") LocalTime time,
             @Param("status") MatchStatus status);
+
+    List<MatchEntity> findByHostIdOrderByMatchDateDesc(Long hostId);
 }

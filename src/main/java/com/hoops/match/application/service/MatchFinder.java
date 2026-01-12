@@ -28,4 +28,9 @@ public class MatchFinder implements MatchQueryUseCase {
     public List<Match> loadMatchesByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance) {
         return matchRepository.findAllByLocation(latitude, longitude, distance);
     }
+
+    @Override
+    public List<Match> findMyHostedMatches(Long hostId) {
+        return matchRepository.findByHostId(hostId);
+    }
 }

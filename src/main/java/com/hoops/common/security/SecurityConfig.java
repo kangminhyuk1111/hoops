@@ -45,6 +45,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/health").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
+                        // 인증 필요한 경기 엔드포인트 (더 구체적인 규칙 먼저)
+                        .requestMatchers(HttpMethod.GET, "/api/matches/hosted").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/locations/**").permitAll()
 

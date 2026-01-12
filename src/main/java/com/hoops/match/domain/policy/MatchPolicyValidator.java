@@ -4,6 +4,7 @@ import com.hoops.match.application.exception.InvalidMatchDateException;
 import com.hoops.match.application.exception.InvalidMaxParticipantsException;
 import com.hoops.match.application.exception.InvalidTimeRangeException;
 import com.hoops.match.application.port.in.CreateMatchCommand;
+import com.hoops.match.application.port.in.UpdateMatchCommand;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,24 @@ public class MatchPolicyValidator {
         validateMaxParticipants(command.maxParticipants());
         validateMatchDate(command.matchDate());
         validateTimeRange(command.startTime(), command.endTime());
+    }
+
+    /**
+     * 경기 수정 명령의 유효성을 검증합니다.
+     * null이 아닌 필드만 검증합니다.
+     *
+     * @param command 경기 수정 명령
+     */
+    public void validateUpdateMatch(UpdateMatchCommand command) {
+        if (command.maxParticipants() != null) {
+            validateMaxParticipants(command.maxParticipants());
+        }
+        if (command.matchDate() != null) {
+            validateMatchDate(command.matchDate());
+        }
+        if (command.startTime() != null && command.endTime() != null) {
+            validateTimeRange(command.startTime(), command.endTime());
+        }
     }
 
     private void validateMaxParticipants(Integer maxParticipants) {

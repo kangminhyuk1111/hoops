@@ -104,4 +104,38 @@ public class Match {
                 && this.status != MatchStatus.ENDED
                 && this.status != MatchStatus.CANCELLED;
     }
+
+    public boolean canUpdate() {
+        return this.status == MatchStatus.PENDING
+                || this.status == MatchStatus.CONFIRMED;
+    }
+
+    public Match update(String title, String description, LocalDate matchDate,
+                        LocalTime startTime, LocalTime endTime, Integer maxParticipants) {
+        MatchStatus newStatus = this.status;
+        if (maxParticipants != null && this.currentParticipants >= maxParticipants) {
+            newStatus = MatchStatus.FULL;
+        } else if (this.status == MatchStatus.FULL && maxParticipants != null
+                && this.currentParticipants < maxParticipants) {
+            newStatus = MatchStatus.PENDING;
+        }
+
+        return new Match(
+                this.id,
+                this.version,
+                this.hostId,
+                this.hostNickname,
+                title != null ? title : this.title,
+                description != null ? description : this.description,
+                this.latitude,
+                this.longitude,
+                this.address,
+                matchDate != null ? matchDate : this.matchDate,
+                startTime != null ? startTime : this.startTime,
+                endTime != null ? endTime : this.endTime,
+                maxParticipants != null ? maxParticipants : this.maxParticipants,
+                this.currentParticipants,
+                newStatus
+        );
+    }
 }

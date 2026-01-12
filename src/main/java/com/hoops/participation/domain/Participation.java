@@ -48,7 +48,7 @@ public class Participation {
     }
 
     public boolean canCancel() {
-        return this.status == ParticipationStatus.CONFIRMED;
+        return this.status == ParticipationStatus.PENDING || this.status == ParticipationStatus.CONFIRMED;
     }
 
     public boolean canBeApprovedOrRejected() {

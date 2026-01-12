@@ -104,7 +104,7 @@
 
 ### 3.5 참가자 조회
 - [x] 참가자 목록 조회 API (`GET /api/matches/{matchId}/participants`)
-- [ ] 참가자 상세 정보 (닉네임, 프로필 등)
+- [x] 참가자 상세 정보 (닉네임, 프로필 등)
 
 ### 3.6 테스트
 - [x] Participation 도메인 테스트
@@ -113,6 +113,7 @@
 - [x] 참가 신청 Cucumber 테스트 (participation.feature)
 - [x] 참가 취소 Cucumber 테스트 (participation-cancel.feature)
 - [x] 참가 승인/거절 Cucumber 테스트 (participation-approval.feature)
+- [x] E2E Happy Path 테스트 (e2e-happy-path.feature)
 - [ ] 동시성 테스트 (낙관적 락)
 
 ---
@@ -224,13 +225,13 @@
 |----------|------|--------|--------|
 | 인증 (Auth) | 15 | 0 | 100% |
 | 경기 (Match) | 17 | 1 | 94% |
-| 참가 (Participation) | 21 | 2 | 91% |
+| 참가 (Participation) | 23 | 1 | 96% |
 | 장소 (Location) | 6 | 2 | 75% |
 | 사용자 (User) | 7 | 1 | 88% |
 | 알림 (Notification) | 6 | 1 | 86% |
 | 이벤트 (Kafka) | 4 | 2 | 67% |
 | 인프라/공통 | 12 | 4 | 75% |
-| **전체** | **88** | **13** | **87%** |
+| **전체** | **90** | **12** | **88%** |
 
 ---
 
@@ -272,6 +273,7 @@ MVP 출시를 위한 최소 필수 기능입니다.
 
 | 날짜 | 변경 내용 | 작성자 |
 |------|----------|--------|
+| 2026-01-12 | E2E Happy Path 테스트 추가, 참가 플로우 호스트 승인 방식으로 변경, 진행률 88% | Claude |
 | 2026-01-12 | 경기 생성/상태 변경 이벤트 항목 제거 (불필요), 진행률 87% | Claude |
 | 2026-01-12 | 프로필 조회/수정 API 구현 반영 (85% 진행) | Claude |
 | 2026-01-12 | 장소 조회/검색 API 구현 반영 | Claude |

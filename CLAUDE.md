@@ -20,6 +20,7 @@
 5. **DTO vs Entity**: Entity를 Controller에서 직접 반환하지 마라. Java 17 `record` 타입을 활용한 DTO로 변환한다.
 6. **Exception Handling**: 아래 예외 규칙을 반드시 준수한다. 상세 내용은 `/docs/convention/convention.md` 참고.
 7. **Documentation Required**: 모든 수정 사항 및 변경 사항은 반드시 관련 문서에 반영한다. 새로운 기능은 문서 작성 후 구현하고, 기존 기능 변경 시 해당 문서를 함께 수정한다. 문서 없는 코드 변경은 금지한다.
+8. **No Visual Diagrams in Code Blocks**: 시각적 다이어그램(ASCII art, 박스 그림 등)은 code block에 포함하지 않는다. 플로우, 아키텍처, 상태 전이 등은 반드시 텍스트 기반 목록, 표, 또는 AI가 해석하기 쉬운 구조화된 형식으로 작성한다.
 
 # Exception 규칙 (필수)
 

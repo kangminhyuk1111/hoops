@@ -77,6 +77,21 @@ services:
       - hoops-network
     restart: unless-stopped
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: hoops-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:8080
+    networks:
+      - hoops-network
+    restart: unless-stopped
+
 networks:
   hoops-network:
     driver: bridge

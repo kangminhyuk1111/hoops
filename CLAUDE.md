@@ -19,6 +19,7 @@
 4. **Constructor Injection**: 모든 의존성은 명시적 생성자 주입을 사용한다. (`@Autowired` 필드 주입 엄금)
 5. **DTO vs Entity**: Entity를 Controller에서 직접 반환하지 마라. Java 17 `record` 타입을 활용한 DTO로 변환한다.
 6. **Exception Handling**: 아래 예외 규칙을 반드시 준수한다. 상세 내용은 `/docs/convention/convention.md` 참고.
+7. **Documentation Required**: 모든 수정 사항 및 변경 사항은 반드시 관련 문서에 반영한다. 새로운 기능은 문서 작성 후 구현하고, 기존 기능 변경 시 해당 문서를 함께 수정한다. 문서 없는 코드 변경은 금지한다.
 
 # Exception 규칙 (필수)
 

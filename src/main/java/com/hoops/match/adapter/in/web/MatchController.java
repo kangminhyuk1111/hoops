@@ -117,4 +117,19 @@ public class MatchController {
         cancelMatchUseCase.cancelMatch(command);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "내가 호스팅한 경기 목록 조회", description = "로그인한 사용자가 생성한 경기 목록을 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 필요")
+    })
+    @GetMapping("/hosted")
+    public ResponseEntity<List<MatchResponse>> findMyHostedMatches(
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
+        List<Match> matches = matchQueryUseCase.findMyHostedMatches(userId);
+        List<MatchResponse> response = matches.stream()
+                .map(MatchResponse::of)
+                .toList();
+        return ResponseEntity.ok(response);
+    }
 }

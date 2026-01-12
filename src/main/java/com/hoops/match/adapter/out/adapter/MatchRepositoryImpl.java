@@ -53,4 +53,11 @@ public class MatchRepositoryImpl implements MatchRepository {
                 .map(MatchMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<Match> findByHostId(Long hostId) {
+        return jpaMatchRepository.findByHostIdOrderByMatchDateDesc(hostId).stream()
+                .map(MatchMapper::toDomain)
+                .toList();
+    }
 }

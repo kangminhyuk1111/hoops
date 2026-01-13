@@ -1,0 +1,193 @@
+package com.hoops.acceptance.steps;
+
+import com.hoops.acceptance.adapter.TestAdapter;
+import com.hoops.acceptance.adapter.TestResponse;
+import com.hoops.match.adapter.out.MatchEntity;
+import com.hoops.match.adapter.out.jpa.JpaMatchRepository;
+import com.hoops.match.domain.MatchStatus;
+import com.hoops.user.domain.User;
+import com.hoops.user.domain.repository.UserRepository;
+import io.cucumber.java.ko.먼저;
+import io.cucumber.java.ko.만일;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+public class MatchReactivateStepDefs {
+
+    private final TestAdapter testAdapter;
+    private final JpaMatchRepository jpaMatchRepository;
+    private final UserRepository userRepository;
+    private final SharedTestContext sharedContext;
+
+    public MatchReactivateStepDefs(
+            TestAdapter testAdapter,
+            JpaMatchRepository jpaMatchRepository,
+            UserRepository userRepository,
+            SharedTestContext sharedContext) {
+        this.testAdapter = testAdapter;
+        this.jpaMatchRepository = jpaMatchRepository;
+        this.userRepository = userRepository;
+        this.sharedContext = sharedContext;
+    }
+
+    @먼저("내가 생성한 취소된 경기가 있다")
+    public void 내가_생성한_취소된_경기가_있다() {
+        User testUser = sharedContext.getTestUser();
+        sharedContext.clearTestMatches();
+
+        MatchEntity entity = new MatchEntity(
+                testUser.getId(),
+                testUser.getNickname(),
+                "내가 생성한 취소된 경기",
+                "테스트 경기 설명",
+                BigDecimal.valueOf(37.5665),
+                BigDecimal.valueOf(126.9780),
+                "서울시 중구",
+                LocalDate.now().plusDays(7),
+                LocalTime.of(18, 0),
+                LocalTime.of(20, 0),
+                10,
+                0,
+                MatchStatus.CANCELLED
+        );
+        entity.setCancelledAt(LocalDateTime.now());
+        MatchEntity savedEntity = jpaMatchRepository.save(entity);
+
+        sharedContext.addTestMatch(toMatch(savedEntity));
+    }
+
+    @먼저("다른 사용자가 생성한 취소된 경기가 있다")
+    public void 다른_사용자가_생성한_취소된_경기가_있다() {
+        User otherUser = User.builder()
+                .email("other-reactivate@example.com")
+                .nickname("다른사용자복구")
+                .rating(BigDecimal.valueOf(3.0))
+                .totalMatches(0)
+                .build();
+        otherUser = userRepository.save(otherUser);
+
+        sharedContext.clearTestMatches();
+
+        MatchEntity entity = new MatchEntity(
+                otherUser.getId(),
+                otherUser.getNickname(),
+                "다른 사용자의 취소된 경기",
+                "테스트 경기 설명",
+                BigDecimal.valueOf(37.5665),
+                BigDecimal.valueOf(126.9780),
+                "서울시 중구",
+                LocalDate.now().plusDays(7),
+                LocalTime.of(18, 0),
+                LocalTime.of(20, 0),
+                10,
+                0,
+                MatchStatus.CANCELLED
+        );
+        entity.setCancelledAt(LocalDateTime.now());
+        MatchEntity savedEntity = jpaMatchRepository.save(entity);
+
+        sharedContext.addTestMatch(toMatch(savedEntity));
+    }
+
+    @먼저("1시간 전에 취소된 경기가 있다")
+    public void 시간_전에_취소된_경기가_있다() {
+        User testUser = sharedContext.getTestUser();
+        sharedContext.clearTestMatches();
+
+        MatchEntity entity = new MatchEntity(
+                testUser.getId(),
+                testUser.getNickname(),
+                "1시간 전에 취소된 경기",
+                "테스트 경기 설명",
+                BigDecimal.valueOf(37.5665),
+                BigDecimal.valueOf(126.9780),
+                "서울시 중구",
+                LocalDate.now().plusDays(7),
+                LocalTime.of(18, 0),
+                LocalTime.of(20, 0),
+                10,
+                0,
+                MatchStatus.CANCELLED
+        );
+        entity.setCancelledAt(LocalDateTime.now().minusHours(1).minusMinutes(1));
+        MatchEntity savedEntity = jpaMatchRepository.save(entity);
+
+        sharedContext.addTestMatch(toMatch(savedEntity));
+    }
+
+    @먼저("경기 날짜가 지난 취소된 경기가 있다")
+    public void 경기_날짜가_지난_취소된_경기가_있다() {
+        User testUser = sharedContext.getTestUser();
+        sharedContext.clearTestMatches();
+
+        MatchEntity entity = new MatchEntity(
+                testUser.getId(),
+                testUser.getNickname(),
+                "경기 날짜가 지난 취소된 경기",
+                "테스트 경기 설명",
+                BigDecimal.valueOf(37.5665),
+                BigDecimal.valueOf(126.9780),
+                "서울시 중구",
+                LocalDate.now().minusDays(1),
+                LocalTime.of(18, 0),
+                LocalTime.of(20, 0),
+                10,
+                0,
+                MatchStatus.CANCELLED
+        );
+        entity.setCancelledAt(LocalDateTime.now().minusMinutes(30));
+        MatchEntity savedEntity = jpaMatchRepository.save(entity);
+
+        sharedContext.addTestMatch(toMatch(savedEntity));
+    }
+
+    @만일("해당 경기 복구 API를 호출한다")
+    public void 해당_경기_복구_API를_호출한다() {
+        var match = sharedContext.getTestMatches().get(0);
+        String accessToken = sharedContext.getAccessToken();
+
+        TestResponse response = testAdapter.postWithAuth(
+                "/api/matches/" + match.getId() + "/reactivate",
+                null,
+                accessToken
+        );
+        sharedContext.setLastResponse(response);
+    }
+
+    @만일("존재하지 않는 경기 복구 API를 호출한다")
+    public void 존재하지_않는_경기_복구_API를_호출한다() {
+        String accessToken = sharedContext.getAccessToken();
+        Long nonExistentMatchId = 999999L;
+
+        TestResponse response = testAdapter.postWithAuth(
+                "/api/matches/" + nonExistentMatchId + "/reactivate",
+                null,
+                accessToken
+        );
+        sharedContext.setLastResponse(response);
+    }
+
+    private com.hoops.match.domain.Match toMatch(MatchEntity entity) {
+        return com.hoops.match.domain.Match.builder()
+                .id(entity.getId())
+                .version(entity.getVersion())
+                .hostId(entity.getHostId())
+                .hostNickname(entity.getHostNickname())
+                .title(entity.getTitle())
+                .description(entity.getDescription())
+                .latitude(entity.getLatitude())
+                .longitude(entity.getLongitude())
+                .address(entity.getAddress())
+                .matchDate(entity.getMatchDate())
+                .startTime(entity.getStartTime())
+                .endTime(entity.getEndTime())
+                .maxParticipants(entity.getMaxParticipants())
+                .currentParticipants(entity.getCurrentParticipants())
+                .status(entity.getStatus())
+                .cancelledAt(entity.getCancelledAt())
+                .build();
+    }
+}

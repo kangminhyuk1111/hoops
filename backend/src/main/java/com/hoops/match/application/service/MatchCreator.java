@@ -48,7 +48,8 @@ public class MatchCreator implements CreateMatchUseCase {
                 command.endTime(),
                 command.maxParticipants(),
                 INITIAL_PARTICIPANTS,
-                MatchStatus.PENDING
+                MatchStatus.PENDING,
+                null
         );
 
         return matchRepository.save(match);

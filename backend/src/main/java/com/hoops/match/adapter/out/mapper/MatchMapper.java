@@ -24,7 +24,8 @@ public class MatchMapper {
                 entity.getEndTime(),
                 entity.getMaxParticipants(),
                 entity.getCurrentParticipants(),
-                entity.getStatus());
+                entity.getStatus(),
+                entity.getCancelledAt());
     }
 
     public static MatchEntity toEntity(Match domain) {
@@ -32,9 +33,10 @@ public class MatchMapper {
             return null;
         }
 
+        MatchEntity entity;
         // id가 있으면 업데이트, 없으면 새로 생성
         if (domain.getId() != null) {
-            return new MatchEntity(
+            entity = new MatchEntity(
                     domain.getId(),
                     domain.getVersion(),
                     domain.getHostId(),
@@ -50,21 +52,23 @@ public class MatchMapper {
                     domain.getMaxParticipants(),
                     domain.getCurrentParticipants(),
                     domain.getStatus());
+        } else {
+            entity = new MatchEntity(
+                    domain.getHostId(),
+                    domain.getHostNickname(),
+                    domain.getTitle(),
+                    domain.getDescription(),
+                    domain.getLatitude(),
+                    domain.getLongitude(),
+                    domain.getAddress(),
+                    domain.getMatchDate(),
+                    domain.getStartTime(),
+                    domain.getEndTime(),
+                    domain.getMaxParticipants(),
+                    domain.getCurrentParticipants(),
+                    domain.getStatus());
         }
-
-        return new MatchEntity(
-                domain.getHostId(),
-                domain.getHostNickname(),
-                domain.getTitle(),
-                domain.getDescription(),
-                domain.getLatitude(),
-                domain.getLongitude(),
-                domain.getAddress(),
-                domain.getMatchDate(),
-                domain.getStartTime(),
-                domain.getEndTime(),
-                domain.getMaxParticipants(),
-                domain.getCurrentParticipants(),
-                domain.getStatus());
+        entity.setCancelledAt(domain.getCancelledAt());
+        return entity;
     }
 }

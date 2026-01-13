@@ -14,6 +14,8 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class Match {
 
+    private static final int REACTIVATE_TIME_LIMIT_HOURS = 1;
+
     private final Long id;
     private final Long version;
     private final Long hostId;
@@ -29,6 +31,7 @@ public class Match {
     private final Integer maxParticipants;
     private Integer currentParticipants;
     private MatchStatus status;
+    private LocalDateTime cancelledAt;
 
     public void addParticipant() {
         this.currentParticipants++;
@@ -97,12 +100,32 @@ public class Match {
 
     public void cancel() {
         this.status = MatchStatus.CANCELLED;
+        this.cancelledAt = LocalDateTime.now();
     }
 
     public boolean canCancel() {
         return this.status != MatchStatus.IN_PROGRESS
                 && this.status != MatchStatus.ENDED
                 && this.status != MatchStatus.CANCELLED;
+    }
+
+    public boolean canReactivate() {
+        if (this.status != MatchStatus.CANCELLED) {
+            return false;
+        }
+        if (this.cancelledAt == null) {
+            return false;
+        }
+        if (this.matchDate.isBefore(LocalDate.now())) {
+            return false;
+        }
+        LocalDateTime reactivateDeadline = this.cancelledAt.plusHours(REACTIVATE_TIME_LIMIT_HOURS);
+        return LocalDateTime.now().isBefore(reactivateDeadline);
+    }
+
+    public void reactivate() {
+        this.status = MatchStatus.PENDING;
+        this.cancelledAt = null;
     }
 
     public boolean canUpdate() {
@@ -135,7 +158,8 @@ public class Match {
                 endTime != null ? endTime : this.endTime,
                 maxParticipants != null ? maxParticipants : this.maxParticipants,
                 this.currentParticipants,
-                newStatus
+                newStatus,
+                this.cancelledAt
         );
     }
 }

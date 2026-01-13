@@ -6,36 +6,25 @@ export interface User {
   createdAt: string;
 }
 
-// Match
+// Match (API 응답 형식)
 export interface Match {
   id: number;
+  hostId: number;
+  hostNickname: string;
   title: string;
   description?: string;
+  latitude: number;
+  longitude: number;
+  address: string;
+  matchDate: string;
   startTime: string;
   endTime: string;
   maxParticipants: number;
   currentParticipants: number;
   status: MatchStatus;
-  host: HostInfo;
-  location: LocationInfo;
-  createdAt: string;
 }
 
 export type MatchStatus = 'PENDING' | 'IN_PROGRESS' | 'ENDED' | 'CANCELLED';
-
-export interface HostInfo {
-  id: number;
-  nickname: string;
-  profileImageUrl?: string;
-}
-
-export interface LocationInfo {
-  id: number;
-  name: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-}
 
 // Participation
 export interface Participation {
@@ -77,16 +66,49 @@ export type NotificationType =
   | 'PARTICIPATION_REJECTED'
   | 'MATCH_CANCELLED';
 
+// Location
+export interface Location {
+  id: number;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  description?: string;
+}
+
+export interface CreateLocationRequest {
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  description?: string;
+}
+
+export interface CreateMatchRequest {
+  locationId: number;
+  title: string;
+  description?: string;
+  matchDate: string;
+  startTime: string;
+  endTime: string;
+  maxParticipants: number;
+}
+
+// Participant Detail (API response)
+export interface ParticipantDetail {
+  id: number;
+  matchId: number;
+  userId: number;
+  nickname: string;
+  profileImage?: string;
+  rating: number;
+  totalMatches: number;
+  status: ParticipationStatus;
+  joinedAt: string;
+}
+
 // API Response
 export interface ApiError {
   errorCode: string;
   message: string;
-}
-
-export interface PaginatedResponse<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
 }

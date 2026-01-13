@@ -13,13 +13,11 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // 이미 로그인된 경우 홈으로 이동
     if (isAuthenticated) {
       router.replace('/');
       return;
     }
 
-    // 임시 토큰이 없으면 로그인 페이지로 이동
     const tempToken = sessionStorage.getItem('tempToken');
     if (!tempToken) {
       router.replace('/login');
@@ -52,19 +50,14 @@ export default function SignupPage() {
 
       const { accessToken, refreshToken } = response.data;
 
-      // 토큰 저장
       login(accessToken, refreshToken);
-
-      // 임시 토큰 삭제
       sessionStorage.removeItem('tempToken');
 
-      // 사용자 정보 조회
       const userResponse = await api.get('/api/users/me', {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       setUser(userResponse.data);
 
-      // 홈으로 이동
       router.replace('/');
     } catch (err: unknown) {
       const error = err as { response?: { status: number; data?: { message: string } } };
@@ -81,17 +74,17 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md">
-        {/* 헤더 */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-orange-500 mb-2">HOOPS</h1>
-          <p className="text-gray-600">프로필을 설정해주세요</p>
-        </div>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Header */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 pt-12 pb-6">
+        <h1 className="text-4xl font-bold text-orange-500 mb-2">HOOPS</h1>
+        <p className="text-gray-600">프로필을 설정해주세요</p>
+      </div>
 
-        {/* 회원가입 폼 */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-xl font-semibold text-gray-800 text-center mb-6">
+      {/* Signup Form */}
+      <div className="px-4 pb-8">
+        <div className="bg-white rounded-2xl shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-800 text-center mb-6">
             회원가입
           </h2>
 
@@ -109,11 +102,12 @@ export default function SignupPage() {
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 placeholder="사용할 닉네임을 입력하세요"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-base"
                 maxLength={20}
                 disabled={isLoading}
+                autoComplete="off"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-2">
                 2~20자 사이로 입력해주세요
               </p>
             </div>
@@ -127,7 +121,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-medium py-3 px-4 rounded-xl transition-colors"
+              className="w-full bg-orange-500 active:bg-orange-600 disabled:bg-orange-300 text-white font-medium py-3.5 px-4 rounded-xl transition-colors"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -141,8 +135,8 @@ export default function SignupPage() {
           </form>
         </div>
 
-        {/* 하단 안내 */}
-        <p className="text-center text-sm text-gray-500 mt-8">
+        {/* Bottom Info */}
+        <p className="text-center text-sm text-gray-500 mt-6">
           닉네임은 나중에 변경할 수 있습니다.
         </p>
       </div>

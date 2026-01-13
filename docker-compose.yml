@@ -82,13 +82,16 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8080
+        NEXT_PUBLIC_KAKAO_CLIENT_ID: 830aee49c62415740e71e6be646c4d0d
+        NEXT_PUBLIC_KAKAO_REDIRECT_URI: http://localhost:3000/auth/kakao/callback
+        NEXT_PUBLIC_KAKAO_JS_KEY: c963cdb39992726ac3b783c8e215f1ae
     container_name: hoops-frontend
     depends_on:
       - backend
     ports:
       - "3000:3000"
-    environment:
-      NEXT_PUBLIC_API_URL: http://backend:8080
     networks:
       - hoops-network
     restart: unless-stopped

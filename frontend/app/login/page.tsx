@@ -23,44 +23,41 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md">
-        {/* 로고 영역 */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-orange-500 mb-2">HOOPS</h1>
-          <p className="text-gray-600">근처 농구 경기를 찾아 참가하세요</p>
-        </div>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Logo Section */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 pt-16 pb-8">
+        <h1 className="text-5xl font-bold text-orange-500 mb-3">HOOPS</h1>
+        <p className="text-gray-600 text-center">
+          근처 농구 경기를 찾아 참가하세요
+        </p>
+      </div>
 
-        {/* 로그인 카드 */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-xl font-semibold text-gray-800 text-center mb-6">
+      {/* Login Card */}
+      <div className="px-4 pb-8">
+        <div className="bg-white rounded-2xl shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-800 text-center mb-6">
             로그인
           </h2>
 
-          {/* 카카오 로그인 버튼 */}
+          {/* Kakao Login Button */}
           <button
             onClick={handleKakaoLogin}
-            className="w-full flex items-center justify-center gap-3 bg-[#FEE500] hover:bg-[#FDD800] text-[#191919] font-medium py-3 px-4 rounded-xl transition-colors"
+            className="w-full flex items-center justify-center gap-3 bg-[#FEE500] active:bg-[#FDD800] text-[#191919] font-medium py-3.5 px-4 rounded-xl transition-colors"
           >
             <KakaoIcon />
             카카오로 시작하기
           </button>
 
-          <p className="text-xs text-gray-500 text-center mt-6">
+          <p className="text-xs text-gray-500 text-center mt-6 leading-relaxed">
             로그인 시{' '}
-            <span className="text-orange-500 cursor-pointer hover:underline">
-              이용약관
-            </span>{' '}
-            및{' '}
-            <span className="text-orange-500 cursor-pointer hover:underline">
-              개인정보처리방침
-            </span>
-            에 동의하게 됩니다.
+            <span className="text-orange-500">이용약관</span> 및{' '}
+            <span className="text-orange-500">개인정보처리방침</span>에
+            동의하게 됩니다.
           </p>
         </div>
 
-        {/* 하단 안내 */}
-        <p className="text-center text-sm text-gray-500 mt-8">
+        {/* Bottom Info */}
+        <p className="text-center text-sm text-gray-500 mt-6">
           계정이 없으신가요? 카카오로 간편하게 가입하세요.
         </p>
       </div>

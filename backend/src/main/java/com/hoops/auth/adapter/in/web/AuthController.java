@@ -12,6 +12,7 @@ import com.hoops.auth.application.dto.TokenResult;
 import com.hoops.auth.application.port.in.KakaoLoginUseCase;
 import com.hoops.auth.application.port.in.RefreshTokenUseCase;
 import com.hoops.auth.application.port.in.SignupUseCase;
+import com.hoops.auth.application.port.in.TestLoginUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,6 +40,7 @@ public class AuthController {
     private final KakaoLoginUseCase kakaoLoginUseCase;
     private final SignupUseCase signupUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
+    private final TestLoginUseCase testLoginUseCase;
 
     @Operation(summary = "카카오 인증 URL 조회", description = "카카오 OAuth 로그인을 위한 인증 URL을 반환합니다.")
     @ApiResponse(responseCode = "200", description = "인증 URL 반환 성공")
@@ -90,5 +92,15 @@ public class AuthController {
             @Valid @RequestBody RefreshTokenRequest request) {
         TokenResult result = refreshTokenUseCase.refresh(request.refreshToken());
         return ResponseEntity.ok(TokenResponse.from(result));
+    }
+
+    @Operation(summary = "테스트 로그인", description = "개발/테스트 환경에서 테스트 계정으로 로그인합니다.")
+    @ApiResponse(responseCode = "200", description = "테스트 로그인 성공")
+    @PostMapping("/test-login")
+    public ResponseEntity<AuthResponse> testLogin() {
+        log.info("[테스트 로그인] 테스트 계정으로 로그인 요청");
+        AuthResult result = testLoginUseCase.testLogin();
+        log.info("[테스트 로그인] 로그인 성공: userId={}", result.user().id());
+        return ResponseEntity.ok(AuthResponse.from(result));
     }
 }

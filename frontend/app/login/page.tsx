@@ -1,15 +1,17 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/store/auth';
+import api from '@/lib/api';
 
 const KAKAO_CLIENT_ID = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
 const KAKAO_REDIRECT_URI = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
 
 export default function LoginPage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, login, fetchUser } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -20,6 +22,22 @@ export default function LoginPage() {
   const handleKakaoLogin = () => {
     const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code`;
     window.location.href = kakaoAuthUrl;
+  };
+
+  const handleTestLogin = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.post('/api/auth/test-login');
+      const { accessToken, refreshToken } = response.data;
+      login(accessToken, refreshToken);
+      await fetchUser();
+      router.replace('/');
+    } catch (error) {
+      console.error('Test login failed:', error);
+      alert('테스트 로그인에 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -46,6 +64,16 @@ export default function LoginPage() {
           >
             <KakaoIcon />
             카카오로 시작하기
+          </button>
+
+          {/* Test Login Button */}
+          <button
+            onClick={handleTestLogin}
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-3 bg-gray-100 active:bg-gray-200 text-gray-700 font-medium py-3.5 px-4 rounded-xl transition-colors mt-3 disabled:opacity-50"
+          >
+            <TestIcon />
+            {isLoading ? '로그인 중...' : '테스트 계정으로 시작하기'}
           </button>
 
           <p className="text-xs text-gray-500 text-center mt-6 leading-relaxed">
@@ -77,6 +105,26 @@ function KakaoIcon() {
       <path
         d="M12 3C6.48 3 2 6.58 2 11C2 13.84 3.92 16.34 6.84 17.78L5.77 21.53C5.67 21.87 6.06 22.14 6.36 21.93L10.86 18.87C11.23 18.91 11.61 18.93 12 18.93C17.52 18.93 22 15.35 22 10.93C22 6.58 17.52 3 12 3Z"
         fill="#191919"
+      />
+    </svg>
+  );
+}
+
+function TestIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
       />
     </svg>
   );

@@ -52,3 +52,11 @@ frontend/.env.*.local
 
 ### Claude ###
 .claude/settings.local.json
+
+# Gradle wrapper (generated)
+gradle/
+gradlew
+gradlew.bat
+
+# IDE settings
+backend/.idea/

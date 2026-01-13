@@ -53,6 +53,66 @@ public class NotificationNotFoundException extends DomainException {
 }
 ```
 
+## Cross-Context 예외 네이밍
+- 동일한 비즈니스 의미의 예외가 여러 Context에 필요한 경우, Context명을 prefix로 붙여 구분한다.
+- 예: `MatchCancelTimeExceededException`, `ParticipationCancelTimeExceededException`
+- 공통으로 사용 가능한 예외는 `common/exception/` 패키지에 위치시킨다.
+
+## HTTP 상태 코드 에러 코드 네이밍 규칙
+에러 코드 문자열에 따라 HTTP 상태 코드가 자동 매핑된다. (`GlobalExceptionHandler`)
+
+| HTTP Status | 에러 코드 패턴 | 예시 |
+|-------------|---------------|------|
+| 404 Not Found | `*_NOT_FOUND` | `MATCH_NOT_FOUND`, `USER_NOT_FOUND` |
+| 409 Conflict | `ALREADY_*`, `DUPLICATE_*`, `OVERLAPPING_*`, `*_CONFLICT` | `ALREADY_PARTICIPATING`, `OVERLAPPING_HOSTING` |
+| 403 Forbidden | `NOT_HOST*`, `NOT_PARTICIPANT*` | `NOT_HOST`, `NOT_PARTICIPANT` |
+| 400 Bad Request | `INVALID_*`, `*_EXCEEDED`, `*_REQUIRED`, `*_TOO_*` | `INVALID_TIME_RANGE`, `CANCEL_TIME_EXCEEDED` |
+
+# Validation 규칙
+
+## Bean Validation vs Service Validation
+- **Bean Validation (@Valid)**: 형식 검증에만 사용
+  - 길이 제한 (`@Size`, `@Length`)
+  - 패턴 검증 (`@Pattern`, `@Email`)
+  - 타입/범위 (`@Min`, `@Max`, `@Positive`)
+  - 필수값 (`@NotNull` - 단순 null 체크만)
+
+- **Service Layer Validation**: 비즈니스 규칙 검증에 사용
+  - 도메인 로직에 의존하는 검증
+  - 커스텀 에러 코드가 필요한 경우
+  - 다른 엔티티와의 관계 검증
+
+```java
+// Bean Validation - 형식 검증
+public record CreateMatchRequest(
+    @Size(min = 1, max = 200) String title,
+    @Min(4) @Max(20) Integer maxParticipants
+) {}
+
+// Service Validation - 비즈니스 규칙
+public void cancelMatch(CancelMatchCommand command) {
+    if (command.reason() == null || command.reason().isBlank()) {
+        throw new CancelReasonRequiredException(command.matchId());
+    }
+}
+```
+
+# Cross-Context 통신 규칙
+
+## Port를 통한 Context 간 통신
+- Context 간 직접 의존 금지. 반드시 Port 인터페이스를 통해 통신한다.
+- 예: Participation → Match 정보 조회 시 `MatchInfoProvider` 포트 사용
+
+## Batch 조회 메서드 필수
+- 여러 엔티티 조회가 필요한 경우, N+1 문제 방지를 위해 batch 조회 메서드를 기본 제공한다.
+```java
+// 단건 조회
+MatchInfo getMatchInfo(Long matchId);
+
+// Batch 조회 (N+1 방지)
+List<MatchInfo> getMatchInfoByIds(List<Long> matchIds);
+```
+
 # Project Structure (Monorepo)
 - **Backend**: `backend/` - Spring Boot 애플리케이션
 - **Frontend**: `frontend/` - Next.js 애플리케이션 (예정)
@@ -116,6 +176,7 @@ public class NotificationNotFoundException extends DomainException {
 - **공통 스텝**: 여러 feature에서 사용하는 스텝은 `CommonStepDefs`에 정의 (DuplicateStepDefinitionException 방지)
 - **상태 공유**: StepDefs 간 상태 공유는 `SharedTestContext` 사용
 - **DB 격리**: 시나리오 간 데이터 격리는 `DatabaseCleanupHook`이 처리
+- **테스트 데이터 생성**: 중복되는 테스트 데이터 생성 로직은 `TestDataFactory` 또는 헬퍼 메서드로 중앙화 권장
 - **트러블슈팅**: `/docs/troubleshooting/cucumber.md` 참고
 
 ---

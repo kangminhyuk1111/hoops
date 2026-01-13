@@ -45,6 +45,7 @@
 
 | 날짜 | 작업 | PR |
 |------|------|-----|
+| 2026-01-13 | 경기 복구(Reactivate) 기능 구현 (취소 후 1시간 이내 복구 가능) | - |
 | 2026-01-13 | 프론트엔드 핵심 페이지 구현 (메인, 경기 생성, 장소 생성, 경기 상세) | #16 |
 | 2026-01-12 | 프론트엔드 화면 목록 문서화 | - |
 | 2026-01-12 | E2E Happy Path 테스트 추가, 호스트 승인 플로우 구현 | - |
@@ -102,6 +103,7 @@
 | GET | `/api/matches` | 경기 목록 조회 |
 | GET | `/api/matches/{matchId}` | 경기 상세 조회 |
 | DELETE | `/api/matches/{matchId}` | 경기 취소 |
+| POST | `/api/matches/{matchId}/reactivate` | 경기 복구 (취소 후 1시간 이내) |
 
 ### Participation
 | Method | Endpoint | 설명 |

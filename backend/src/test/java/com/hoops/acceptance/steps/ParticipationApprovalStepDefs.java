@@ -131,7 +131,8 @@ public class ParticipationApprovalStepDefs {
                 endTime,
                 10,
                 1,
-                MatchStatus.PENDING
+                MatchStatus.PENDING,
+                null
         );
         Match savedMatch = matchRepository.save(match);
         sharedContext.addTestMatch(savedMatch);

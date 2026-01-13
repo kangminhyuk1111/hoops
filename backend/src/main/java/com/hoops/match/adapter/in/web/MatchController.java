@@ -7,6 +7,8 @@ import com.hoops.match.application.port.in.CancelMatchCommand;
 import com.hoops.match.application.port.in.CancelMatchUseCase;
 import com.hoops.match.application.port.in.CreateMatchUseCase;
 import com.hoops.match.application.port.in.MatchQueryUseCase;
+import com.hoops.match.application.port.in.ReactivateMatchCommand;
+import com.hoops.match.application.port.in.ReactivateMatchUseCase;
 import com.hoops.match.application.port.in.UpdateMatchUseCase;
 import com.hoops.match.domain.Match;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,6 +36,7 @@ public class MatchController {
     private final CreateMatchUseCase createMatchUseCase;
     private final UpdateMatchUseCase updateMatchUseCase;
     private final CancelMatchUseCase cancelMatchUseCase;
+    private final ReactivateMatchUseCase reactivateMatchUseCase;
 
     @Operation(summary = "경기 생성", description = "새로운 경기를 생성합니다.")
     @ApiResponses({
@@ -131,5 +134,22 @@ public class MatchController {
                 .map(MatchResponse::of)
                 .toList();
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "경기 복구", description = "취소된 경기를 복구합니다. 호스트만 복구 가능하며, 취소 후 1시간 이내에만 복구할 수 있습니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "복구 성공"),
+            @ApiResponse(responseCode = "400", description = "복구 불가 (취소되지 않은 경기, 1시간 초과, 경기 날짜 지남)"),
+            @ApiResponse(responseCode = "403", description = "권한 없음 (호스트가 아님)"),
+            @ApiResponse(responseCode = "404", description = "경기를 찾을 수 없음")
+    })
+    @PostMapping("/{matchId}/reactivate")
+    public ResponseEntity<MatchResponse> reactivateMatch(
+            @Parameter(description = "경기 ID") @PathVariable("matchId") Long matchId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
+        ReactivateMatchCommand command = new ReactivateMatchCommand(matchId, userId);
+        reactivateMatchUseCase.reactivateMatch(command);
+        Match match = matchQueryUseCase.findMatchById(matchId);
+        return ResponseEntity.ok(MatchResponse.of(match));
     }
 }

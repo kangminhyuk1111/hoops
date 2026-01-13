@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -65,6 +66,9 @@ public class MatchEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private MatchStatus status;
+
+    @Column(name = "cancelled_at")
+    private LocalDateTime cancelledAt;
 
     protected MatchEntity() {
     }
@@ -168,5 +172,13 @@ public class MatchEntity extends BaseTimeEntity {
 
     public Long getVersion() {
         return version;
+    }
+
+    public LocalDateTime getCancelledAt() {
+        return cancelledAt;
+    }
+
+    public void setCancelledAt(LocalDateTime cancelledAt) {
+        this.cancelledAt = cancelledAt;
     }
 }

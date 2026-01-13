@@ -173,6 +173,21 @@ export default function MatchDetailPage() {
     }
   };
 
+  const handleReactivateMatch = async () => {
+    if (!confirm('Are you sure you want to reactivate this match?')) return;
+
+    setActionLoading(true);
+    try {
+      await api.post(`/api/matches/${matchId}/reactivate`);
+      fetchMatchDetail();
+      fetchParticipants();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to reactivate match');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('ko-KR', {
@@ -389,13 +404,28 @@ export default function MatchDetailPage() {
         {/* Host Actions */}
         {isHost && (
           <div className="bg-white mt-2 p-4">
-            <button
-              onClick={handleCancelMatch}
-              disabled={actionLoading}
-              className="w-full py-3 border border-red-500 text-red-500 rounded-lg font-medium disabled:opacity-50"
-            >
-              Cancel Match
-            </button>
+            {match.status === 'CANCELLED' ? (
+              <div className="space-y-3">
+                <p className="text-center text-gray-500 text-sm">
+                  This match was cancelled. You can reactivate it within 1 hour.
+                </p>
+                <button
+                  onClick={handleReactivateMatch}
+                  disabled={actionLoading}
+                  className="w-full py-3 bg-orange-500 text-white rounded-lg font-medium disabled:opacity-50"
+                >
+                  {actionLoading ? 'Processing...' : 'Reactivate Match'}
+                </button>
+              </div>
+            ) : match.status !== 'ENDED' && match.status !== 'IN_PROGRESS' ? (
+              <button
+                onClick={handleCancelMatch}
+                disabled={actionLoading}
+                className="w-full py-3 border border-red-500 text-red-500 rounded-lg font-medium disabled:opacity-50"
+              >
+                Cancel Match
+              </button>
+            ) : null}
           </div>
         )}
       </div>

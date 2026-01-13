@@ -80,6 +80,11 @@ export default function CreateMatchPage() {
       return;
     }
 
+    if (!validateDuration()) {
+      setError('경기 시간은 최소 1시간 이상이어야 합니다.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -97,13 +102,41 @@ export default function CreateMatchPage() {
       router.push(`/matches/${response.data.id}`);
     } catch (err: any) {
       console.error('경기 생성 실패:', err);
-      setError(err.response?.data?.message || '경기 생성에 실패했습니다.');
+      const errorCode = err.response?.data?.errorCode;
+      setError(getErrorMessage(errorCode, err.response?.data?.message));
     } finally {
       setLoading(false);
     }
   };
 
   const today = new Date().toISOString().split('T')[0];
+  const maxDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+  // Validate minimum 1-hour duration
+  const validateDuration = (): boolean => {
+    if (!startTime || !endTime) return true;
+    const [startH, startM] = startTime.split(':').map(Number);
+    const [endH, endM] = endTime.split(':').map(Number);
+    const startMinutes = startH * 60 + startM;
+    const endMinutes = endH * 60 + endM;
+    return endMinutes - startMinutes >= 60;
+  };
+
+  // Get error message for API error codes
+  const getErrorMessage = (errorCode: string | undefined, defaultMessage: string): string => {
+    switch (errorCode) {
+      case 'OVERLAPPING_HOSTING':
+        return '해당 시간에 이미 생성한 경기가 있습니다.';
+      case 'MATCH_TOO_SOON':
+        return '경기는 최소 2시간 후부터 생성 가능합니다.';
+      case 'MATCH_TOO_FAR':
+        return '경기는 14일 이내로만 생성 가능합니다.';
+      case 'MATCH_DURATION_TOO_SHORT':
+        return '경기 시간은 최소 1시간 이상이어야 합니다.';
+      default:
+        return defaultMessage || '오류가 발생했습니다.';
+    }
+  };
 
   if (!isAuthenticated) {
     return null;
@@ -205,9 +238,11 @@ export default function CreateMatchPage() {
             value={matchDate}
             onChange={(e) => setMatchDate(e.target.value)}
             min={today}
+            max={maxDate}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
             required
           />
+          <p className="text-xs text-gray-400 mt-1">14일 이내의 날짜만 선택 가능합니다</p>
         </div>
 
         {/* 시간 */}
@@ -237,6 +272,9 @@ export default function CreateMatchPage() {
             />
           </div>
         </div>
+        {startTime && endTime && !validateDuration() && (
+          <p className="text-xs text-red-500 -mt-3">경기 시간은 최소 1시간 이상이어야 합니다</p>
+        )}
 
         {/* 최대 인원 */}
         <div>
@@ -256,14 +294,14 @@ export default function CreateMatchPage() {
             </span>
             <button
               type="button"
-              onClick={() => setMaxParticipants(Math.min(30, maxParticipants + 1))}
+              onClick={() => setMaxParticipants(Math.min(20, maxParticipants + 1))}
               className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 text-xl font-medium active:bg-gray-200"
             >
               +
             </button>
             <span className="text-sm text-gray-500">명</span>
           </div>
-          <p className="text-xs text-gray-400 mt-2">최소 4명 ~ 최대 30명</p>
+          <p className="text-xs text-gray-400 mt-2">최소 4명 ~ 최대 20명</p>
         </div>
 
         {/* 장소 선택 모달 */}
@@ -342,7 +380,7 @@ export default function CreateMatchPage() {
         <div className="pt-4 pb-6">
           <button
             type="submit"
-            disabled={loading || !title || !matchDate || !startTime || !endTime || !locationId}
+            disabled={loading || !title || !matchDate || !startTime || !endTime || !locationId || !validateDuration()}
             className="w-full py-3.5 bg-orange-500 text-white rounded-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             {loading ? '생성 중...' : '경기 생성'}

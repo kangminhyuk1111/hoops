@@ -25,6 +25,8 @@ export default function MatchDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
 
   // Check if current user is participant
   const myParticipation = participants.find(p => p.userId === user?.id);
@@ -32,6 +34,15 @@ export default function MatchDetailPage() {
   const isParticipant = !!myParticipation;
   const isPending = myParticipation?.status === 'PENDING';
   const isConfirmed = myParticipation?.status === 'CONFIRMED';
+
+  // Check if cancellation is allowed (2 hours before match start)
+  const canCancelByTime = (): boolean => {
+    if (!match) return false;
+    const matchStart = new Date(`${match.matchDate}T${match.startTime}`);
+    const now = new Date();
+    const twoHoursInMs = 2 * 60 * 60 * 1000;
+    return matchStart.getTime() - now.getTime() > twoHoursInMs;
+  };
 
   useEffect(() => {
     fetchMatchDetail();
@@ -115,7 +126,9 @@ export default function MatchDetailPage() {
       await api.post(`/api/matches/${matchId}/participations`);
       fetchParticipants();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to join match');
+      const errorCode = err.response?.data?.errorCode;
+      const message = getErrorMessage(errorCode, err.response?.data?.message);
+      alert(message);
     } finally {
       setActionLoading(false);
     }
@@ -124,12 +137,19 @@ export default function MatchDetailPage() {
   const handleCancel = async () => {
     if (!myParticipation) return;
 
+    if (!canCancelByTime()) {
+      alert('경기 시작 2시간 전까지만 참가 취소가 가능합니다.');
+      return;
+    }
+
     setActionLoading(true);
     try {
       await api.delete(`/api/matches/${matchId}/participations/${myParticipation.id}`);
       fetchParticipants();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to cancel participation');
+      const errorCode = err.response?.data?.errorCode;
+      const message = getErrorMessage(errorCode, err.response?.data?.message);
+      alert(message);
     } finally {
       setActionLoading(false);
     }
@@ -160,16 +180,46 @@ export default function MatchDetailPage() {
   };
 
   const handleCancelMatch = async () => {
-    if (!confirm('Are you sure you want to cancel this match?')) return;
+    if (!cancelReason.trim()) {
+      alert('취소 사유를 입력해주세요.');
+      return;
+    }
 
     setActionLoading(true);
     try {
-      await api.delete(`/api/matches/${matchId}`);
+      await api.delete(`/api/matches/${matchId}`, {
+        data: { reason: cancelReason }
+      });
+      setShowCancelModal(false);
+      setCancelReason('');
       router.push('/');
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to cancel match');
+      const errorCode = err.response?.data?.errorCode;
+      const message = getErrorMessage(errorCode, err.response?.data?.message);
+      alert(message);
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const getErrorMessage = (errorCode: string | undefined, defaultMessage: string): string => {
+    switch (errorCode) {
+      case 'CANCEL_TIME_EXCEEDED':
+        return '경기 시작 2시간 전까지만 취소 가능합니다.';
+      case 'CANCEL_REASON_REQUIRED':
+        return '취소 사유를 입력해주세요.';
+      case 'OVERLAPPING_PARTICIPATION':
+        return '해당 시간에 이미 참가 신청한 경기가 있습니다.';
+      case 'OVERLAPPING_HOSTING':
+        return '해당 시간에 이미 생성한 경기가 있습니다.';
+      case 'MATCH_TOO_SOON':
+        return '경기는 최소 2시간 후부터 생성 가능합니다.';
+      case 'MATCH_TOO_FAR':
+        return '경기는 14일 이내로만 생성 가능합니다.';
+      case 'PARTICIPATION_CANCEL_TIME_EXCEEDED':
+        return '경기 시작 2시간 전까지만 참가 취소가 가능합니다.';
+      default:
+        return defaultMessage || '오류가 발생했습니다.';
     }
   };
 
@@ -418,14 +468,64 @@ export default function MatchDetailPage() {
                 </button>
               </div>
             ) : match.status !== 'ENDED' && match.status !== 'IN_PROGRESS' ? (
-              <button
-                onClick={handleCancelMatch}
-                disabled={actionLoading}
-                className="w-full py-3 border border-red-500 text-red-500 rounded-lg font-medium disabled:opacity-50"
-              >
-                Cancel Match
-              </button>
+              <div className="space-y-2">
+                {!canCancelByTime() && (
+                  <p className="text-center text-yellow-600 text-xs">
+                    경기 시작 2시간 전까지만 취소 가능합니다
+                  </p>
+                )}
+                <button
+                  onClick={() => setShowCancelModal(true)}
+                  disabled={actionLoading || !canCancelByTime()}
+                  className="w-full py-3 border border-red-500 text-red-500 rounded-lg font-medium disabled:opacity-50 disabled:border-gray-300 disabled:text-gray-400"
+                >
+                  Cancel Match
+                </button>
+              </div>
             ) : null}
+          </div>
+        )}
+
+        {/* Cancel Match Modal */}
+        {showCancelModal && (
+          <div className="fixed inset-0 bg-black/50 z-30 flex items-center justify-center p-4">
+            <div className="bg-white w-full max-w-sm rounded-2xl overflow-hidden">
+              <div className="p-4 border-b border-gray-100">
+                <h3 className="font-semibold text-gray-900 text-lg">경기 취소</h3>
+              </div>
+              <div className="p-4 space-y-4">
+                <p className="text-sm text-gray-600">
+                  경기를 취소하시겠습니까? 취소 사유를 입력해주세요.
+                </p>
+                <textarea
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  placeholder="취소 사유를 입력하세요..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 h-24 resize-none"
+                  maxLength={500}
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCancelModal(false);
+                      setCancelReason('');
+                    }}
+                    className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium"
+                  >
+                    취소
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelMatch}
+                    disabled={actionLoading || !cancelReason.trim()}
+                    className="flex-1 py-3 bg-red-500 text-white rounded-lg font-medium disabled:bg-gray-300"
+                  >
+                    {actionLoading ? '처리 중...' : '경기 취소'}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -444,9 +544,14 @@ export default function MatchDetailPage() {
           ) : isPending ? (
             <div className="space-y-2">
               <p className="text-center text-yellow-600 text-sm font-medium">Waiting for host approval</p>
+              {!canCancelByTime() && (
+                <p className="text-center text-yellow-600 text-xs">
+                  경기 시작 2시간 전까지만 취소 가능합니다
+                </p>
+              )}
               <button
                 onClick={handleCancel}
-                disabled={actionLoading}
+                disabled={actionLoading || !canCancelByTime()}
                 className="w-full py-3.5 border border-gray-300 text-gray-700 rounded-lg font-medium disabled:opacity-50"
               >
                 Cancel Request
@@ -455,10 +560,15 @@ export default function MatchDetailPage() {
           ) : isConfirmed ? (
             <div className="space-y-2">
               <p className="text-center text-green-600 text-sm font-medium">You're in!</p>
+              {!canCancelByTime() && (
+                <p className="text-center text-yellow-600 text-xs">
+                  경기 시작 2시간 전까지만 취소 가능합니다
+                </p>
+              )}
               <button
                 onClick={handleCancel}
-                disabled={actionLoading}
-                className="w-full py-3.5 border border-red-500 text-red-500 rounded-lg font-medium disabled:opacity-50"
+                disabled={actionLoading || !canCancelByTime()}
+                className="w-full py-3.5 border border-red-500 text-red-500 rounded-lg font-medium disabled:opacity-50 disabled:border-gray-300 disabled:text-gray-400"
               >
                 Leave Match
               </button>

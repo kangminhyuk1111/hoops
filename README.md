@@ -165,6 +165,7 @@ hoops/
 - [Architecture](docs/architecture/architecture.md) - System design
 - [API Specs](docs/api/) - Detailed API documentation
 - [Conventions](docs/convention/) - Code conventions
+- [Optimization Report](docs/article/optimization-report.md) - Performance & concurrency analysis
 
 ## License
 

@@ -148,6 +148,9 @@ List<MatchInfo> getMatchInfoByIds(List<Long> matchIds);
 - `/docs/frontend/` - 프론트엔드
   - `screens.md` - 화면 목록
   - `convention.md` - UI 컨벤션 (모바일 고정 레이아웃 등)
+- `/docs/article/` - 아티클 제출용 문서
+  - `optimization-report.md` - 고도화 포인트 기술서
+  - `ai-review-log.md` - AI 코드 리뷰 로그
 
 # Documentation Writing Guidelines
 

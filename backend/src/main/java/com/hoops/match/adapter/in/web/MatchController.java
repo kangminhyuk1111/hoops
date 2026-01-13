@@ -1,5 +1,6 @@
 package com.hoops.match.adapter.in.web;
 
+import com.hoops.match.adapter.dto.CancelMatchRequest;
 import com.hoops.match.adapter.dto.CreateMatchRequest;
 import com.hoops.match.adapter.dto.MatchResponse;
 import com.hoops.match.adapter.dto.UpdateMatchRequest;
@@ -106,17 +107,19 @@ public class MatchController {
         return ResponseEntity.ok(MatchResponse.of(match));
     }
 
-    @Operation(summary = "경기 취소", description = "경기를 취소합니다. 호스트만 취소 가능합니다.")
+    @Operation(summary = "경기 취소", description = "경기를 취소합니다. 호스트만 취소 가능합니다. 취소 사유를 반드시 입력해야 합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "취소 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 (취소 사유 누락)"),
             @ApiResponse(responseCode = "403", description = "권한 없음 (호스트가 아님)"),
             @ApiResponse(responseCode = "404", description = "경기를 찾을 수 없음")
     })
     @DeleteMapping("/{matchId}")
     public ResponseEntity<Void> cancelMatch(
             @Parameter(description = "경기 ID") @PathVariable("matchId") Long matchId,
-            @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
-        CancelMatchCommand command = new CancelMatchCommand(matchId, userId);
+            @Parameter(hidden = true) @AuthenticationPrincipal Long userId,
+            @RequestBody CancelMatchRequest request) {
+        CancelMatchCommand command = request.toCommand(matchId, userId);
         cancelMatchUseCase.cancelMatch(command);
         return ResponseEntity.noContent().build();
     }

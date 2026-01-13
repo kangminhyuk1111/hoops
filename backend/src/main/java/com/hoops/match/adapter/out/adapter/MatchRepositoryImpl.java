@@ -60,4 +60,21 @@ public class MatchRepositoryImpl implements MatchRepository {
                 .map(MatchMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<Match> findActiveMatchesByHostId(Long hostId) {
+        return jpaMatchRepository.findActiveMatchesByHostId(hostId).stream()
+                .map(MatchMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Match> findAllByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        return jpaMatchRepository.findAllById(ids).stream()
+                .map(MatchMapper::toDomain)
+                .toList();
+    }
 }

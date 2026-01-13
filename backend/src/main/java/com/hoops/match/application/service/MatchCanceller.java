@@ -1,5 +1,7 @@
 package com.hoops.match.application.service;
 
+import com.hoops.match.application.exception.CancelReasonRequiredException;
+import com.hoops.match.application.exception.CancelTimeExceededException;
 import com.hoops.match.application.exception.MatchAlreadyStartedException;
 import com.hoops.match.application.exception.MatchNotFoundException;
 import com.hoops.match.application.exception.NotMatchHostException;
@@ -20,6 +22,8 @@ public class MatchCanceller implements CancelMatchUseCase {
 
     @Override
     public void cancelMatch(CancelMatchCommand command) {
+        validateReason(command);
+
         Match match = matchRepository.findById(command.matchId())
                 .orElseThrow(() -> new MatchNotFoundException(command.matchId()));
 
@@ -31,7 +35,17 @@ public class MatchCanceller implements CancelMatchUseCase {
             throw new MatchAlreadyStartedException(command.matchId());
         }
 
+        if (!match.canCancelByTime()) {
+            throw new CancelTimeExceededException(command.matchId());
+        }
+
         match.cancel();
         matchRepository.save(match);
+    }
+
+    private void validateReason(CancelMatchCommand command) {
+        if (command.reason() == null || command.reason().isBlank()) {
+            throw new CancelReasonRequiredException(command.matchId());
+        }
     }
 }

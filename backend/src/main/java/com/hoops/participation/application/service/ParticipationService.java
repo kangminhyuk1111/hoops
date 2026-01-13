@@ -5,6 +5,7 @@ import com.hoops.common.event.ParticipationCreatedEvent;
 import com.hoops.common.exception.BusinessException;
 import com.hoops.participation.application.exception.AlreadyParticipatingException;
 import com.hoops.participation.application.exception.CancellationConflictException;
+import com.hoops.participation.application.exception.CancelTimeExceededException;
 import com.hoops.participation.application.exception.HostCannotParticipateException;
 import com.hoops.participation.application.exception.InvalidMatchStatusException;
 import com.hoops.participation.application.exception.InvalidParticipationStatusException;
@@ -12,6 +13,7 @@ import com.hoops.participation.application.exception.MatchAlreadyStartedExceptio
 import com.hoops.participation.application.exception.MatchFullException;
 import com.hoops.participation.application.exception.NotHostException;
 import com.hoops.participation.application.exception.NotParticipantException;
+import com.hoops.participation.application.exception.OverlappingParticipationException;
 import com.hoops.participation.application.exception.ParticipationNotFoundException;
 import com.hoops.participation.application.port.in.ApproveParticipationCommand;
 import com.hoops.participation.application.port.in.ApproveParticipationUseCase;
@@ -97,6 +99,28 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
         if (participationRepository.existsByMatchIdAndUserId(matchInfo.matchId(), userId)) {
             throw new AlreadyParticipatingException(matchInfo.matchId(), userId);
         }
+
+        validateNoOverlappingParticipation(matchInfo, userId);
+    }
+
+    private void validateNoOverlappingParticipation(MatchInfo targetMatch, Long userId) {
+        List<Participation> userParticipations = participationRepository.findByUserIdAndNotCancelled(userId);
+
+        if (userParticipations.isEmpty()) {
+            return;
+        }
+
+        List<Long> matchIds = userParticipations.stream()
+                .map(Participation::getMatchId)
+                .toList();
+
+        List<MatchInfo> existingMatches = matchInfoProvider.getMatchInfoByIds(matchIds);
+
+        for (MatchInfo existingMatch : existingMatches) {
+            if (existingMatch.overlapsWithTime(targetMatch.getStartDateTime(), targetMatch.getEndDateTime())) {
+                throw new OverlappingParticipationException(targetMatch.matchId(), existingMatch.matchId());
+            }
+        }
     }
 
     @Override
@@ -123,6 +147,10 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
         MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
         if (matchInfo.hasStarted()) {
             throw new MatchAlreadyStartedException(command.matchId());
+        }
+
+        if (!matchInfo.canCancelByTime()) {
+            throw new CancelTimeExceededException(command.participationId());
         }
 
         boolean wasConfirmed = participation.getStatus() == ParticipationStatus.CONFIRMED;

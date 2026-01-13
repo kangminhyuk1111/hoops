@@ -36,4 +36,8 @@ public interface JpaMatchRepository extends JpaRepository<MatchEntity, Long> {
             @Param("status") MatchStatus status);
 
     List<MatchEntity> findByHostIdOrderByMatchDateDesc(Long hostId);
+
+    @Query("SELECT m FROM MatchEntity m WHERE m.hostId = :hostId " +
+            "AND m.status NOT IN ('CANCELLED', 'ENDED')")
+    List<MatchEntity> findActiveMatchesByHostId(@Param("hostId") Long hostId);
 }

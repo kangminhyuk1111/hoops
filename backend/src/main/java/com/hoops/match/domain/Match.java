@@ -15,6 +15,7 @@ import java.time.LocalTime;
 public class Match {
 
     private static final int REACTIVATE_TIME_LIMIT_HOURS = 1;
+    private static final int CANCEL_DEADLINE_HOURS = 2;
 
     private final Long id;
     private final Long version;
@@ -107,6 +108,26 @@ public class Match {
         return this.status != MatchStatus.IN_PROGRESS
                 && this.status != MatchStatus.ENDED
                 && this.status != MatchStatus.CANCELLED;
+    }
+
+    public boolean canCancelByTime() {
+        LocalDateTime matchStartDateTime = LocalDateTime.of(this.matchDate, this.startTime);
+        LocalDateTime cancelDeadline = matchStartDateTime.minusHours(CANCEL_DEADLINE_HOURS);
+        return LocalDateTime.now().isBefore(cancelDeadline);
+    }
+
+    public LocalDateTime getStartDateTime() {
+        return LocalDateTime.of(this.matchDate, this.startTime);
+    }
+
+    public LocalDateTime getEndDateTime() {
+        return LocalDateTime.of(this.matchDate, this.endTime);
+    }
+
+    public boolean overlapsWithTime(LocalDateTime otherStart, LocalDateTime otherEnd) {
+        LocalDateTime thisStart = getStartDateTime();
+        LocalDateTime thisEnd = getEndDateTime();
+        return thisStart.isBefore(otherEnd) && otherStart.isBefore(thisEnd);
     }
 
     public boolean canReactivate() {

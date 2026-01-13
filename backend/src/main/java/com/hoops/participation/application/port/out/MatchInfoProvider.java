@@ -1,5 +1,7 @@
 package com.hoops.participation.application.port.out;
 
+import java.util.List;
+
 /**
  * 경기 정보 제공 포트
  *
@@ -16,6 +18,14 @@ public interface MatchInfoProvider {
      * @throws com.hoops.participation.application.exception.ParticipationMatchNotFoundException 경기를 찾을 수 없는 경우
      */
     MatchInfo getMatchInfo(Long matchId);
+
+    /**
+     * 여러 경기 정보를 조회합니다.
+     *
+     * @param matchIds 경기 ID 목록
+     * @return 경기 정보 목록
+     */
+    List<MatchInfo> getMatchInfoByIds(List<Long> matchIds);
 
     /**
      * 경기에 참가자를 추가합니다.

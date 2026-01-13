@@ -4,6 +4,7 @@ import com.hoops.match.application.exception.MatchNotFoundException;
 import com.hoops.match.application.port.out.MatchParticipationPort;
 import com.hoops.match.application.port.out.MatchRepository;
 import com.hoops.match.domain.Match;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,16 +25,28 @@ public class MatchParticipationAdapter implements MatchParticipationPort {
     @Override
     public Optional<MatchParticipationData> findMatchForParticipation(Long matchId) {
         return matchRepository.findById(matchId)
-                .map(match -> new MatchParticipationData(
-                        match.getId(),
-                        match.getHostId(),
-                        match.getTitle(),
-                        match.getStatus().name(),
-                        match.getCurrentParticipants(),
-                        match.getMaxParticipants(),
-                        match.getMatchDate(),
-                        match.getStartTime()
-                ));
+                .map(this::toMatchParticipationData);
+    }
+
+    @Override
+    public List<MatchParticipationData> findMatchesForParticipation(List<Long> matchIds) {
+        return matchRepository.findAllByIds(matchIds).stream()
+                .map(this::toMatchParticipationData)
+                .toList();
+    }
+
+    private MatchParticipationData toMatchParticipationData(Match match) {
+        return new MatchParticipationData(
+                match.getId(),
+                match.getHostId(),
+                match.getTitle(),
+                match.getStatus().name(),
+                match.getCurrentParticipants(),
+                match.getMaxParticipants(),
+                match.getMatchDate(),
+                match.getStartTime(),
+                match.getEndTime()
+        );
     }
 
     @Override

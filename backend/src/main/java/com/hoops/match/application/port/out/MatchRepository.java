@@ -21,4 +21,8 @@ public interface MatchRepository {
     List<Match> findMatchesToEnd(LocalDate date, LocalTime time, MatchStatus status);
 
     List<Match> findByHostId(Long hostId);
+
+    List<Match> findActiveMatchesByHostId(Long hostId);
+
+    List<Match> findAllByIds(List<Long> ids);
 }

@@ -7,6 +7,8 @@ import com.hoops.participation.application.port.out.MatchInfoProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Match Context를 통한 경기 정보 제공 어댑터
  *
@@ -27,6 +29,17 @@ public class MatchInfoAdapter implements MatchInfoProvider {
         MatchParticipationPort.MatchParticipationData data = matchParticipationPort.findMatchForParticipation(matchId)
                 .orElseThrow(() -> new ParticipationMatchNotFoundException(matchId));
 
+        return toMatchInfo(data);
+    }
+
+    @Override
+    public List<MatchInfo> getMatchInfoByIds(List<Long> matchIds) {
+        return matchParticipationPort.findMatchesForParticipation(matchIds).stream()
+                .map(this::toMatchInfo)
+                .toList();
+    }
+
+    private MatchInfo toMatchInfo(MatchParticipationPort.MatchParticipationData data) {
         return new MatchInfo(
                 data.matchId(),
                 data.hostId(),
@@ -35,7 +48,8 @@ public class MatchInfoAdapter implements MatchInfoProvider {
                 data.currentParticipants(),
                 data.maxParticipants(),
                 data.matchDate(),
-                data.startTime()
+                data.startTime(),
+                data.endTime()
         );
     }
 

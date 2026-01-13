@@ -54,6 +54,16 @@ public interface TestAdapter {
     TestResponse deleteWithAuth(String path, String token);
 
     /**
+     * 인증 헤더와 요청 본문과 함께 HTTP DELETE 요청을 수행합니다.
+     *
+     * @param path 요청 경로
+     * @param body 요청 본문
+     * @param token JWT 토큰
+     * @return HTTP 응답
+     */
+    TestResponse deleteWithAuthAndBody(String path, Object body, String token);
+
+    /**
      * 인증 헤더와 함께 HTTP PUT 요청을 수행합니다.
      *
      * @param path 요청 경로

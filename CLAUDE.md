@@ -78,7 +78,10 @@ public class NotificationNotFoundException extends DomainException {
 - `/docs/convention/` - 코드 컨벤션
 - `/docs/api/` - API 명세 (번호 순서)
 - `/docs/sequence/` - 시퀀스 다이어그램
-- `/docs/spec/` - 스펙 (mvp, api, business-logic, schema)
+- `/docs/spec/` - 스펙
+  - `SPEC.md` - **기능 스펙 명세서 (핵심 비즈니스 규칙, UI/UX, Phase 구분)**
+  - `mvp-features.md` - MVP 기능 체크리스트
+  - `schema.md` - DB 스키마
 - `/docs/git/` - Git 가이드 (commit, pull-request)
 - `/docs/testing/` - 테스트 가이드
 - `/docs/troubleshooting/` - 트러블슈팅

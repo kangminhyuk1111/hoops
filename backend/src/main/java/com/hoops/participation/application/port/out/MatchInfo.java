@@ -18,8 +18,11 @@ public record MatchInfo(
         Integer currentParticipants,
         Integer maxParticipants,
         LocalDate matchDate,
-        LocalTime startTime
+        LocalTime startTime,
+        LocalTime endTime
 ) {
+    private static final int CANCEL_DEADLINE_HOURS = 2;
+
     public boolean isHost(Long userId) {
         return hostId.equals(userId);
     }
@@ -36,5 +39,24 @@ public record MatchInfo(
     public boolean hasStarted() {
         LocalDateTime matchStartDateTime = LocalDateTime.of(matchDate, startTime);
         return LocalDateTime.now().isAfter(matchStartDateTime);
+    }
+
+    public LocalDateTime getStartDateTime() {
+        return LocalDateTime.of(matchDate, startTime);
+    }
+
+    public LocalDateTime getEndDateTime() {
+        return LocalDateTime.of(matchDate, endTime);
+    }
+
+    public boolean canCancelByTime() {
+        LocalDateTime cancelDeadline = getStartDateTime().minusHours(CANCEL_DEADLINE_HOURS);
+        return LocalDateTime.now().isBefore(cancelDeadline);
+    }
+
+    public boolean overlapsWithTime(LocalDateTime otherStart, LocalDateTime otherEnd) {
+        LocalDateTime thisStart = getStartDateTime();
+        LocalDateTime thisEnd = getEndDateTime();
+        return thisStart.isBefore(otherEnd) && otherStart.isBefore(thisEnd);
     }
 }

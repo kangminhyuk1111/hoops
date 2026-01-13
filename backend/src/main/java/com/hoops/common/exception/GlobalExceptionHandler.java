@@ -125,8 +125,9 @@ public class GlobalExceptionHandler {
             return HttpStatus.NOT_FOUND;
         }
 
-        // DUPLICATE, CONFLICT, ALREADY 계열 → 409 Conflict
-        if (errorCode.contains("DUPLICATE") || errorCode.contains("CONFLICT") || errorCode.contains("ALREADY")) {
+        // DUPLICATE, CONFLICT, ALREADY, OVERLAPPING 계열 → 409 Conflict
+        if (errorCode.contains("DUPLICATE") || errorCode.contains("CONFLICT")
+                || errorCode.contains("ALREADY") || errorCode.contains("OVERLAPPING")) {
             return HttpStatus.CONFLICT;
         }
 

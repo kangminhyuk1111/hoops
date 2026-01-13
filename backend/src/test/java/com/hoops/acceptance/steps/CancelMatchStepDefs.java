@@ -14,6 +14,7 @@ import io.cucumber.java.ko.만일;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -122,8 +123,10 @@ public class CancelMatchStepDefs {
         Match match = sharedContext.getTestMatches().get(0);
         String accessToken = sharedContext.getAccessToken();
 
-        TestResponse response = testAdapter.deleteWithAuth(
+        Map<String, Object> requestBody = Map.of("reason", "테스트 취소 사유입니다");
+        TestResponse response = testAdapter.deleteWithAuthAndBody(
                 "/api/matches/" + match.getId(),
+                requestBody,
                 accessToken
         );
         sharedContext.setLastResponse(response);
@@ -134,8 +137,10 @@ public class CancelMatchStepDefs {
         String accessToken = sharedContext.getAccessToken();
         Long nonExistentMatchId = 999999L;
 
-        TestResponse response = testAdapter.deleteWithAuth(
+        Map<String, Object> requestBody = Map.of("reason", "테스트 취소 사유입니다");
+        TestResponse response = testAdapter.deleteWithAuthAndBody(
                 "/api/matches/" + nonExistentMatchId,
+                requestBody,
                 accessToken
         );
         sharedContext.setLastResponse(response);

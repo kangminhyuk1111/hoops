@@ -3,6 +3,7 @@ package com.hoops.match.application.port.out;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,6 +21,14 @@ public interface MatchParticipationPort {
      * @return 경기 참가 정보
      */
     Optional<MatchParticipationData> findMatchForParticipation(Long matchId);
+
+    /**
+     * 여러 경기 정보를 조회합니다.
+     *
+     * @param matchIds 경기 ID 목록
+     * @return 경기 참가 정보 목록
+     */
+    List<MatchParticipationData> findMatchesForParticipation(List<Long> matchIds);
 
     /**
      * 경기에 참가자를 추가합니다.
@@ -46,7 +55,8 @@ public interface MatchParticipationPort {
             Integer currentParticipants,
             Integer maxParticipants,
             LocalDate matchDate,
-            LocalTime startTime
+            LocalTime startTime,
+            LocalTime endTime
     ) {
         public boolean isHost(Long userId) {
             return hostId.equals(userId);
@@ -64,6 +74,14 @@ public interface MatchParticipationPort {
         public boolean hasStarted() {
             LocalDateTime matchStartDateTime = LocalDateTime.of(matchDate, startTime);
             return LocalDateTime.now().isAfter(matchStartDateTime);
+        }
+
+        public LocalDateTime getStartDateTime() {
+            return LocalDateTime.of(matchDate, startTime);
+        }
+
+        public LocalDateTime getEndDateTime() {
+            return LocalDateTime.of(matchDate, endTime);
         }
     }
 }

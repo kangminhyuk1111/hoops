@@ -82,7 +82,20 @@ public class NotificationNotFoundException extends DomainException {
 - `/docs/git/` - Git 가이드 (commit, pull-request)
 - `/docs/testing/` - 테스트 가이드
 - `/docs/troubleshooting/` - 트러블슈팅
-- `/docs/frontend/` - 프론트엔드 (화면 목록, 라우팅)
+- `/docs/frontend/` - 프론트엔드
+  - `screens.md` - 화면 목록
+  - `convention.md` - UI 컨벤션 (모바일 고정 레이아웃 등)
+
+# Documentation Writing Guidelines
+
+## CLAUDE.md의 역할
+- **진입점(Entry Point)**: 프로젝트의 공통 규칙과 필수 사항만 명시
+- **링킹 허브**: 상세 문서(`/docs/**/*.md`)로 연결하는 네비게이션 역할
+- **간결함 유지**: 코드 블럭, 시각적 다이어그램 최소화 → 상세 내용은 하위 문서에 위임
+
+## 하위 문서 (`/docs/`)
+- 상세 설명, 코드 예시, 다이어그램 허용
+- 특정 주제별로 깊이 있는 내용 작성 가능
 
 # Git Rules
 

@@ -10,6 +10,7 @@ import com.hoops.auth.application.port.in.KakaoLoginUseCase;
 import com.hoops.auth.application.port.in.RefreshTokenUseCase;
 import com.hoops.auth.application.port.in.SignupCommand;
 import com.hoops.auth.application.port.in.SignupUseCase;
+import com.hoops.auth.application.port.in.TestLoginUseCase;
 import com.hoops.auth.application.port.out.JwtTokenProvider;
 import com.hoops.auth.application.port.out.KakaoOAuthClient;
 import com.hoops.auth.domain.AuthAccount;
@@ -32,7 +33,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AuthService implements KakaoLoginUseCase, SignupUseCase, RefreshTokenUseCase {
+public class AuthService implements KakaoLoginUseCase, SignupUseCase, RefreshTokenUseCase, TestLoginUseCase {
 
     private static final int MIN_NICKNAME_LENGTH = 2;
     private static final int MAX_NICKNAME_LENGTH = 20;
@@ -169,5 +170,66 @@ public class AuthService implements KakaoLoginUseCase, SignupUseCase, RefreshTok
                 newRefreshToken
         );
         authAccountRepository.save(updatedAccount);
+    }
+
+    @Override
+    public AuthResult testLogin() {
+        String testEmail = "test@hoops.kr";
+        String testNickname = "TestUser";
+        String testProviderId = "test_user_001";
+
+        Optional<AuthAccount> existingAccount = authAccountRepository
+                .findByProviderAndProviderId(AuthProvider.KAKAO, testProviderId);
+
+        User user;
+        AuthAccount authAccount;
+
+        if (existingAccount.isPresent()) {
+            authAccount = existingAccount.get();
+            user = userRepository.findById(authAccount.getUserId())
+                    .orElseThrow(() -> new IllegalStateException("AuthAccount exists but User not found"));
+        } else {
+            user = new User(
+                    null,
+                    testEmail,
+                    testNickname,
+                    null,
+                    BigDecimal.valueOf(4.5),
+                    10
+            );
+            User savedUser = userRepository.save(user);
+            user = savedUser;
+
+            authAccount = new AuthAccount(
+                    null,
+                    savedUser.getId(),
+                    AuthProvider.KAKAO,
+                    testProviderId,
+                    null,
+                    null
+            );
+            authAccount = authAccountRepository.save(authAccount);
+        }
+
+        TokenResult tokens = jwtTokenProvider.createTokens(user.getId());
+
+        AuthAccount updatedAccount = new AuthAccount(
+                authAccount.getId(),
+                authAccount.getUserId(),
+                authAccount.getProvider(),
+                authAccount.getProviderId(),
+                authAccount.getPasswordHash(),
+                tokens.refreshToken()
+        );
+        authAccountRepository.save(updatedAccount);
+
+        UserInfo userInfo = new UserInfo(
+                user.getId(),
+                user.getNickname(),
+                user.getEmail(),
+                user.getProfileImage()
+        );
+
+        return new AuthResult(tokens.accessToken(), tokens.refreshToken(), userInfo);
     }
 }

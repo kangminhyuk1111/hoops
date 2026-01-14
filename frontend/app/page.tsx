@@ -37,23 +37,47 @@ export default function Home() {
   }, [locationStatus, location, distance]);
 
   const requestLocation = () => {
+    // Geolocation API 지원 여부 확인
     if (!navigator.geolocation) {
+      console.warn('Geolocation API가 지원되지 않는 브라우저입니다.');
+      setLocationStatus('default');
+      return;
+    }
+
+    // HTTPS 확인 (localhost 제외)
+    if (typeof window !== 'undefined' &&
+        window.location.protocol !== 'https:' &&
+        window.location.hostname !== 'localhost' &&
+        window.location.hostname !== '127.0.0.1') {
+      console.warn('Geolocation API는 HTTPS에서만 동작합니다.');
       setLocationStatus('default');
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        console.log('위치 정보 획득 성공:', position.coords);
         setLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         });
         setLocationStatus('granted');
       },
-      () => {
+      (error) => {
+        // 에러 코드별 상세 로깅
+        const errorMessages: Record<number, string> = {
+          1: '사용자가 위치 정보 제공을 거부했습니다.',
+          2: '위치 정보를 사용할 수 없습니다.',
+          3: '위치 정보 요청 시간이 초과되었습니다.',
+        };
+        console.warn('위치 정보 획득 실패:', errorMessages[error.code] || error.message);
         setLocationStatus('denied');
       },
-      { enableHighAccuracy: true, timeout: 5000 }
+      {
+        enableHighAccuracy: false,  // true는 GPS 사용, false는 WiFi/IP 기반 (더 빠름)
+        timeout: 10000,             // 10초로 증가
+        maximumAge: 300000          // 5분간 캐시된 위치 허용
+      }
     );
   };
 
@@ -119,12 +143,25 @@ export default function Home() {
       {/* Filter Bar */}
       <div className="px-4 py-2 bg-white border-b border-gray-100 z-10 flex-shrink-0">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">
-            {locationStatus === 'granted' && '현재 위치 기준'}
-            {locationStatus === 'denied' && '기본 위치 사용'}
-            {locationStatus === 'default' && '서울'}
-            {locationStatus === 'loading' && '위치 확인 중...'}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-500">
+              {locationStatus === 'granted' && '📍 현재 위치 기준'}
+              {locationStatus === 'denied' && '📍 기본 위치 (서울)'}
+              {locationStatus === 'default' && '📍 서울'}
+              {locationStatus === 'loading' && '📍 위치 확인 중...'}
+            </span>
+            {(locationStatus === 'denied' || locationStatus === 'default') && (
+              <button
+                onClick={() => {
+                  setLocationStatus('loading');
+                  requestLocation();
+                }}
+                className="text-xs text-orange-500 font-medium"
+              >
+                위치 재요청
+              </button>
+            )}
+          </div>
           <div className="flex gap-1.5">
             {DISTANCE_OPTIONS.map((d) => (
               <button

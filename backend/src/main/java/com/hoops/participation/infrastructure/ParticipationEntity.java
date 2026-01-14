@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,9 @@ public class ParticipationEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Version
+    private Long version;
 
     @Column(name = "match_id", nullable = false)
     private Long matchId;
@@ -57,6 +61,16 @@ public class ParticipationEntity extends BaseTimeEntity {
     public ParticipationEntity(Long id, Long matchId, Long userId, ParticipationStatus status,
             LocalDateTime joinedAt) {
         this.id = id;
+        this.matchId = matchId;
+        this.userId = userId;
+        this.status = status;
+        this.joinedAt = joinedAt;
+    }
+
+    public ParticipationEntity(Long id, Long version, Long matchId, Long userId, ParticipationStatus status,
+            LocalDateTime joinedAt) {
+        this.id = id;
+        this.version = version;
         this.matchId = matchId;
         this.userId = userId;
         this.status = status;

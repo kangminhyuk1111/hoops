@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class Participation {
 
     private final Long id;
+    private final Long version;
     private final Long matchId;
     private final Long userId;
     private final ParticipationStatus status;
@@ -20,6 +21,7 @@ public class Participation {
     public Participation cancel() {
         return Participation.builder()
                 .id(this.id)
+                .version(this.version)
                 .matchId(this.matchId)
                 .userId(this.userId)
                 .status(ParticipationStatus.CANCELLED)
@@ -30,6 +32,7 @@ public class Participation {
     public Participation approve() {
         return Participation.builder()
                 .id(this.id)
+                .version(this.version)
                 .matchId(this.matchId)
                 .userId(this.userId)
                 .status(ParticipationStatus.CONFIRMED)
@@ -40,6 +43,7 @@ public class Participation {
     public Participation reject() {
         return Participation.builder()
                 .id(this.id)
+                .version(this.version)
                 .matchId(this.matchId)
                 .userId(this.userId)
                 .status(ParticipationStatus.REJECTED)

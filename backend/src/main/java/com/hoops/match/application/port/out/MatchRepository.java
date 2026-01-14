@@ -14,6 +14,12 @@ public interface MatchRepository {
 
     Optional<Match> findById(Long id);
 
+    /**
+     * 비관적 락을 사용하여 경기 조회
+     * 참가자 수 변경 시 Race Condition 방지용
+     */
+    Optional<Match> findByIdWithLock(Long id);
+
     List<Match> findAllByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance);
 
     List<Match> findMatchesToStart(LocalDate date, LocalTime time, List<MatchStatus> statuses);

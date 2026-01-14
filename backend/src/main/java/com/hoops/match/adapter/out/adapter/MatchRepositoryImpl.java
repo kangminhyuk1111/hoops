@@ -34,6 +34,11 @@ public class MatchRepositoryImpl implements MatchRepository {
     }
 
     @Override
+    public Optional<Match> findByIdWithLock(Long id) {
+        return jpaMatchRepository.findByIdWithLock(id).map(MatchMapper::toDomain);
+    }
+
+    @Override
     public List<Match> findAllByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance) {
         return jpaMatchRepository.findAllByLocation(latitude, longitude, distance).stream()
                 .map(MatchMapper::toDomain)

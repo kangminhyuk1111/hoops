@@ -3,15 +3,26 @@ package com.hoops.match.adapter.out.jpa;
 import com.hoops.match.adapter.out.MatchEntity;
 import com.hoops.match.domain.MatchStatus;
 
+import jakarta.persistence.LockModeType;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface JpaMatchRepository extends JpaRepository<MatchEntity, Long> {
+
+    /**
+     * 비관적 락을 사용하여 경기 조회
+     * 참가자 수 변경 시 Race Condition 방지용
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT m FROM MatchEntity m WHERE m.id = :matchId")
+    Optional<MatchEntity> findByIdWithLock(@Param("matchId") Long matchId);
 
     @Query(value = "SELECT * FROM matches m WHERE " +
             "ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(m.longitude, m.latitude)) <= :distance " +

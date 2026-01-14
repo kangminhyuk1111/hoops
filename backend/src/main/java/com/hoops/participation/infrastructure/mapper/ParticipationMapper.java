@@ -11,6 +11,7 @@ public class ParticipationMapper {
         }
         return new Participation(
                 entity.getId(),
+                entity.getVersion(),
                 entity.getMatchId(),
                 entity.getUserId(),
                 entity.getStatus(),
@@ -24,6 +25,7 @@ public class ParticipationMapper {
         if (domain.getId() != null) {
             return new ParticipationEntity(
                     domain.getId(),
+                    domain.getVersion(),
                     domain.getMatchId(),
                     domain.getUserId(),
                     domain.getStatus(),

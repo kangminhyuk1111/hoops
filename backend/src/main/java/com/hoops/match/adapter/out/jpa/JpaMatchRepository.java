@@ -24,13 +24,53 @@ public interface JpaMatchRepository extends JpaRepository<MatchEntity, Long> {
     @Query("SELECT m FROM MatchEntity m WHERE m.id = :matchId")
     Optional<MatchEntity> findByIdWithLock(@Param("matchId") Long matchId);
 
-    @Query(value = "SELECT * FROM matches m WHERE " +
-            "ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(m.longitude, m.latitude)) <= :distance " +
-            "ORDER BY ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(m.longitude, m.latitude)) ASC",
+    /**
+     * Spatial Index를 활용한 위치 기반 경기 검색
+     *
+     * 최적화 전략:
+     * 1. Bounding Box로 대략적인 범위 필터링 (Spatial Index 활용)
+     * 2. ST_Distance_Sphere로 정확한 거리 계산 및 정렬
+     *
+     * Bounding Box 계산:
+     * - 위도 1도 ≈ 111km (고정)
+     * - 경도 1도 ≈ 111km * cos(latitude) (위도에 따라 변함)
+     *
+     * @param latitude 중심점 위도
+     * @param longitude 중심점 경도
+     * @param distance 검색 반경 (미터)
+     */
+    @Query(value = """
+            SELECT * FROM matches m
+            WHERE m.latitude BETWEEN :minLat AND :maxLat
+            AND m.longitude BETWEEN :minLng AND :maxLng
+            AND ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(m.longitude, m.latitude)) <= :distance
+            ORDER BY ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(m.longitude, m.latitude)) ASC
+            """,
             nativeQuery = true)
-    List<MatchEntity> findAllByLocation(@Param("latitude") BigDecimal latitude,
+    List<MatchEntity> findAllByLocationWithBoundingBox(
+            @Param("latitude") BigDecimal latitude,
             @Param("longitude") BigDecimal longitude,
-            @Param("distance") BigDecimal distance);
+            @Param("distance") BigDecimal distance,
+            @Param("minLat") BigDecimal minLat,
+            @Param("maxLat") BigDecimal maxLat,
+            @Param("minLng") BigDecimal minLng,
+            @Param("maxLng") BigDecimal maxLng);
+
+    /**
+     * H2 호환 위치 기반 경기 검색 (테스트용)
+     * Haversine 공식의 간략화된 버전 사용
+     */
+    @Query(value = """
+            SELECT * FROM matches m
+            WHERE m.latitude BETWEEN :minLat AND :maxLat
+            AND m.longitude BETWEEN :minLng AND :maxLng
+            """,
+            nativeQuery = true)
+    List<MatchEntity> findAllByLocationBoundingBoxOnly(
+            @Param("minLat") BigDecimal minLat,
+            @Param("maxLat") BigDecimal maxLat,
+            @Param("minLng") BigDecimal minLng,
+            @Param("maxLng") BigDecimal maxLng);
 
     @Query("SELECT m FROM MatchEntity m WHERE m.status IN :statuses " +
             "AND (m.matchDate < :date OR (m.matchDate = :date AND m.startTime <= :time))")

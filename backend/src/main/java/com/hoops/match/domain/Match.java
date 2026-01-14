@@ -95,6 +95,10 @@ public class Match {
                 && this.currentParticipants < this.maxParticipants;
     }
 
+    public boolean isFull() {
+        return this.currentParticipants >= this.maxParticipants;
+    }
+
     public boolean isHost(Long userId) {
         return this.hostId.equals(userId);
     }

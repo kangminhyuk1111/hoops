@@ -156,6 +156,7 @@ public class ParticipationApprovalStepDefs {
 
         Participation participation = new Participation(
                 null,
+                null,  // version - 새 엔티티는 null
                 match.getId(),
                 participantUser.getId(),
                 ParticipationStatus.PENDING,

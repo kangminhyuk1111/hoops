@@ -14,6 +14,7 @@ import com.hoops.participation.application.exception.MatchFullException;
 import com.hoops.participation.application.exception.NotHostException;
 import com.hoops.participation.application.exception.NotParticipantException;
 import com.hoops.participation.application.exception.OverlappingParticipationException;
+import com.hoops.participation.application.exception.ParticipationConflictException;
 import com.hoops.participation.application.exception.ParticipationNotFoundException;
 import com.hoops.participation.application.port.in.ApproveParticipationCommand;
 import com.hoops.participation.application.port.in.ApproveParticipationUseCase;
@@ -66,6 +67,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
 
         Participation participation = new Participation(
                 null,
+                null,  // version - 새 엔티티는 null
                 command.matchId(),
                 command.userId(),
                 ParticipationStatus.PENDING,
@@ -205,6 +207,12 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
     }
 
     @Override
+    @Retryable(
+            retryFor = OptimisticLockingFailureException.class,
+            noRetryFor = BusinessException.class,
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 100, multiplier = 2)
+    )
     public Participation approveParticipation(ApproveParticipationCommand command) {
         MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
 
@@ -228,6 +236,12 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
     }
 
     @Override
+    @Retryable(
+            retryFor = OptimisticLockingFailureException.class,
+            noRetryFor = BusinessException.class,
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 100, multiplier = 2)
+    )
     public Participation rejectParticipation(RejectParticipationCommand command) {
         MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
 
@@ -244,6 +258,34 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
 
         Participation rejectedParticipation = participation.reject();
         return participationRepository.save(rejectedParticipation);
+    }
+
+    @Recover
+    public Participation recoverFromApproveConflict(
+            OptimisticLockingFailureException e,
+            ApproveParticipationCommand command) {
+        throw new ParticipationConflictException(command.matchId());
+    }
+
+    @Recover
+    public Participation recoverFromApproveBusinessException(
+            BusinessException e,
+            ApproveParticipationCommand command) {
+        throw e;
+    }
+
+    @Recover
+    public Participation recoverFromRejectConflict(
+            OptimisticLockingFailureException e,
+            RejectParticipationCommand command) {
+        throw new ParticipationConflictException(command.matchId());
+    }
+
+    @Recover
+    public Participation recoverFromRejectBusinessException(
+            BusinessException e,
+            RejectParticipationCommand command) {
+        throw e;
     }
 
     private void validateHostPermission(MatchInfo matchInfo, Long userId) {

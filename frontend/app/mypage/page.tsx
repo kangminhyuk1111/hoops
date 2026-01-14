@@ -89,17 +89,17 @@ export default function MyPage() {
   const getStatusBadge = (status: ParticipationStatus | string | null) => {
     switch (status) {
       case 'PENDING':
-        return <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full">Pending</span>;
+        return <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full">대기중</span>;
       case 'CONFIRMED':
-        return <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">Confirmed</span>;
+        return <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">확정</span>;
       case 'REJECTED':
-        return <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full">Rejected</span>;
+        return <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full">거절됨</span>;
       case 'CANCELLED':
-        return <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full">Cancelled</span>;
+        return <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full">취소됨</span>;
       case 'IN_PROGRESS':
-        return <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full">In Progress</span>;
+        return <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full">진행중</span>;
       case 'ENDED':
-        return <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full">Ended</span>;
+        return <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full">종료</span>;
       default:
         return null;
     }
@@ -135,12 +135,12 @@ export default function MyPage() {
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-20">
         <div className="px-4 py-3 flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-gray-800">My Page</h1>
+          <h1 className="text-lg font-semibold text-gray-800">마이페이지</h1>
           <button
             onClick={handleLogout}
             className="text-sm text-gray-500"
           >
-            Logout
+            로그아웃
           </button>
         </div>
       </header>
@@ -169,13 +169,13 @@ export default function MyPage() {
                 <p className="text-lg font-semibold text-orange-500">
                   {profile?.rating?.toFixed(1) || '-'}
                 </p>
-                <p className="text-xs text-gray-500">Rating</p>
+                <p className="text-xs text-gray-500">평점</p>
               </div>
               <div className="text-center">
                 <p className="text-lg font-semibold text-orange-500">
                   {profile?.totalMatches || 0}
                 </p>
-                <p className="text-xs text-gray-500">Matches</p>
+                <p className="text-xs text-gray-500">경기</p>
               </div>
             </div>
           </div>
@@ -193,7 +193,7 @@ export default function MyPage() {
                 : 'border-transparent text-gray-500'
             }`}
           >
-            Participated ({participatedMatches.length})
+            참가한 경기 ({participatedMatches.length})
           </button>
           <button
             onClick={() => setActiveTab('hosted')}
@@ -203,7 +203,7 @@ export default function MyPage() {
                 : 'border-transparent text-gray-500'
             }`}
           >
-            Hosted ({hostedMatches.length})
+            개설한 경기 ({hostedMatches.length})
           </button>
         </div>
       </div>
@@ -237,7 +237,7 @@ export default function MyPage() {
                     <span className="truncate">{match.address}</span>
                   </div>
                   <div className="flex justify-between items-center mt-2">
-                    <span className="text-xs text-gray-400">Host: {match.hostNickname}</span>
+                    <span className="text-xs text-gray-400">호스트: {match.hostNickname}</span>
                     <span className="text-sm font-medium text-orange-500">
                       {match.currentParticipants}/{match.maxParticipants}
                     </span>
@@ -247,12 +247,12 @@ export default function MyPage() {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-              <p>No participated matches</p>
+              <p>참가한 경기가 없습니다</p>
               <button
                 onClick={() => router.push('/')}
                 className="mt-2 text-orange-500 text-sm font-medium"
               >
-                Find matches
+                경기 찾기
               </button>
             </div>
           )
@@ -291,12 +291,12 @@ export default function MyPage() {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-            <p>No hosted matches</p>
+            <p>개설한 경기가 없습니다</p>
             <button
               onClick={() => router.push('/matches/new')}
               className="mt-2 text-orange-500 text-sm font-medium"
             >
-              Create a match
+              경기 만들기
             </button>
           </div>
         )}
@@ -310,18 +310,18 @@ export default function MyPage() {
             className="flex flex-col items-center py-1 px-3 text-gray-400"
           >
             <HomeIcon />
-            <span className="text-xs mt-1">Home</span>
+            <span className="text-xs mt-1">홈</span>
           </button>
           <button
             onClick={() => router.push('/matches/new')}
             className="flex flex-col items-center py-1 px-3 text-gray-400"
           >
             <PlusIcon />
-            <span className="text-xs mt-1">Create</span>
+            <span className="text-xs mt-1">경기 생성</span>
           </button>
           <button className="flex flex-col items-center py-1 px-3 text-orange-500">
             <UserIcon />
-            <span className="text-xs mt-1">My</span>
+            <span className="text-xs mt-1">마이</span>
           </button>
         </div>
       </nav>

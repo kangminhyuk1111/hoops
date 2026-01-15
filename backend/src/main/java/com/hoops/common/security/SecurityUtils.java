@@ -1,5 +1,6 @@
 package com.hoops.common.security;
 
+import com.hoops.common.exception.UnauthenticatedUserException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -15,13 +16,13 @@ public final class SecurityUtils {
      * 현재 인증된 사용자의 ID를 반환합니다.
      *
      * @return 사용자 ID
-     * @throws IllegalStateException 인증되지 않은 경우
+     * @throws UnauthenticatedUserException 인증되지 않은 경우
      */
     public static Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new IllegalStateException("인증되지 않은 사용자입니다");
+            throw new UnauthenticatedUserException("인증되지 않은 사용자입니다");
         }
 
         Object principal = authentication.getPrincipal();
@@ -30,7 +31,7 @@ public final class SecurityUtils {
             return (Long) principal;
         }
 
-        throw new IllegalStateException("사용자 ID를 가져올 수 없습니다");
+        throw new UnauthenticatedUserException("사용자 ID를 가져올 수 없습니다");
     }
 
     /**

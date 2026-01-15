@@ -1,6 +1,6 @@
 package com.hoops.user.infrastructure;
 
-import com.hoops.common.domain.BaseTimeEntity;
+import com.hoops.common.infrastructure.persistence.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

@@ -1,7 +1,7 @@
 package com.hoops.auth.infrastructure;
 
 import com.hoops.auth.domain.AuthProvider;
-import com.hoops.common.domain.BaseTimeEntity;
+import com.hoops.common.infrastructure.persistence.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

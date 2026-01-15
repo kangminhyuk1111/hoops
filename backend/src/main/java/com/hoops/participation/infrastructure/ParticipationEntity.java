@@ -1,6 +1,6 @@
 package com.hoops.participation.infrastructure;
 
-import com.hoops.common.domain.BaseTimeEntity;
+import com.hoops.common.infrastructure.persistence.BaseTimeEntity;
 import com.hoops.participation.domain.ParticipationStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

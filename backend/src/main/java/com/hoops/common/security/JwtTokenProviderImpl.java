@@ -2,6 +2,7 @@ package com.hoops.common.security;
 
 import com.hoops.auth.application.dto.TokenResult;
 import com.hoops.auth.application.port.out.JwtTokenProvider;
+import com.hoops.common.exception.InvalidTokenClaimException;
 import com.hoops.user.application.exception.InvalidRefreshTokenException;
 import com.hoops.user.application.exception.InvalidTempTokenException;
 import io.jsonwebtoken.Claims;
@@ -72,7 +73,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
             return (Long) userId;
         }
 
-        throw new IllegalArgumentException("Invalid userId in token");
+        throw new InvalidTokenClaimException("토큰에서 유효한 userId를 찾을 수 없습니다");
     }
 
     @Override
@@ -169,6 +170,6 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
             return (Long) userId;
         }
 
-        throw new IllegalArgumentException("Invalid userId in claims");
+        throw new InvalidTokenClaimException("클레임에서 유효한 userId를 찾을 수 없습니다");
     }
 }

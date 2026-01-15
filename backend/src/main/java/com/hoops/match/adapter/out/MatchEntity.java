@@ -1,6 +1,6 @@
 package com.hoops.match.adapter.out;
 
-import com.hoops.common.domain.BaseTimeEntity;
+import com.hoops.common.infrastructure.persistence.BaseTimeEntity;
 import com.hoops.match.domain.MatchStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

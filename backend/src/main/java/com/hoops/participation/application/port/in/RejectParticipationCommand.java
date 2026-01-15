@@ -6,6 +6,7 @@ package com.hoops.participation.application.port.in;
 public record RejectParticipationCommand(
         Long matchId,
         Long participationId,
-        Long hostUserId
+        Long hostUserId,
+        String reason
 ) {
 }

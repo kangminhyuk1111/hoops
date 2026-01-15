@@ -27,10 +27,17 @@ export default function Home() {
   const [distance, setDistance] = useState(10);
 
   useEffect(() => {
+    console.log('[Home] 컴포넌트 마운트, 위치 요청 시작');
     requestLocation();
   }, []);
 
   useEffect(() => {
+    console.log('[Home] 위치 상태 변경:', {
+      locationStatus,
+      location,
+      distance,
+      willShowRedMarker: locationStatus === 'granted'
+    });
     if (locationStatus !== 'loading') {
       fetchMatches();
     }
@@ -187,7 +194,7 @@ export default function Home() {
           <KakaoMap
             matches={matches}
             center={location}
-            currentLocation={locationStatus === 'granted' ? location : undefined}
+            currentLocation={locationStatus !== 'loading' ? location : undefined}
             onMarkerClick={handleMatchClick}
           />
           {/* Match Count Badge */}

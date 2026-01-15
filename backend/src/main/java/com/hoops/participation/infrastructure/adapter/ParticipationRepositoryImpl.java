@@ -12,6 +12,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.hoops.participation.domain.ParticipationStatus.CONFIRMED;
+import static com.hoops.participation.domain.ParticipationStatus.PENDING;
+
 @Repository
 @RequiredArgsConstructor
 public class ParticipationRepositoryImpl implements ParticipationRepository {
@@ -36,9 +39,24 @@ public class ParticipationRepositoryImpl implements ParticipationRepository {
     }
 
     @Override
+    public boolean existsActiveParticipation(Long matchId, Long userId) {
+        return jpaParticipationRepository.existsByMatchIdAndUserIdAndStatusIn(
+                matchId, userId, List.of(PENDING, CONFIRMED));
+    }
+
+    @Override
     public List<Participation> findByUserIdAndNotCancelled(Long userId) {
         return jpaParticipationRepository
                 .findByUserIdAndStatusNot(userId, ParticipationStatus.CANCELLED)
+                .stream()
+                .map(ParticipationMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Participation> findActiveParticipationsByUserId(Long userId) {
+        return jpaParticipationRepository
+                .findByUserIdAndStatusIn(userId, List.of(PENDING, CONFIRMED))
                 .stream()
                 .map(ParticipationMapper::toDomain)
                 .toList();
@@ -51,5 +69,12 @@ public class ParticipationRepositoryImpl implements ParticipationRepository {
                 .stream()
                 .map(ParticipationMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Optional<Participation> findCancelledParticipation(Long matchId, Long userId) {
+        return jpaParticipationRepository
+                .findByMatchIdAndUserIdAndStatus(matchId, userId, ParticipationStatus.CANCELLED)
+                .map(ParticipationMapper::toDomain);
     }
 }

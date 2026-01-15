@@ -5,6 +5,7 @@ import com.hoops.match.application.port.out.MatchRepository;
 import com.hoops.match.domain.Match;
 import com.hoops.match.domain.MatchStatus;
 import com.hoops.user.domain.User;
+import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;
 import io.cucumber.java.ko.만일;
 
@@ -12,11 +13,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class MatchStatusSchedulerStepDefs {
 
     private final MatchRepository matchRepository;
     private final UpdateMatchStatusUseCase updateMatchStatusUseCase;
     private final SharedTestContext sharedContext;
+
+    private int totalStatusChangeCount = 0;
 
     public MatchStatusSchedulerStepDefs(
             MatchRepository matchRepository,
@@ -49,8 +54,23 @@ public class MatchStatusSchedulerStepDefs {
 
     @만일("경기 상태 업데이트가 실행된다")
     public void 경기_상태_업데이트가_실행된다() {
-        updateMatchStatusUseCase.startMatches();
-        updateMatchStatusUseCase.endMatches();
+        int startedCount = updateMatchStatusUseCase.startMatches();
+        int endedCount = updateMatchStatusUseCase.endMatches();
+        totalStatusChangeCount += startedCount + endedCount;
+    }
+
+    @만일("경기 상태 업데이트가 다시 실행된다")
+    public void 경기_상태_업데이트가_다시_실행된다() {
+        int startedCount = updateMatchStatusUseCase.startMatches();
+        int endedCount = updateMatchStatusUseCase.endMatches();
+        totalStatusChangeCount += startedCount + endedCount;
+    }
+
+    @그리고("경기 상태 변경 횟수가 {int}회 이다")
+    public void 경기_상태_변경_횟수가_N회_이다(int expectedCount) {
+        assertThat(totalStatusChangeCount)
+                .as("멱등성 검증: 상태 변경은 최초 1회만 발생해야 함")
+                .isEqualTo(expectedCount);
     }
 
     // "해당 경기의 상태가 {word} 이다" step은 CancelMatchStepDefs에 정의되어 있음
@@ -58,6 +78,7 @@ public class MatchStatusSchedulerStepDefs {
     private void createMatchWithStatus(MatchStatus status, boolean started, boolean ended) {
         User testUser = sharedContext.getTestUser();
         sharedContext.clearTestMatches();
+        totalStatusChangeCount = 0;  // 시나리오 시작 시 카운트 초기화
 
         LocalDate matchDate;
         LocalTime startTime;

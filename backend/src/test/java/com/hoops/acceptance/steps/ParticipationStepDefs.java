@@ -61,6 +61,12 @@ public class ParticipationStepDefs {
         testParticipation = participationRepository.save(participation);
     }
 
+    @그리고("해당 참가를 취소했다")
+    public void 해당_참가를_취소했다() {
+        Participation cancelledParticipation = testParticipation.cancel();
+        testParticipation = participationRepository.save(cancelledParticipation);
+    }
+
     @먼저("정원이 찬 경기가 있다")
     public void 정원이_찬_경기가_있다() {
         User otherUser = createOtherUser("fullmatch");

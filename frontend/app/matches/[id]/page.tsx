@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import toast from 'react-hot-toast';
 import { useAuthStore } from '@/lib/store/auth';
 import api from '@/lib/api';
 import { Match, ParticipantDetail, ParticipationStatus } from '@/types';
@@ -25,6 +26,12 @@ export default function MatchDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejectingParticipantId, setRejectingParticipantId] = useState<number | null>(null);
 
   // Check if current user is participant
   const myParticipation = participants.find(p => p.userId === user?.id);
@@ -32,6 +39,7 @@ export default function MatchDetailPage() {
   const isParticipant = !!myParticipation;
   const isPending = myParticipation?.status === 'PENDING';
   const isConfirmed = myParticipation?.status === 'CONFIRMED';
+  const isRejected = myParticipation?.status === 'REJECTED';
 
   useEffect(() => {
     fetchMatchDetail();
@@ -104,18 +112,23 @@ export default function MatchDetailPage() {
     }
   };
 
-  const handleJoin = async () => {
+  const handleJoinClick = () => {
     if (!isAuthenticated) {
       router.push('/login');
       return;
     }
+    setShowJoinModal(true);
+  };
 
+  const handleJoinConfirm = async () => {
     setActionLoading(true);
     try {
       await api.post(`/api/matches/${matchId}/participations`);
+      toast.success('참가 신청이 완료되었습니다');
+      setShowJoinModal(false);
       fetchParticipants();
     } catch (err: any) {
-      alert(err.response?.data?.message || '참가 신청에 실패했습니다');
+      toast.error(err.response?.data?.message || '참가 신청에 실패했습니다');
     } finally {
       setActionLoading(false);
     }
@@ -127,9 +140,10 @@ export default function MatchDetailPage() {
     setActionLoading(true);
     try {
       await api.delete(`/api/matches/${matchId}/participations/${myParticipation.id}`);
+      toast.success('참가가 취소되었습니다');
       fetchParticipants();
     } catch (err: any) {
-      alert(err.response?.data?.message || '참가 취소에 실패했습니다');
+      toast.error(err.response?.data?.message || '참가 취소에 실패했습니다');
     } finally {
       setActionLoading(false);
     }
@@ -139,35 +153,60 @@ export default function MatchDetailPage() {
     setActionLoading(true);
     try {
       await api.put(`/api/matches/${matchId}/participations/${participationId}/approve`);
+      toast.success('참가를 승인했습니다');
       fetchParticipants();
     } catch (err: any) {
-      alert(err.response?.data?.message || '승인에 실패했습니다');
+      toast.error(err.response?.data?.message || '승인에 실패했습니다');
     } finally {
       setActionLoading(false);
     }
   };
 
-  const handleReject = async (participationId: number) => {
+  const handleRejectClick = (participationId: number) => {
+    setRejectingParticipantId(participationId);
+    setShowRejectModal(true);
+  };
+
+  const handleRejectConfirm = async () => {
+    if (!rejectingParticipantId || !rejectReason.trim()) {
+      toast.error('거절 사유를 입력해주세요');
+      return;
+    }
+
     setActionLoading(true);
     try {
-      await api.put(`/api/matches/${matchId}/participations/${participationId}/reject`);
+      await api.put(`/api/matches/${matchId}/participations/${rejectingParticipantId}/reject`, {
+        reason: rejectReason
+      });
+      toast.success('참가를 거절했습니다');
+      setShowRejectModal(false);
+      setRejectReason('');
+      setRejectingParticipantId(null);
       fetchParticipants();
     } catch (err: any) {
-      alert(err.response?.data?.message || '거절에 실패했습니다');
+      toast.error(err.response?.data?.message || '거절에 실패했습니다');
     } finally {
       setActionLoading(false);
     }
   };
 
   const handleCancelMatch = async () => {
-    if (!confirm('경기를 취소하시겠습니까?')) return;
+    if (!cancelReason.trim()) {
+      toast.error('취소 사유를 입력해주세요');
+      return;
+    }
 
     setActionLoading(true);
     try {
-      await api.delete(`/api/matches/${matchId}`);
+      await api.delete(`/api/matches/${matchId}`, {
+        data: { reason: cancelReason }
+      });
+      toast.success('경기가 취소되었습니다');
+      setShowCancelModal(false);
+      setCancelReason('');
       router.push('/');
     } catch (err: any) {
-      alert(err.response?.data?.message || '경기 취소에 실패했습니다');
+      toast.error(err.response?.data?.message || '경기 취소에 실패했습니다');
     } finally {
       setActionLoading(false);
     }
@@ -179,10 +218,11 @@ export default function MatchDetailPage() {
     setActionLoading(true);
     try {
       await api.post(`/api/matches/${matchId}/reactivate`);
+      toast.success('경기가 복구되었습니다');
       fetchMatchDetail();
       fetchParticipants();
     } catch (err: any) {
-      alert(err.response?.data?.message || '경기 복구에 실패했습니다');
+      toast.error(err.response?.data?.message || '경기 복구에 실패했습니다');
     } finally {
       setActionLoading(false);
     }
@@ -388,7 +428,7 @@ export default function MatchDetailPage() {
                       승인
                     </button>
                     <button
-                      onClick={() => handleReject(participant.id)}
+                      onClick={() => handleRejectClick(participant.id)}
                       disabled={actionLoading}
                       className="px-3 py-1.5 bg-red-500 text-white text-xs font-medium rounded-lg disabled:opacity-50"
                     >
@@ -419,7 +459,7 @@ export default function MatchDetailPage() {
               </div>
             ) : match.status !== 'ENDED' && match.status !== 'IN_PROGRESS' ? (
               <button
-                onClick={handleCancelMatch}
+                onClick={() => setShowCancelModal(true)}
                 disabled={actionLoading}
                 className="w-full py-3 border border-red-500 text-red-500 rounded-lg font-medium disabled:opacity-50"
               >
@@ -435,7 +475,7 @@ export default function MatchDetailPage() {
         <div className="bg-white border-t p-4">
           {!isParticipant ? (
             <button
-              onClick={handleJoin}
+              onClick={handleJoinClick}
               disabled={actionLoading || match.currentParticipants >= match.maxParticipants}
               className="w-full py-3.5 bg-orange-500 text-white rounded-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
@@ -463,7 +503,117 @@ export default function MatchDetailPage() {
                 참가 취소
               </button>
             </div>
+          ) : isRejected ? (
+            <div className="py-2">
+              <p className="text-center text-red-500 text-sm font-medium">참가 신청이 거절되었습니다</p>
+            </div>
           ) : null}
+        </div>
+      )}
+
+      {/* Cancel Match Modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-sm p-5">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">경기 취소</h3>
+            <p className="text-sm text-gray-500 mb-4">취소 사유를 입력해주세요.</p>
+            <textarea
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              placeholder="예: 개인 사정으로 인해 취소합니다"
+              className="w-full p-3 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-orange-500"
+              rows={3}
+            />
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => {
+                  setShowCancelModal(false);
+                  setCancelReason('');
+                }}
+                className="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleCancelMatch}
+                disabled={actionLoading || !cancelReason.trim()}
+                className="flex-1 py-2.5 bg-red-500 text-white rounded-lg font-medium disabled:opacity-50"
+              >
+                {actionLoading ? '처리 중...' : '경기 취소'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Join Confirmation Modal */}
+      {showJoinModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-sm p-5">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">참가 신청</h3>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+              <p className="text-sm text-yellow-800 font-medium mb-1">주의사항</p>
+              <ul className="text-xs text-yellow-700 space-y-1">
+                <li>- 호스트가 거절하면 재신청이 불가능합니다.</li>
+                <li>- 신청 취소 후에도 1회만 재신청할 수 있습니다.</li>
+                <li>- 신중하게 결정해주세요.</li>
+              </ul>
+            </div>
+            <p className="text-sm text-gray-600 mb-4">
+              <span className="font-medium">{match?.title}</span> 경기에 참가 신청하시겠습니까?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowJoinModal(false)}
+                className="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleJoinConfirm}
+                disabled={actionLoading}
+                className="flex-1 py-2.5 bg-orange-500 text-white rounded-lg font-medium disabled:opacity-50"
+              >
+                {actionLoading ? '처리 중...' : '신청하기'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reject Confirmation Modal */}
+      {showRejectModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-sm p-5">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">참가 거절</h3>
+            <p className="text-sm text-gray-500 mb-4">거절 사유를 입력해주세요.</p>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="예: 정원이 초과되었습니다"
+              className="w-full p-3 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-500"
+              rows={3}
+            />
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => {
+                  setShowRejectModal(false);
+                  setRejectReason('');
+                  setRejectingParticipantId(null);
+                }}
+                className="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleRejectConfirm}
+                disabled={actionLoading || !rejectReason.trim()}
+                className="flex-1 py-2.5 bg-red-500 text-white rounded-lg font-medium disabled:opacity-50"
+              >
+                {actionLoading ? '처리 중...' : '거절하기'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

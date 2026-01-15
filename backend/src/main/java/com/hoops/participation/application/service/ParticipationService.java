@@ -65,16 +65,21 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
 
         validateParticipation(matchInfo, command.userId());
 
-        Participation participation = new Participation(
-                null,
-                null,  // version - 새 엔티티는 null
-                command.matchId(),
-                command.userId(),
-                ParticipationStatus.PENDING,
-                LocalDateTime.now()
-        );
-
-        Participation savedParticipation = participationRepository.save(participation);
+        // 취소된 참가 기록이 있으면 재활성화
+        Participation savedParticipation = participationRepository
+                .findCancelledParticipation(command.matchId(), command.userId())
+                .map(cancelled -> participationRepository.save(cancelled.reactivate()))
+                .orElseGet(() -> {
+                    Participation newParticipation = new Participation(
+                            null,
+                            null,
+                            command.matchId(),
+                            command.userId(),
+                            ParticipationStatus.PENDING,
+                            LocalDateTime.now()
+                    );
+                    return participationRepository.save(newParticipation);
+                });
 
         eventPublisher.publish(new ParticipationCreatedEvent(
                 savedParticipation.getId(),
@@ -98,7 +103,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
             throw new InvalidMatchStatusException(matchInfo.matchId(), matchInfo.status());
         }
 
-        if (participationRepository.existsByMatchIdAndUserId(matchInfo.matchId(), userId)) {
+        if (participationRepository.existsActiveParticipation(matchInfo.matchId(), userId)) {
             throw new AlreadyParticipatingException(matchInfo.matchId(), userId);
         }
 
@@ -106,7 +111,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
     }
 
     private void validateNoOverlappingParticipation(MatchInfo targetMatch, Long userId) {
-        List<Participation> userParticipations = participationRepository.findByUserIdAndNotCancelled(userId);
+        List<Participation> userParticipations = participationRepository.findActiveParticipationsByUserId(userId);
 
         if (userParticipations.isEmpty()) {
             return;

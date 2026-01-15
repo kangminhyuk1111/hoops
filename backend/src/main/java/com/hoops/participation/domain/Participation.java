@@ -29,6 +29,17 @@ public class Participation {
                 .build();
     }
 
+    public Participation reactivate() {
+        return Participation.builder()
+                .id(this.id)
+                .version(this.version)
+                .matchId(this.matchId)
+                .userId(this.userId)
+                .status(ParticipationStatus.PENDING)
+                .joinedAt(LocalDateTime.now())
+                .build();
+    }
+
     public Participation approve() {
         return Participation.builder()
                 .id(this.id)

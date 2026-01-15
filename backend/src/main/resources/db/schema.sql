@@ -143,3 +143,14 @@ CREATE TABLE IF NOT EXISTS notifications (
     INDEX idx_notification_user (user_id),
     INDEX idx_notification_match (related_match_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='사용자 알림';
+
+-- =====================================================
+-- 7. ShedLock (스케줄러 중복 실행 방지)
+-- =====================================================
+
+CREATE TABLE IF NOT EXISTS shedlock (
+    name VARCHAR(64) NOT NULL PRIMARY KEY COMMENT '락 이름 (스케줄러 메서드명)',
+    lock_until TIMESTAMP(3) NOT NULL COMMENT '락 만료 시간',
+    locked_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '락 획득 시간',
+    locked_by VARCHAR(255) NOT NULL COMMENT '락 획득한 인스턴스 식별자'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='스케줄러 락 테이블';

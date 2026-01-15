@@ -169,7 +169,23 @@ List<MatchInfo> getMatchInfoByIds(List<Long> matchIds);
 - **PR 생성 전**: `/docs/git/pull-request.md` 확인 후 템플릿에 맞게 작성
 - **커밋 제외 파일**: 로컬 설정, 민감 정보 등 커밋하면 안 되는 파일은 `.gitignore`에 추가
 
-# Cucumber Test Rules
+# Test Rules
+
+## 테스트 DB 환경 (필수)
+- **H2 사용 금지**: 테스트 환경에서 H2 인메모리 DB를 사용하지 않는다.
+- **MySQL Testcontainers 필수**: 모든 테스트는 MySQL Testcontainers를 사용하여 운영 환경과 동일한 DB에서 실행한다.
+- **이유**: H2와 MySQL 간의 SQL 문법 차이, 함수 동작 차이로 인해 테스트 통과 후 운영 환경에서 실패하는 문제를 방지한다.
+
+## 테스트 유형별 가이드
+- **인수 테스트 (Acceptance Test)**: Cucumber + MySQL Testcontainers
+  - E2E 시나리오 검증
+  - `backend/src/test/java/com/hoops/acceptance/` 패키지
+- **통합 테스트 (Integration Test)**: JUnit 5 + MySQL Testcontainers
+  - 인프라 컴포넌트 검증 (ShedLock, Repository 등)
+  - `backend/src/test/java/com/hoops/integration/` 패키지
+  - 인수 테스트로 검증이 어려운 기술적 동작 테스트에 사용
+
+## Cucumber Test Rules
 
 - **스텝 작성 전 검증 (필수)**: 새로운 스텝을 작성하기 전, 반드시 기존 StepDefs 파일들을 검색하여 동일한 스텝이 존재하는지 확인한다. 중복 스텝은 `DuplicateStepDefinitionException`을 발생시킨다.
   ```bash

@@ -21,6 +21,9 @@ public class DatabaseCleanupHook {
 
     @Before(order = 0)
     public void cleanupDatabase() {
+        // ShedLock 테이블 생성 (존재하지 않는 경우)
+        createShedLockTableIfNotExists();
+
         // 외래키 제약조건 비활성화
         jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS = 0");
 
@@ -31,8 +34,20 @@ public class DatabaseCleanupHook {
         jdbcTemplate.execute("TRUNCATE TABLE locations");
         jdbcTemplate.execute("TRUNCATE TABLE auth_accounts");
         jdbcTemplate.execute("TRUNCATE TABLE users");
+        jdbcTemplate.execute("TRUNCATE TABLE shedlock");
 
         // 외래키 제약조건 활성화
         jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS = 1");
+    }
+
+    private void createShedLockTableIfNotExists() {
+        jdbcTemplate.execute("""
+            CREATE TABLE IF NOT EXISTS shedlock (
+                name VARCHAR(64) NOT NULL PRIMARY KEY,
+                lock_until TIMESTAMP(3) NOT NULL,
+                locked_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+                locked_by VARCHAR(255) NOT NULL
+            )
+            """);
     }
 }

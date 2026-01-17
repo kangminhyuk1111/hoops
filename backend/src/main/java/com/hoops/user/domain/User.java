@@ -18,6 +18,16 @@ public class User {
     private final BigDecimal rating;
     private final Integer totalMatches;
 
+    public static User createNew(String email, String nickname, String profileImage) {
+        return User.builder()
+                .email(email)
+                .nickname(nickname)
+                .profileImage(profileImage)
+                .rating(BigDecimal.ZERO)
+                .totalMatches(0)
+                .build();
+    }
+
     public User updateProfile(String nickname, String profileImage) {
         return new User(
                 this.id,

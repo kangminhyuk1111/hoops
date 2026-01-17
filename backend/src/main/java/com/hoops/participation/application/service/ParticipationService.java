@@ -1,11 +1,8 @@
 package com.hoops.participation.application.service;
 
-import com.hoops.common.event.ParticipationCancelledEvent;
-import com.hoops.common.event.ParticipationCreatedEvent;
 import com.hoops.common.exception.BusinessException;
 import com.hoops.participation.application.exception.CancellationConflictException;
 import com.hoops.participation.application.exception.ParticipationConflictException;
-import com.hoops.participation.application.exception.ParticipationNotFoundException;
 import com.hoops.participation.application.port.in.ApproveParticipationCommand;
 import com.hoops.participation.application.port.in.ApproveParticipationUseCase;
 import com.hoops.participation.application.port.in.CancelParticipationCommand;
@@ -18,9 +15,7 @@ import com.hoops.participation.application.port.in.RejectParticipationCommand;
 import com.hoops.participation.application.port.in.RejectParticipationUseCase;
 import com.hoops.participation.application.port.out.MatchInfo;
 import com.hoops.participation.application.port.out.MatchInfoProvider;
-import com.hoops.participation.application.port.out.ParticipationEventPublisher;
 import com.hoops.participation.domain.Participation;
-import com.hoops.participation.domain.ParticipationStatus;
 import com.hoops.participation.domain.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -40,8 +35,10 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
 
     private final ParticipationRepository participationRepository;
     private final MatchInfoProvider matchInfoProvider;
-    private final ParticipationEventPublisher eventPublisher;
     private final ParticipationValidator validator;
+    private final ParticipationFinder finder;
+    private final ParticipationCreator creator;
+    private final ParticipationCanceller canceller;
 
     @Override
     @Retryable(
@@ -53,11 +50,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
     public Participation participateInMatch(ParticipateInMatchCommand command) {
         MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
         validator.validateForParticipation(matchInfo, command.userId());
-
-        Participation participation = findOrCreateParticipation(command);
-        publishParticipationCreatedEvent(participation, matchInfo);
-
-        return participation;
+        return creator.create(command, matchInfo);
     }
 
     @Override
@@ -68,24 +61,23 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
             backoff = @Backoff(delay = 100, multiplier = 2)
     )
     public void cancelParticipation(CancelParticipationCommand command) {
-        Participation participation = findParticipation(command.participationId());
+        Participation participation = finder.findById(command.participationId());
         MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
         validator.validateForCancellation(participation, matchInfo, command.userId());
-
-        processCancellation(participation, matchInfo, command.matchId());
+        canceller.cancel(participation, matchInfo, command.matchId());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Participation> getMyParticipations(Long userId) {
-        return participationRepository.findByUserIdAndNotCancelled(userId);
+        return finder.findByUserIdAndNotCancelled(userId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Participation> getMatchParticipants(Long matchId) {
         matchInfoProvider.getMatchInfo(matchId);
-        return participationRepository.findByMatchIdAndNotCancelled(matchId);
+        return finder.findByMatchIdAndNotCancelled(matchId);
     }
 
     @Override
@@ -97,14 +89,13 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
     )
     public Participation approveParticipation(ApproveParticipationCommand command) {
         MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
-        Participation participation = findParticipation(command.participationId());
+        Participation participation = finder.findById(command.participationId());
 
         validator.validateHostPermission(matchInfo, command.hostUserId());
         validator.validateCanBeApprovedOrRejected(participation);
 
         Participation approved = participationRepository.save(participation.approve());
         matchInfoProvider.addParticipant(command.matchId());
-
         return approved;
     }
 
@@ -117,7 +108,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
     )
     public Participation rejectParticipation(RejectParticipationCommand command) {
         MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
-        Participation participation = findParticipation(command.participationId());
+        Participation participation = finder.findById(command.participationId());
 
         validator.validateHostPermission(matchInfo, command.hostUserId());
         validator.validateCanBeApprovedOrRejected(participation);
@@ -125,43 +116,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
         return participationRepository.save(participation.reject());
     }
 
-    private Participation findParticipation(Long participationId) {
-        return participationRepository.findById(participationId)
-                .orElseThrow(() -> new ParticipationNotFoundException(participationId));
-    }
-
-    private Participation findOrCreateParticipation(ParticipateInMatchCommand command) {
-        return participationRepository
-                .findCancelledParticipation(command.matchId(), command.userId())
-                .map(cancelled -> participationRepository.save(cancelled.reactivate()))
-                .orElseGet(() -> participationRepository.save(Participation.createPending(command.matchId(), command.userId())));
-    }
-
-    private void publishParticipationCreatedEvent(Participation participation, MatchInfo matchInfo) {
-        eventPublisher.publish(new ParticipationCreatedEvent(
-                participation.getId(),
-                participation.getMatchId(),
-                participation.getUserId(),
-                matchInfo.title()
-        ));
-    }
-
-    private void processCancellation(Participation participation, MatchInfo matchInfo, Long matchId) {
-        boolean wasConfirmed = participation.getStatus() == ParticipationStatus.CONFIRMED;
-        participationRepository.save(participation.cancel());
-
-        if (wasConfirmed) {
-            matchInfoProvider.removeParticipant(matchId);
-        }
-
-        eventPublisher.publish(new ParticipationCancelledEvent(
-                participation.getId(),
-                participation.getMatchId(),
-                participation.getUserId(),
-                matchInfo.title()
-        ));
-    }
-
+    // Spring Retry @Recover methods
     @Recover
     public void recoverFromCancellationConflict(
             OptimisticLockingFailureException e,

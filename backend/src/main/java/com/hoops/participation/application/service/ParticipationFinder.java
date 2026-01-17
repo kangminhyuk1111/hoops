@@ -1,0 +1,29 @@
+package com.hoops.participation.application.service;
+
+import com.hoops.participation.application.exception.ParticipationNotFoundException;
+import com.hoops.participation.domain.Participation;
+import com.hoops.participation.domain.repository.ParticipationRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+@Component
+@RequiredArgsConstructor
+public class ParticipationFinder {
+
+    private final ParticipationRepository participationRepository;
+
+    public Participation findById(Long participationId) {
+        return participationRepository.findById(participationId)
+                .orElseThrow(() -> new ParticipationNotFoundException(participationId));
+    }
+
+    public List<Participation> findByUserIdAndNotCancelled(Long userId) {
+        return participationRepository.findByUserIdAndNotCancelled(userId);
+    }
+
+    public List<Participation> findByMatchIdAndNotCancelled(Long matchId) {
+        return participationRepository.findByMatchIdAndNotCancelled(matchId);
+    }
+}

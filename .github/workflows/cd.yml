@@ -39,27 +39,19 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: DOCKER_USERNAME,DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,KAKAO_CLIENT_ID,KAKAO_CLIENT_SECRET,KAKAO_REDIRECT_URI
           script: |
-            # Pull latest image
-            docker pull ${{ secrets.DOCKER_USERNAME }}/hoops-backend:latest
-
-            # Stop and remove existing container
+            docker pull $DOCKER_USERNAME/hoops-backend:latest
             docker stop hoops-backend || true
             docker rm hoops-backend || true
-
-            # Run new container
-            docker run -d \
-              --name hoops-backend \
-              -p 8080:8080 \
-              -e SPRING_PROFILES_ACTIVE=prod \
-              -e SPRING_DATASOURCE_URL=${{ secrets.DB_URL }} \
-              -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
-              -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-              -e KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }} \
-              -e KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }} \
-              -e KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }} \
-              ${{ secrets.DOCKER_USERNAME }}/hoops-backend:latest
-
-            # Cleanup old images
+            docker run -d --name hoops-backend --restart always -p 8080:8080 -e SPRING_PROFILES_ACTIVE=prod -e SPRING_DATASOURCE_URL="$DB_URL" -e SPRING_DATASOURCE_USERNAME="$DB_USERNAME" -e SPRING_DATASOURCE_PASSWORD="$DB_PASSWORD" -e JWT_SECRET="$JWT_SECRET" -e KAKAO_CLIENT_ID="$KAKAO_CLIENT_ID" -e KAKAO_CLIENT_SECRET="$KAKAO_CLIENT_SECRET" -e KAKAO_REDIRECT_URI="$KAKAO_REDIRECT_URI" $DOCKER_USERNAME/hoops-backend:latest
             docker image prune -f
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_REDIRECT_URI: ${{ secrets.KAKAO_REDIRECT_URI }}

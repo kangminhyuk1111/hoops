@@ -63,13 +63,6 @@ public class MatchRepositoryImpl implements MatchRepository {
                         centerLat, centerLng,
                         match.getLatitude().doubleValue(),
                         match.getLongitude().doubleValue()) <= distanceMeters)
-                .sorted((m1, m2) -> {
-                    double d1 = calculateDistanceInMeters(centerLat, centerLng,
-                            m1.getLatitude().doubleValue(), m1.getLongitude().doubleValue());
-                    double d2 = calculateDistanceInMeters(centerLat, centerLng,
-                            m2.getLatitude().doubleValue(), m2.getLongitude().doubleValue());
-                    return Double.compare(d1, d2);
-                })
                 .toList();
     }
 

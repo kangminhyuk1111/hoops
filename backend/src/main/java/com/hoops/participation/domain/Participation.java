@@ -29,6 +29,17 @@ public class Participation {
                 .build();
     }
 
+    public Participation reactivate() {
+        return Participation.builder()
+                .id(this.id)
+                .version(this.version)
+                .matchId(this.matchId)
+                .userId(this.userId)
+                .status(ParticipationStatus.PENDING)
+                .joinedAt(LocalDateTime.now())
+                .build();
+    }
+
     public Participation approve() {
         return Participation.builder()
                 .id(this.id)
@@ -61,5 +72,16 @@ public class Participation {
 
     public boolean isOwner(Long userId) {
         return this.userId.equals(userId);
+    }
+
+    public static Participation createPending(Long matchId, Long userId) {
+        return Participation.builder()
+                .id(null)
+                .version(null)
+                .matchId(matchId)
+                .userId(userId)
+                .status(ParticipationStatus.PENDING)
+                .joinedAt(LocalDateTime.now())
+                .build();
     }
 }

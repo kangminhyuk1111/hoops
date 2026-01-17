@@ -3,17 +3,7 @@ package com.hoops.participation.application.service;
 import com.hoops.common.event.ParticipationCancelledEvent;
 import com.hoops.common.event.ParticipationCreatedEvent;
 import com.hoops.common.exception.BusinessException;
-import com.hoops.participation.application.exception.AlreadyParticipatingException;
 import com.hoops.participation.application.exception.CancellationConflictException;
-import com.hoops.participation.application.exception.CancelTimeExceededException;
-import com.hoops.participation.application.exception.HostCannotParticipateException;
-import com.hoops.participation.application.exception.InvalidMatchStatusException;
-import com.hoops.participation.application.exception.InvalidParticipationStatusException;
-import com.hoops.participation.application.exception.MatchAlreadyStartedException;
-import com.hoops.participation.application.exception.MatchFullException;
-import com.hoops.participation.application.exception.NotHostException;
-import com.hoops.participation.application.exception.NotParticipantException;
-import com.hoops.participation.application.exception.OverlappingParticipationException;
 import com.hoops.participation.application.exception.ParticipationConflictException;
 import com.hoops.participation.application.exception.ParticipationNotFoundException;
 import com.hoops.participation.application.port.in.ApproveParticipationCommand;
@@ -40,7 +30,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -52,6 +41,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
     private final ParticipationRepository participationRepository;
     private final MatchInfoProvider matchInfoProvider;
     private final ParticipationEventPublisher eventPublisher;
+    private final ParticipationValidator validator;
 
     @Override
     @Retryable(
@@ -62,67 +52,12 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
     )
     public Participation participateInMatch(ParticipateInMatchCommand command) {
         MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
+        validator.validateForParticipation(matchInfo, command.userId());
 
-        validateParticipation(matchInfo, command.userId());
+        Participation participation = findOrCreateParticipation(command);
+        publishParticipationCreatedEvent(participation, matchInfo);
 
-        Participation participation = new Participation(
-                null,
-                null,  // version - 새 엔티티는 null
-                command.matchId(),
-                command.userId(),
-                ParticipationStatus.PENDING,
-                LocalDateTime.now()
-        );
-
-        Participation savedParticipation = participationRepository.save(participation);
-
-        eventPublisher.publish(new ParticipationCreatedEvent(
-                savedParticipation.getId(),
-                savedParticipation.getMatchId(),
-                savedParticipation.getUserId(),
-                matchInfo.title()
-        ));
-
-        return savedParticipation;
-    }
-
-    private void validateParticipation(MatchInfo matchInfo, Long userId) {
-        if (matchInfo.isHost(userId)) {
-            throw new HostCannotParticipateException(matchInfo.matchId(), userId);
-        }
-
-        if (!matchInfo.canParticipate()) {
-            if (matchInfo.isFull()) {
-                throw new MatchFullException(matchInfo.matchId());
-            }
-            throw new InvalidMatchStatusException(matchInfo.matchId(), matchInfo.status());
-        }
-
-        if (participationRepository.existsByMatchIdAndUserId(matchInfo.matchId(), userId)) {
-            throw new AlreadyParticipatingException(matchInfo.matchId(), userId);
-        }
-
-        validateNoOverlappingParticipation(matchInfo, userId);
-    }
-
-    private void validateNoOverlappingParticipation(MatchInfo targetMatch, Long userId) {
-        List<Participation> userParticipations = participationRepository.findByUserIdAndNotCancelled(userId);
-
-        if (userParticipations.isEmpty()) {
-            return;
-        }
-
-        List<Long> matchIds = userParticipations.stream()
-                .map(Participation::getMatchId)
-                .toList();
-
-        List<MatchInfo> existingMatches = matchInfoProvider.getMatchInfoByIds(matchIds);
-
-        for (MatchInfo existingMatch : existingMatches) {
-            if (existingMatch.overlapsWithTime(targetMatch.getStartDateTime(), targetMatch.getEndDateTime())) {
-                throw new OverlappingParticipationException(targetMatch.matchId(), existingMatch.matchId());
-            }
-        }
+        return participation;
     }
 
     @Override
@@ -133,35 +68,90 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
             backoff = @Backoff(delay = 100, multiplier = 2)
     )
     public void cancelParticipation(CancelParticipationCommand command) {
-        Participation participation = participationRepository.findById(command.participationId())
-                .orElseThrow(() -> new ParticipationNotFoundException(command.participationId()));
-
-        if (!participation.isOwner(command.userId())) {
-            throw new NotParticipantException(command.participationId(), command.userId());
-        }
-
-        if (!participation.canCancel()) {
-            throw new InvalidParticipationStatusException(
-                    command.participationId(),
-                    participation.getStatus().name());
-        }
-
+        Participation participation = findParticipation(command.participationId());
         MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
-        if (matchInfo.hasStarted()) {
-            throw new MatchAlreadyStartedException(command.matchId());
-        }
+        validator.validateForCancellation(participation, matchInfo, command.userId());
 
-        if (!matchInfo.canCancelByTime()) {
-            throw new CancelTimeExceededException(command.participationId());
-        }
+        processCancellation(participation, matchInfo, command.matchId());
+    }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Participation> getMyParticipations(Long userId) {
+        return participationRepository.findByUserIdAndNotCancelled(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Participation> getMatchParticipants(Long matchId) {
+        matchInfoProvider.getMatchInfo(matchId);
+        return participationRepository.findByMatchIdAndNotCancelled(matchId);
+    }
+
+    @Override
+    @Retryable(
+            retryFor = OptimisticLockingFailureException.class,
+            noRetryFor = BusinessException.class,
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 100, multiplier = 2)
+    )
+    public Participation approveParticipation(ApproveParticipationCommand command) {
+        MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
+        Participation participation = findParticipation(command.participationId());
+
+        validator.validateHostPermission(matchInfo, command.hostUserId());
+        validator.validateCanBeApprovedOrRejected(participation);
+
+        Participation approved = participationRepository.save(participation.approve());
+        matchInfoProvider.addParticipant(command.matchId());
+
+        return approved;
+    }
+
+    @Override
+    @Retryable(
+            retryFor = OptimisticLockingFailureException.class,
+            noRetryFor = BusinessException.class,
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 100, multiplier = 2)
+    )
+    public Participation rejectParticipation(RejectParticipationCommand command) {
+        MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
+        Participation participation = findParticipation(command.participationId());
+
+        validator.validateHostPermission(matchInfo, command.hostUserId());
+        validator.validateCanBeApprovedOrRejected(participation);
+
+        return participationRepository.save(participation.reject());
+    }
+
+    private Participation findParticipation(Long participationId) {
+        return participationRepository.findById(participationId)
+                .orElseThrow(() -> new ParticipationNotFoundException(participationId));
+    }
+
+    private Participation findOrCreateParticipation(ParticipateInMatchCommand command) {
+        return participationRepository
+                .findCancelledParticipation(command.matchId(), command.userId())
+                .map(cancelled -> participationRepository.save(cancelled.reactivate()))
+                .orElseGet(() -> participationRepository.save(Participation.createPending(command.matchId(), command.userId())));
+    }
+
+    private void publishParticipationCreatedEvent(Participation participation, MatchInfo matchInfo) {
+        eventPublisher.publish(new ParticipationCreatedEvent(
+                participation.getId(),
+                participation.getMatchId(),
+                participation.getUserId(),
+                matchInfo.title()
+        ));
+    }
+
+    private void processCancellation(Participation participation, MatchInfo matchInfo, Long matchId) {
         boolean wasConfirmed = participation.getStatus() == ParticipationStatus.CONFIRMED;
-
-        Participation cancelledParticipation = participation.cancel();
-        participationRepository.save(cancelledParticipation);
+        participationRepository.save(participation.cancel());
 
         if (wasConfirmed) {
-            matchInfoProvider.removeParticipant(command.matchId());
+            matchInfoProvider.removeParticipant(matchId);
         }
 
         eventPublisher.publish(new ParticipationCancelledEvent(
@@ -193,73 +183,6 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
         throw e;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<Participation> getMyParticipations(Long userId) {
-        return participationRepository.findByUserIdAndNotCancelled(userId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Participation> getMatchParticipants(Long matchId) {
-        matchInfoProvider.getMatchInfo(matchId);
-        return participationRepository.findByMatchIdAndNotCancelled(matchId);
-    }
-
-    @Override
-    @Retryable(
-            retryFor = OptimisticLockingFailureException.class,
-            noRetryFor = BusinessException.class,
-            maxAttempts = 3,
-            backoff = @Backoff(delay = 100, multiplier = 2)
-    )
-    public Participation approveParticipation(ApproveParticipationCommand command) {
-        MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
-
-        validateHostPermission(matchInfo, command.hostUserId());
-
-        Participation participation = participationRepository.findById(command.participationId())
-                .orElseThrow(() -> new ParticipationNotFoundException(command.participationId()));
-
-        if (!participation.canBeApprovedOrRejected()) {
-            throw new InvalidParticipationStatusException(
-                    command.participationId(),
-                    participation.getStatus().name());
-        }
-
-        Participation approvedParticipation = participation.approve();
-        Participation savedParticipation = participationRepository.save(approvedParticipation);
-
-        matchInfoProvider.addParticipant(command.matchId());
-
-        return savedParticipation;
-    }
-
-    @Override
-    @Retryable(
-            retryFor = OptimisticLockingFailureException.class,
-            noRetryFor = BusinessException.class,
-            maxAttempts = 3,
-            backoff = @Backoff(delay = 100, multiplier = 2)
-    )
-    public Participation rejectParticipation(RejectParticipationCommand command) {
-        MatchInfo matchInfo = matchInfoProvider.getMatchInfo(command.matchId());
-
-        validateHostPermission(matchInfo, command.hostUserId());
-
-        Participation participation = participationRepository.findById(command.participationId())
-                .orElseThrow(() -> new ParticipationNotFoundException(command.participationId()));
-
-        if (!participation.canBeApprovedOrRejected()) {
-            throw new InvalidParticipationStatusException(
-                    command.participationId(),
-                    participation.getStatus().name());
-        }
-
-        Participation rejectedParticipation = participation.reject();
-        return participationRepository.save(rejectedParticipation);
-    }
-
     @Recover
     public Participation recoverFromApproveConflict(
             OptimisticLockingFailureException e,
@@ -286,11 +209,5 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
             BusinessException e,
             RejectParticipationCommand command) {
         throw e;
-    }
-
-    private void validateHostPermission(MatchInfo matchInfo, Long userId) {
-        if (!matchInfo.isHost(userId)) {
-            throw new NotHostException(matchInfo.matchId(), userId);
-        }
     }
 }

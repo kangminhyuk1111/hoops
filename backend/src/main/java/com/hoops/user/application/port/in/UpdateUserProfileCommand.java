@@ -1,5 +1,7 @@
 package com.hoops.user.application.port.in;
 
+import com.hoops.common.exception.InvalidCommandException;
+
 /**
  * 사용자 프로필 수정 커맨드
  */
@@ -11,10 +13,10 @@ public record UpdateUserProfileCommand(
 ) {
     public UpdateUserProfileCommand {
         if (userId == null) {
-            throw new IllegalArgumentException("userId는 필수입니다");
+            throw new InvalidCommandException("userId", "필수 값입니다");
         }
         if (requesterId == null) {
-            throw new IllegalArgumentException("requesterId는 필수입니다");
+            throw new InvalidCommandException("requesterId", "필수 값입니다");
         }
     }
 }

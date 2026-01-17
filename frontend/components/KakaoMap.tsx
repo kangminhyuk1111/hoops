@@ -127,6 +127,12 @@ export default function KakaoMap({ matches, center, currentLocation, onMarkerCli
 
   // 현재 위치 마커 (빨간색)
   useEffect(() => {
+    console.log('[KakaoMap] 현재 위치 마커 업데이트:', {
+      hasMap: !!map,
+      isLoaded,
+      currentLocation,
+      willCreateMarker: !!(map && isLoaded && currentLocation)
+    });
     if (!map || !isLoaded || !currentLocation) return;
 
     // 기존 현재 위치 마커 제거

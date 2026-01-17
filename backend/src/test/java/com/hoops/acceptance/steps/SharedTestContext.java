@@ -1,6 +1,7 @@
 package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestResponse;
+import com.hoops.location.domain.Location;
 import com.hoops.match.domain.Match;
 import com.hoops.user.domain.User;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,7 @@ public class SharedTestContext {
     private Long participationId;
     private String userAccessToken;
     private String hostAccessToken;
+    private Location testLocation;
 
     public TestResponse getLastResponse() {
         return lastResponse;
@@ -129,5 +131,13 @@ public class SharedTestContext {
 
     public void setHostAccessToken(String hostAccessToken) {
         this.hostAccessToken = hostAccessToken;
+    }
+
+    public Location getTestLocation() {
+        return testLocation;
+    }
+
+    public void setTestLocation(Location testLocation) {
+        this.testLocation = testLocation;
     }
 }

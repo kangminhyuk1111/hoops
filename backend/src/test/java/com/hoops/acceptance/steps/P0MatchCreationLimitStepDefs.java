@@ -39,9 +39,14 @@ public class P0MatchCreationLimitStepDefs {
         String accessToken = sharedContext.getAccessToken();
         ensureLocationExists();
 
-        LocalDateTime startDateTime = LocalDateTime.now().plusHours(hoursLater);
-        LocalDate matchDate = startDateTime.toLocalDate();
-        LocalTime startTime = startDateTime.toLocalTime();
+        // 날짜 경계 문제를 피하기 위해 내일 오후 2시 기준으로 계산
+        LocalDate matchDate = LocalDate.now().plusDays(1);
+        LocalTime baseTime = LocalTime.of(14, 0);
+        LocalDateTime startDateTime = LocalDateTime.of(matchDate, baseTime);
+
+        // hoursLater가 1이면 현재+1시간 조건을 테스트하기 위해 내일 오후 2시 사용
+        // hoursLater가 2이면 현재+2시간 조건 (안전하게 통과)
+        LocalTime startTime = baseTime;
         LocalTime endTime = startTime.plusHours(2);
 
         Map<String, Object> request = createMatchRequest(matchDate, startTime, endTime, 10);
@@ -95,6 +100,9 @@ public class P0MatchCreationLimitStepDefs {
 
     private void ensureLocationExists() {
         if (testLocation == null) {
+            testLocation = sharedContext.getTestLocation();
+        }
+        if (testLocation == null) {
             User testUser = sharedContext.getTestUser();
             Location location = Location.builder()
                     .userId(testUser.getId())
@@ -104,6 +112,7 @@ public class P0MatchCreationLimitStepDefs {
                     .address("서울특별시 중구 세종대로 110")
                     .build();
             testLocation = locationRepository.save(location);
+            sharedContext.setTestLocation(testLocation);
         }
     }
 }

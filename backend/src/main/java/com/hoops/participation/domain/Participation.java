@@ -73,4 +73,15 @@ public class Participation {
     public boolean isOwner(Long userId) {
         return this.userId.equals(userId);
     }
+
+    public static Participation createPending(Long matchId, Long userId) {
+        return Participation.builder()
+                .id(null)
+                .version(null)
+                .matchId(matchId)
+                .userId(userId)
+                .status(ParticipationStatus.PENDING)
+                .joinedAt(LocalDateTime.now())
+                .build();
+    }
 }

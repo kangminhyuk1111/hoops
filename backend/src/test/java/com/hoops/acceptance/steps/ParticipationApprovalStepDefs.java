@@ -24,6 +24,7 @@ import io.cucumber.java.ko.만일;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -182,7 +183,8 @@ public class ParticipationApprovalStepDefs {
         String accessToken = sharedContext.getAccessToken();
 
         String path = "/api/matches/" + match.getId() + "/participations/" + participationId + "/reject";
-        TestResponse response = testAdapter.putWithAuth(path, null, accessToken);
+        Map<String, Object> request = Map.of("reason", "테스트 거절 사유");
+        TestResponse response = testAdapter.putWithAuth(path, request, accessToken);
         sharedContext.setLastResponse(response);
     }
 

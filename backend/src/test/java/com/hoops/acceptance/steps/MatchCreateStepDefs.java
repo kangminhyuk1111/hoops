@@ -44,6 +44,7 @@ public class MatchCreateStepDefs {
                 .address("서울특별시 중구 세종대로 110")
                 .build();
         testLocation = locationRepository.save(location);
+        sharedContext.setTestLocation(testLocation);
     }
 
     @만일("유효한 경기 정보로 경기 생성 API를 호출한다")

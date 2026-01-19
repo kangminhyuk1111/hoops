@@ -3,8 +3,7 @@ package com.hoops.acceptance.steps;
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.acceptance.mock.MockKakaoOAuthClient;
-import com.hoops.auth.application.dto.KakaoUserInfo;
-import com.hoops.auth.application.port.out.JwtTokenProvider;
+import com.hoops.auth.application.port.out.JwtTokenPort;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;
 import io.cucumber.java.ko.만일;
@@ -21,13 +20,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AuthSignupStepDefs {
 
     private final TestAdapter testAdapter;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenPort jwtTokenProvider;
     private final MockKakaoOAuthClient mockKakaoOAuthClient;
     private final SharedTestContext sharedContext;
 
     public AuthSignupStepDefs(
             TestAdapter testAdapter,
-            JwtTokenProvider jwtTokenProvider,
+            JwtTokenPort jwtTokenProvider,
             MockKakaoOAuthClient mockKakaoOAuthClient,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;

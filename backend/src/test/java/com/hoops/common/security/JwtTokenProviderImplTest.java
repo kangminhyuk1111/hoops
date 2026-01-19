@@ -3,9 +3,9 @@ package com.hoops.common.security;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.hoops.auth.application.dto.TokenResult;
-import com.hoops.user.application.exception.InvalidRefreshTokenException;
-import com.hoops.user.application.exception.InvalidTempTokenException;
+import com.hoops.auth.application.exception.InvalidRefreshTokenException;
+import com.hoops.auth.application.exception.InvalidTempTokenException;
+import com.hoops.auth.domain.vo.TokenPair;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ class JwtTokenProviderImplTest {
         Long userId = 1L;
 
         // when
-        TokenResult result = jwtTokenProvider.createTokens(userId);
+        TokenPair result = jwtTokenProvider.createTokens(userId);
 
         // then
         assertThat(result).isNotNull();
@@ -48,7 +48,7 @@ class JwtTokenProviderImplTest {
     void getUserIdFromToken_WithValidToken_ReturnsUserId() {
         // given
         Long userId = 123L;
-        TokenResult tokens = jwtTokenProvider.createTokens(userId);
+        TokenPair tokens = jwtTokenProvider.createTokens(userId);
 
         // when
         Long extractedUserId = jwtTokenProvider.getUserIdFromToken(tokens.accessToken());
@@ -61,7 +61,7 @@ class JwtTokenProviderImplTest {
     @DisplayName("유효한 토큰은 검증에 성공한다")
     void validateToken_WithValidToken_ReturnsTrue() {
         // given
-        TokenResult tokens = jwtTokenProvider.createTokens(1L);
+        TokenPair tokens = jwtTokenProvider.createTokens(1L);
 
         // when
         boolean isValid = jwtTokenProvider.validateToken(tokens.accessToken());
@@ -131,10 +131,10 @@ class JwtTokenProviderImplTest {
     void refreshTokens_WithValidRefreshToken_ReturnsNewTokens() {
         // given
         Long userId = 1L;
-        TokenResult originalTokens = jwtTokenProvider.createTokens(userId);
+        TokenPair originalTokens = jwtTokenProvider.createTokens(userId);
 
         // when
-        TokenResult newTokens = jwtTokenProvider.refreshTokens(originalTokens.refreshToken());
+        TokenPair newTokens = jwtTokenProvider.refreshTokens(originalTokens.refreshToken());
 
         // then
         assertThat(newTokens.accessToken()).isNotBlank();
@@ -147,7 +147,7 @@ class JwtTokenProviderImplTest {
     @DisplayName("Access 토큰으로 갱신 시도 시 예외를 발생시킨다")
     void refreshTokens_WithAccessToken_ThrowsException() {
         // given
-        TokenResult tokens = jwtTokenProvider.createTokens(1L);
+        TokenPair tokens = jwtTokenProvider.createTokens(1L);
 
         // when & then
         assertThatThrownBy(() -> jwtTokenProvider.refreshTokens(tokens.accessToken()))
@@ -165,7 +165,7 @@ class JwtTokenProviderImplTest {
                 1L
         );
         JwtTokenProviderImpl shortExpiryProvider = new JwtTokenProviderImpl(shortExpiryProps);
-        TokenResult tokens = shortExpiryProvider.createTokens(1L);
+        TokenPair tokens = shortExpiryProvider.createTokens(1L);
 
         // when - 토큰 만료 대기
         Thread.sleep(10);

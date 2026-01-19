@@ -45,6 +45,7 @@ public class UserQueryAdapter implements UserQueryPort {
     private UserDetails toUserDetails(User user) {
         return new UserDetails(
                 user.getId(),
+                user.getEmail(),
                 user.getNickname(),
                 user.getProfileImage(),
                 user.getRating(),

@@ -6,12 +6,12 @@ import com.hoops.auth.application.dto.KakaoUserInfo;
 import com.hoops.auth.application.dto.TokenResult;
 import com.hoops.auth.application.dto.UserInfo;
 import com.hoops.auth.application.exception.UserNotFoundForAuthException;
-import com.hoops.auth.application.port.out.JwtTokenProvider;
-import com.hoops.auth.application.port.out.KakaoOAuthClient;
-import com.hoops.auth.application.port.out.UserInfoPort;
-import com.hoops.auth.domain.AuthAccount;
-import com.hoops.auth.domain.AuthProvider;
-import com.hoops.auth.domain.repository.AuthAccountRepository;
+import com.hoops.auth.domain.model.AuthAccount;
+import com.hoops.auth.domain.model.AuthProvider;
+import com.hoops.auth.domain.port.AuthAccountPort;
+import com.hoops.auth.domain.port.JwtTokenProvider;
+import com.hoops.auth.domain.port.KakaoOAuthClient;
+import com.hoops.auth.domain.port.UserInfoPort;
 import com.hoops.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -20,19 +20,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Handles Kakao OAuth callback processing.
+ */
 @Component
 @RequiredArgsConstructor
 public class KakaoCallbackHandler {
 
     private final KakaoOAuthClient kakaoOAuthClient;
     private final JwtTokenProvider jwtTokenProvider;
-    private final AuthAccountRepository authAccountRepository;
+    private final AuthAccountPort authAccountPort;
     private final UserInfoPort userInfoPort;
 
     public KakaoCallbackResult handle(String code) {
         KakaoUserInfo kakaoUserInfo = fetchKakaoUserInfo(code);
 
-        Optional<AuthAccount> existingAccount = authAccountRepository
+        Optional<AuthAccount> existingAccount = authAccountPort
                 .findByProviderAndProviderId(AuthProvider.KAKAO, kakaoUserInfo.kakaoId());
 
         return existingAccount
@@ -49,7 +52,7 @@ public class KakaoCallbackHandler {
         User user = findUserByAuthAccount(authAccount);
         TokenResult tokens = jwtTokenProvider.createTokens(user.getId());
 
-        authAccountRepository.save(authAccount.withRefreshToken(tokens.refreshToken()));
+        authAccountPort.save(authAccount.withRefreshToken(tokens.refreshToken()));
 
         return KakaoCallbackResult.forExistingUser(tokens.accessToken(), tokens.refreshToken(), UserInfo.from(user));
     }

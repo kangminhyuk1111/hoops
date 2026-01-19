@@ -1,8 +1,8 @@
 package com.hoops.auth.application.validator;
 
-import com.hoops.auth.application.port.in.SignupCommand;
-import com.hoops.auth.application.port.out.JwtTokenProvider;
-import com.hoops.auth.application.port.out.UserInfoPort;
+import com.hoops.auth.application.dto.SignupCommand;
+import com.hoops.auth.domain.port.JwtTokenProvider;
+import com.hoops.auth.domain.port.UserInfoPort;
 import com.hoops.user.application.exception.DuplicateNicknameException;
 import com.hoops.user.application.exception.InvalidNicknameException;
 import com.hoops.user.application.exception.InvalidTempTokenException;
@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+/**
+ * Validates signup requests.
+ */
 @Component
 @RequiredArgsConstructor
 public class SignupValidator {
@@ -38,7 +41,7 @@ public class SignupValidator {
 
     private void validateNickname(String nickname) {
         if (nickname == null || nickname.isBlank()) {
-            throw new InvalidNicknameException(nickname, "닉네임은 필수입니다");
+            throw new InvalidNicknameException(nickname, "Nickname is required");
         }
 
         String trimmedNickname = nickname.trim();

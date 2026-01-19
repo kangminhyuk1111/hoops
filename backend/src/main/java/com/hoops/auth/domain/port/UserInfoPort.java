@@ -1,13 +1,13 @@
-package com.hoops.auth.application.port.out;
+package com.hoops.auth.domain.port;
 
 import com.hoops.user.domain.User;
 
 import java.util.Optional;
 
 /**
- * Auth Context에서 User 정보에 접근하기 위한 Port
+ * Port for accessing User information from Auth context.
  *
- * Cross-context 통신을 위해 UserRepository 직접 접근 대신 사용합니다.
+ * Used for cross-context communication instead of direct UserRepository access.
  */
 public interface UserInfoPort {
 

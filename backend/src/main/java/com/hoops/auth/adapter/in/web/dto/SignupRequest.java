@@ -1,18 +1,18 @@
 package com.hoops.auth.adapter.in.web.dto;
 
-import com.hoops.auth.application.port.in.SignupCommand;
+import com.hoops.auth.application.dto.SignupCommand;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 /**
- * 회원가입 요청
+ * Signup request DTO.
  */
 public record SignupRequest(
-        @NotBlank(message = "임시 토큰은 필수입니다")
+        @NotBlank(message = "Temp token is required")
         String tempToken,
 
-        @NotBlank(message = "닉네임은 필수입니다")
-        @Size(min = 2, max = 20, message = "닉네임은 2~20자 사이여야 합니다")
+        @NotBlank(message = "Nickname is required")
+        @Size(min = 2, max = 20, message = "Nickname must be between 2 and 20 characters")
         String nickname
 ) {
 

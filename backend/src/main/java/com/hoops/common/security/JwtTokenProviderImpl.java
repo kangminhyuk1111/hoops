@@ -1,7 +1,7 @@
 package com.hoops.common.security;
 
 import com.hoops.auth.application.dto.TokenResult;
-import com.hoops.auth.application.port.out.JwtTokenProvider;
+import com.hoops.auth.domain.port.JwtTokenProvider;
 import com.hoops.common.exception.InvalidTokenClaimException;
 import com.hoops.user.application.exception.InvalidRefreshTokenException;
 import com.hoops.user.application.exception.InvalidTempTokenException;
@@ -18,7 +18,7 @@ import javax.crypto.SecretKey;
 import org.springframework.stereotype.Component;
 
 /**
- * JWT 토큰 제공자 구현체
+ * JWT Token Provider Implementation.
  */
 @Component
 public class JwtTokenProviderImpl implements JwtTokenProvider {
@@ -73,7 +73,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
             return (Long) userId;
         }
 
-        throw new InvalidTokenClaimException("토큰에서 유효한 userId를 찾을 수 없습니다");
+        throw new InvalidTokenClaimException("Valid userId not found in token");
     }
 
     @Override
@@ -83,7 +83,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
             String tokenType = claims.get(TOKEN_TYPE_CLAIM, String.class);
             if (!TOKEN_TYPE_TEMP.equals(tokenType)) {
-                throw new InvalidTempTokenException("임시 토큰이 아닙니다");
+                throw new InvalidTempTokenException("Not a temporary token");
             }
 
             Map<String, Object> result = new HashMap<>();
@@ -92,7 +92,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
             return result;
         } catch (ExpiredJwtException e) {
-            throw new InvalidTempTokenException("임시 토큰이 만료되었습니다");
+            throw new InvalidTempTokenException("Temporary token has expired");
         } catch (JwtException e) {
             throw new InvalidTempTokenException();
         }
@@ -105,13 +105,13 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
             String tokenType = claims.get(TOKEN_TYPE_CLAIM, String.class);
             if (!TOKEN_TYPE_REFRESH.equals(tokenType)) {
-                throw new InvalidRefreshTokenException("리프레시 토큰이 아닙니다");
+                throw new InvalidRefreshTokenException("Not a refresh token");
             }
 
             Long userId = getUserIdFromClaims(claims);
             return createTokens(userId);
         } catch (ExpiredJwtException e) {
-            throw new InvalidRefreshTokenException("리프레시 토큰이 만료되었습니다");
+            throw new InvalidRefreshTokenException("Refresh token has expired");
         } catch (JwtException e) {
             throw new InvalidRefreshTokenException();
         }
@@ -170,6 +170,6 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
             return (Long) userId;
         }
 
-        throw new InvalidTokenClaimException("클레임에서 유효한 userId를 찾을 수 없습니다");
+        throw new InvalidTokenClaimException("Valid userId not found in claims");
     }
 }

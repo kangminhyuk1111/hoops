@@ -1,10 +1,14 @@
-package com.hoops.auth.domain.repository;
+package com.hoops.auth.domain.port;
 
-import com.hoops.auth.domain.AuthAccount;
-import com.hoops.auth.domain.AuthProvider;
+import com.hoops.auth.domain.model.AuthAccount;
+import com.hoops.auth.domain.model.AuthProvider;
 import java.util.Optional;
 
-public interface AuthAccountRepository {
+/**
+ * Outbound port for AuthAccount persistence operations.
+ */
+public interface AuthAccountPort {
+
     AuthAccount save(AuthAccount authAccount);
 
     Optional<AuthAccount> findById(Long id);

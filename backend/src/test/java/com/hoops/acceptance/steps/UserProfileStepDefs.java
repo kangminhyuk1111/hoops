@@ -2,7 +2,7 @@ package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
-import com.hoops.auth.application.port.out.JwtTokenProvider;
+import com.hoops.auth.domain.port.JwtTokenProvider;
 import com.hoops.user.domain.User;
 import com.hoops.user.domain.repository.UserRepository;
 import io.cucumber.java.ko.그리고;

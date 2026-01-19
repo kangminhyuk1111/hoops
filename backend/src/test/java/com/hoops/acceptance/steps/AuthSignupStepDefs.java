@@ -4,7 +4,7 @@ import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.acceptance.mock.MockKakaoOAuthClient;
 import com.hoops.auth.application.dto.KakaoUserInfo;
-import com.hoops.auth.application.port.out.JwtTokenProvider;
+import com.hoops.auth.domain.port.JwtTokenProvider;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;
 import io.cucumber.java.ko.만일;

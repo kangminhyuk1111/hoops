@@ -1,8 +1,8 @@
-package com.hoops.auth.infrastructure.oauth;
+package com.hoops.auth.adapter.out.oauth;
 
 import com.hoops.auth.application.dto.KakaoTokenResponse;
 import com.hoops.auth.application.dto.KakaoUserInfo;
-import com.hoops.auth.application.port.out.KakaoOAuthClient;
+import com.hoops.auth.domain.port.KakaoOAuthClient;
 import com.hoops.auth.infrastructure.config.KakaoOAuthProperties;
 import com.hoops.user.application.exception.InvalidAuthCodeException;
 import com.hoops.user.application.exception.KakaoApiException;
@@ -21,7 +21,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * 카카오 OAuth 클라이언트 구현체
+ * Kakao OAuth client adapter implementation.
  */
 @Component
 public class KakaoOAuthClientImpl implements KakaoOAuthClient {
@@ -73,7 +73,7 @@ public class KakaoOAuthClientImpl implements KakaoOAuthClient {
 
             Map<String, Object> body = response.getBody();
             if (body == null) {
-                throw new KakaoApiException("카카오 토큰 응답이 비어있습니다");
+                throw new KakaoApiException("Kakao token response is empty");
             }
 
             return new KakaoTokenResponse(
@@ -82,9 +82,9 @@ public class KakaoOAuthClientImpl implements KakaoOAuthClient {
                     (Integer) body.get("expires_in")
             );
         } catch (HttpClientErrorException e) {
-            throw new InvalidAuthCodeException("인가코드가 만료되었거나 유효하지 않습니다");
+            throw new InvalidAuthCodeException("Authorization code is expired or invalid");
         } catch (RestClientException e) {
-            throw new KakaoApiException("카카오 토큰 교환에 실패했습니다", e);
+            throw new KakaoApiException("Failed to exchange Kakao token", e);
         }
     }
 
@@ -106,12 +106,12 @@ public class KakaoOAuthClientImpl implements KakaoOAuthClient {
 
             Map<String, Object> body = response.getBody();
             if (body == null) {
-                throw new KakaoApiException("카카오 사용자 정보 응답이 비어있습니다");
+                throw new KakaoApiException("Kakao user info response is empty");
             }
 
             return parseKakaoUserInfo(body);
         } catch (RestClientException e) {
-            throw new KakaoApiException("카카오 사용자 정보 조회에 실패했습니다", e);
+            throw new KakaoApiException("Failed to fetch Kakao user info", e);
         }
     }
 

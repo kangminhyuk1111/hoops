@@ -2,7 +2,7 @@ package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
-import com.hoops.auth.application.port.out.JwtTokenProvider;
+import com.hoops.auth.domain.port.JwtTokenProvider;
 import com.hoops.location.domain.Location;
 import com.hoops.location.domain.repository.LocationRepository;
 import com.hoops.match.application.port.out.MatchRepository;

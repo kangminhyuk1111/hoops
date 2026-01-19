@@ -1,6 +1,6 @@
-package com.hoops.auth.infrastructure.adapter;
+package com.hoops.auth.adapter.out.persistence.repository;
 
-import com.hoops.auth.application.port.out.UserInfoPort;
+import com.hoops.auth.domain.port.UserInfoPort;
 import com.hoops.user.domain.User;
 import com.hoops.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

@@ -2,13 +2,13 @@ package com.hoops.auth.application.service;
 
 import com.hoops.auth.application.dto.AuthResult;
 import com.hoops.auth.application.dto.KakaoCallbackResult;
+import com.hoops.auth.application.dto.SignupCommand;
 import com.hoops.auth.application.dto.TokenResult;
 import com.hoops.auth.application.port.in.KakaoLoginUseCase;
 import com.hoops.auth.application.port.in.RefreshTokenUseCase;
-import com.hoops.auth.application.port.in.SignupCommand;
 import com.hoops.auth.application.port.in.SignupUseCase;
-import com.hoops.auth.application.port.out.JwtTokenProvider;
-import com.hoops.auth.application.port.out.KakaoOAuthClient;
+import com.hoops.auth.domain.port.JwtTokenProvider;
+import com.hoops.auth.domain.port.KakaoOAuthClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

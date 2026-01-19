@@ -1,27 +1,30 @@
 package com.hoops.auth.application.service;
 
 import com.hoops.auth.application.dto.AuthResult;
+import com.hoops.auth.application.dto.SignupCommand;
 import com.hoops.auth.application.dto.TokenResult;
 import com.hoops.auth.application.dto.UserInfo;
-import com.hoops.auth.application.port.in.SignupCommand;
-import com.hoops.auth.application.port.out.JwtTokenProvider;
-import com.hoops.auth.application.port.out.UserInfoPort;
 import com.hoops.auth.application.validator.SignupValidator;
-import com.hoops.auth.domain.AuthAccount;
-import com.hoops.auth.domain.repository.AuthAccountRepository;
+import com.hoops.auth.domain.model.AuthAccount;
+import com.hoops.auth.domain.port.AuthAccountPort;
+import com.hoops.auth.domain.port.JwtTokenProvider;
+import com.hoops.auth.domain.port.UserInfoPort;
 import com.hoops.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+/**
+ * Processes user signup requests.
+ */
 @Component
 @RequiredArgsConstructor
 public class SignupProcessor {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserInfoPort userInfoPort;
-    private final AuthAccountRepository authAccountRepository;
+    private final AuthAccountPort authAccountPort;
     private final SignupValidator signupValidator;
 
     public AuthResult process(SignupCommand command) {
@@ -45,6 +48,6 @@ public class SignupProcessor {
     private void createAuthAccount(Map<String, Object> claims, Long userId, String refreshToken) {
         String kakaoId = (String) claims.get("kakaoId");
         AuthAccount authAccount = AuthAccount.createForKakao(userId, kakaoId, refreshToken);
-        authAccountRepository.save(authAccount);
+        authAccountPort.save(authAccount);
     }
 }

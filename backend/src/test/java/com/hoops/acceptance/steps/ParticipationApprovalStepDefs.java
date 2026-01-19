@@ -2,10 +2,10 @@ package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
-import com.hoops.auth.application.port.out.JwtTokenProvider;
-import com.hoops.auth.domain.AuthAccount;
-import com.hoops.auth.domain.AuthProvider;
-import com.hoops.auth.domain.repository.AuthAccountRepository;
+import com.hoops.auth.domain.model.AuthAccount;
+import com.hoops.auth.domain.model.AuthProvider;
+import com.hoops.auth.domain.port.AuthAccountPort;
+import com.hoops.auth.domain.port.JwtTokenProvider;
 import com.hoops.location.domain.Location;
 import com.hoops.location.domain.repository.LocationRepository;
 import com.hoops.match.domain.Match;
@@ -36,7 +36,7 @@ public class ParticipationApprovalStepDefs {
 
     private final TestAdapter testAdapter;
     private final UserRepository userRepository;
-    private final AuthAccountRepository authAccountRepository;
+    private final AuthAccountPort authAccountRepository;
     private final MatchRepository matchRepository;
     private final LocationRepository locationRepository;
     private final ParticipationRepository participationRepository;
@@ -49,7 +49,7 @@ public class ParticipationApprovalStepDefs {
     public ParticipationApprovalStepDefs(
             TestAdapter testAdapter,
             UserRepository userRepository,
-            AuthAccountRepository authAccountRepository,
+            AuthAccountPort authAccountRepository,
             MatchRepository matchRepository,
             LocationRepository locationRepository,
             ParticipationRepository participationRepository,

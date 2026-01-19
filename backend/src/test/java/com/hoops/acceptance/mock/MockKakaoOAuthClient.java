@@ -2,7 +2,7 @@ package com.hoops.acceptance.mock;
 
 import com.hoops.auth.application.dto.KakaoTokenResponse;
 import com.hoops.auth.application.dto.KakaoUserInfo;
-import com.hoops.auth.application.port.out.KakaoOAuthClient;
+import com.hoops.auth.domain.port.KakaoOAuthClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;

@@ -1,6 +1,6 @@
 package com.hoops.common.security;
 
-import com.hoops.auth.application.port.out.JwtTokenProvider;
+import com.hoops.auth.domain.port.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,9 +15,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * JWT 인증 필터
+ * JWT Authentication Filter.
  *
- * 모든 요청에서 JWT 토큰을 검증하고 SecurityContext에 인증 정보를 설정합니다.
+ * Validates JWT token on every request and sets authentication info in SecurityContext.
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {

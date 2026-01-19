@@ -5,10 +5,10 @@ import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.acceptance.mock.MockKakaoOAuthClient;
 import com.hoops.auth.application.dto.KakaoUserInfo;
 import com.hoops.auth.application.dto.TokenResult;
-import com.hoops.auth.application.port.out.JwtTokenProvider;
-import com.hoops.auth.domain.AuthAccount;
-import com.hoops.auth.domain.AuthProvider;
-import com.hoops.auth.domain.repository.AuthAccountRepository;
+import com.hoops.auth.domain.model.AuthAccount;
+import com.hoops.auth.domain.model.AuthProvider;
+import com.hoops.auth.domain.port.AuthAccountPort;
+import com.hoops.auth.domain.port.JwtTokenProvider;
 import com.hoops.user.domain.User;
 import com.hoops.user.domain.repository.UserRepository;
 import io.cucumber.java.ko.그리고;
@@ -29,7 +29,7 @@ public class AuthLoginStepDefs {
 
     private final TestAdapter testAdapter;
     private final UserRepository userRepository;
-    private final AuthAccountRepository authAccountRepository;
+    private final AuthAccountPort authAccountRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final MockKakaoOAuthClient mockKakaoOAuthClient;
     private final SharedTestContext sharedContext;
@@ -37,7 +37,7 @@ public class AuthLoginStepDefs {
     public AuthLoginStepDefs(
             TestAdapter testAdapter,
             UserRepository userRepository,
-            AuthAccountRepository authAccountRepository,
+            AuthAccountPort authAccountRepository,
             JwtTokenProvider jwtTokenProvider,
             MockKakaoOAuthClient mockKakaoOAuthClient,
             SharedTestContext sharedContext) {

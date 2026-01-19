@@ -1,4 +1,4 @@
-package com.hoops.auth.domain;
+package com.hoops.auth.domain.model;
 
 public enum AuthProvider {
     LOCAL,

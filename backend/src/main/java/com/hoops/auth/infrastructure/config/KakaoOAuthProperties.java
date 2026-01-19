@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * 카카오 OAuth 설정 프로퍼티
+ * Kakao OAuth configuration properties.
  */
 @ConfigurationProperties(prefix = "kakao")
 public class KakaoOAuthProperties {
@@ -17,11 +17,11 @@ public class KakaoOAuthProperties {
 
     @PostConstruct
     public void logConfig() {
-        log.info("=== 카카오 OAuth 설정 ===");
+        log.info("=== Kakao OAuth Configuration ===");
         log.info("Client ID: {}", clientId != null ? clientId.substring(0, Math.min(8, clientId.length())) + "..." : "NULL");
         log.info("Redirect URI: {}", redirectUri);
         log.info("Auth Base URL: {}", authBaseUrl);
-        log.info("========================");
+        log.info("=================================");
     }
 
     private String clientId;

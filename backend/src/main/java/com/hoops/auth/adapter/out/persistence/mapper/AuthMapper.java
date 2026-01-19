@@ -1,7 +1,7 @@
-package com.hoops.auth.infrastructure.mapper;
+package com.hoops.auth.adapter.out.persistence.mapper;
 
-import com.hoops.auth.domain.AuthAccount;
-import com.hoops.auth.infrastructure.AuthAccountEntity;
+import com.hoops.auth.adapter.out.persistence.entity.AuthAccountEntity;
+import com.hoops.auth.domain.model.AuthAccount;
 
 public class AuthMapper {
 

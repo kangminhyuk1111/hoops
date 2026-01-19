@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class UserInfoAdapter implements UserInfoPort {
+public class AuthUserInfoAdapter implements UserInfoPort {
 
     private final UserQueryPort userQueryPort;
     private final UserCommandPort userCommandPort;

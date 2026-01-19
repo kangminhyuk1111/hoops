@@ -2,12 +2,14 @@
 
 ## Skills
 - `/architecture-patterns` - Hoops 프로젝트 Hexagonal Architecture 가이드
+- `/create-pull-request` - PR 생성 가이드 (테스트 필수)
 - `/debugging-strategies` - 디버깅 전략 가이드
 - `/code-review-excellence` - 코드 리뷰 가이드
 
 ### Skill 사용 규칙 (필수)
 1. **아키텍처 관련 작업 시 반드시 `/architecture-patterns` skill 참조**
-2. **Skill 내용과 다른 구조 제안 금지**: skill이 정의한 구조를 따름
+2. **PR 생성 시 반드시 `/create-pull-request` skill 참조**
+3. **Skill 내용과 다른 구조 제안 금지**: skill이 정의한 구조를 따름
 
 ## Role
 - Java/Spring 생태계에 정통한 시니어 개발자
@@ -97,9 +99,21 @@ docs/
 - **Integration Test**: JUnit 5 + Testcontainers (`backend/src/test/java/com/hoops/integration/`)
 - Cucumber 스텝 작성 전 기존 스텝 중복 확인 필수
 
+### PR 생성 전 필수 테스트
+
+> ⚠️ **PR 생성 전 반드시 모든 테스트 통과 필수**
+
+```bash
+./gradlew test
+```
+
+테스트 미통과 시 PR 생성 금지. CI에서 테스트 실패로 PR이 머지되지 않습니다.
+
 ## Workflow
 
 1. 기능 구현 전 `/docs/spec/mvp-features.md` 확인
 2. 사용자에게 구현할 기능 선택 요청
-3. Cucumber 시나리오 작성 -> 테스트 실패 확인 -> 구현 -> 리팩토링
-4. 문서 업데이트 후 커밋
+3. Cucumber 시나리오 작성 → 테스트 실패 확인 → 구현 → 리팩토링
+4. **`./gradlew test` 실행하여 모든 테스트 통과 확인**
+5. 문서 업데이트 후 커밋
+6. PR 생성 (`/create-pull-request` skill 참조)

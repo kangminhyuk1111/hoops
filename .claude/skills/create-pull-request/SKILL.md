@@ -41,6 +41,25 @@ If there are uncommitted changes, ask the user whether to:
 - Stash them temporarily
 - Discard them (with caution)
 
+### 4. **[필수] 테스트 실행**
+
+> ⚠️ **PR 생성 전 반드시 모든 테스트를 통과해야 합니다. 테스트 실패 시 PR 생성을 중단하세요.**
+
+```bash
+./gradlew test
+```
+
+테스트가 실패하면:
+1. 실패 원인 분석
+2. 코드 수정
+3. 테스트 재실행
+4. 모든 테스트 통과 후 PR 생성 진행
+
+**테스트 종류:**
+- Unit Tests
+- Integration Tests
+- **Cucumber Acceptance Tests** (`backend/src/test/java/com/hoops/acceptance/`)
+
 ## Gather Context
 
 ### 1. Identify the current branch
@@ -187,6 +206,7 @@ After creating the PR:
 
 Before finalizing, ensure:
 - [ ] `gh` CLI is installed and authenticated
+- [ ] **모든 테스트 통과 (`./gradlew test`)** ← 필수!
 - [ ] Working directory is clean
 - [ ] All commits are pushed
 - [ ] Branch is up-to-date with base branch
@@ -194,3 +214,5 @@ Before finalizing, ensure:
 - [ ] PR description follows the template exactly
 - [ ] Appropriate type of change is selected
 - [ ] Pre-flight checklist items are addressed
+
+> ❌ **테스트 미통과 시 PR 생성 금지**

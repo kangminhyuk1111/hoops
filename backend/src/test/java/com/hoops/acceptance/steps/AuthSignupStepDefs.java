@@ -37,18 +37,19 @@ public class AuthSignupStepDefs {
 
     @먼저("카카오 인증이 완료된 신규 사용자이다")
     public void 카카오_인증이_완료된_신규_사용자이다() {
-        String kakaoId = "new-user-kakao-" + UUID.randomUUID().toString().substring(0, 8);
+        String providerId = "new-user-kakao-" + UUID.randomUUID().toString().substring(0, 8);
         String email = "newuser" + System.currentTimeMillis() + "@kakao.com";
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("kakaoId", kakaoId);
+        claims.put("provider", "KAKAO");
+        claims.put("providerId", providerId);
         claims.put("email", email);
         claims.put("profileImage", "https://example.com/profile.jpg");
 
         String tempToken = jwtTokenProvider.createTempToken(claims);
 
         sharedContext.setTempToken(tempToken);
-        sharedContext.setKakaoId(kakaoId);
+        sharedContext.setKakaoId(providerId);
     }
 
     @만일("닉네임 {string}으로 회원가입을 요청한다")

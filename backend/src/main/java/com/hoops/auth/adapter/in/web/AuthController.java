@@ -1,7 +1,7 @@
 package com.hoops.auth.adapter.in.web;
 
 import com.hoops.auth.adapter.in.web.dto.AuthResponse;
-import com.hoops.auth.adapter.in.web.dto.KakaoAuthUrlResponse;
+import com.hoops.auth.adapter.in.web.dto.AuthUrlResponse;
 import com.hoops.auth.adapter.in.web.dto.OAuthCallbackResponse;
 import com.hoops.auth.adapter.in.web.dto.RefreshTokenRequest;
 import com.hoops.auth.adapter.in.web.dto.SignupRequest;
@@ -41,23 +41,23 @@ public class AuthController {
     private final SignupUseCase signupUseCase;
     private final TokenUseCase tokenUseCase;
 
-    @Operation(summary = "Get Kakao auth URL")
+    @Operation(summary = "Get OAuth authorization URL")
     @ApiResponse(responseCode = "200", description = "Auth URL returned successfully")
     @GetMapping("/kakao")
-    public ResponseEntity<KakaoAuthUrlResponse> getKakaoAuthUrl() {
-        log.info("Kakao auth URL requested");
+    public ResponseEntity<AuthUrlResponse> getKakaoAuthUrl() {
+        log.info("OAuth auth URL requested for Kakao");
         String authUrl = oauthLoginUseCase.getAuthorizationUrl(AuthProvider.KAKAO);
-        return ResponseEntity.ok(new KakaoAuthUrlResponse(authUrl));
+        return ResponseEntity.ok(new AuthUrlResponse(authUrl));
     }
 
-    @Operation(summary = "Handle Kakao callback")
+    @Operation(summary = "Handle OAuth callback")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Existing user login successful"),
             @ApiResponse(responseCode = "202", description = "New user - signup required")
     })
     @GetMapping("/kakao/callback")
     public ResponseEntity<OAuthCallbackResponse> handleKakaoCallback(
-            @Parameter(description = "Kakao authorization code") @RequestParam("code") String code) {
+            @Parameter(description = "OAuth authorization code") @RequestParam("code") String code) {
         OAuthCallbackResult result = oauthLoginUseCase.processCallback(AuthProvider.KAKAO, code);
         OAuthCallbackResponse response = OAuthCallbackResponse.from(result);
 

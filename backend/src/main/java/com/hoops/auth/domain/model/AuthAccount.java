@@ -17,11 +17,11 @@ public class AuthAccount {
     private final String passwordHash;
     private final String refreshToken;
 
-    public static AuthAccount createForKakao(Long userId, String kakaoId, String refreshToken) {
+    public static AuthAccount create(Long userId, AuthProvider provider, String providerId, String refreshToken) {
         return AuthAccount.builder()
                 .userId(userId)
-                .provider(AuthProvider.KAKAO)
-                .providerId(kakaoId)
+                .provider(provider)
+                .providerId(providerId)
                 .refreshToken(refreshToken)
                 .build();
     }

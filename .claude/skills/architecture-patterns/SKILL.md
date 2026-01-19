@@ -5,21 +5,22 @@ description: Hoops 프로젝트 Hexagonal Architecture 가이드. Java/Spring �
 
 # Hexagonal Architecture for Hoops
 
-Hoops 프로젝트의 Hexagonal Architecture (Ports and Adapters) 구현 가이드.
+Hoops 프로젝트의 Hexagonal Architecture (Ports and Adapters) + DDD 구현 가이드.
 
 ## Package Structure
 
 ```
 {domain}/
 ├── domain/                      # 순수 도메인 (Pure POJO, No Framework)
-│   ├── model/                   # Identity를 가진 도메인 모델
-│   ├── vo/                      # Value Objects (불변)
+│   ├── model/                   # Identity를 가진 도메인 모델 (Entity)
+│   ├── vo/                      # Value Objects (불변, 벤더 중립적)
+│   ├── repository/              # Repository 인터페이스 (DDD)
 │   └── exception/               # 도메인 규칙 위반 예외
 │
 ├── application/                 # 애플리케이션 계층
 │   ├── port/
 │   │   ├── in/                  # Inbound Port (UseCase 인터페이스)
-│   │   └── out/                 # Outbound Port (*Port 접미사)
+│   │   └── out/                 # Outbound Port (외부 서비스, ACL)
 │   ├── service/                 # UseCase 구현체
 │   ├── dto/                     # Command, Response (UseCase I/O)
 │   └── exception/               # UseCase 실패 예외
@@ -30,8 +31,9 @@ Hoops 프로젝트의 Hexagonal Architecture (Ports and Adapters) 구현 가이�
 │   │       └── dto/             # Request/Response DTO
 │   └── out/
 │       ├── persistence/         # JPA Entity, Repository 구현
-│       └── {external}/          # 외부 API Adapter (oauth, payment 등)
-│           └── exception/       # 외부 API 예외
+│       └── {external}/          # 외부 API Adapter
+│           └── {provider}/      # 벤더별 구현 (kakao/, google/)
+│               └── exception/   # 벤더별 예외
 │
 └── infrastructure/
     └── config/                  # Spring Configuration
@@ -47,6 +49,7 @@ Hoops 프로젝트의 Hexagonal Architecture (Ports and Adapters) 구현 가이�
 - Spring, JPA, Lombok(@Data) 등 외부 프레임워크 의존 금지
 - 순수 Java POJO로 구성
 - Lombok @Getter, @Builder, @AllArgsConstructor는 허용
+- **Value Object는 벤더 중립적으로 명명** (KakaoUserInfo ❌ → OAuthUserInfo ✅)
 
 ```java
 // domain/model/AuthAccount.java - Identity를 가진 도메인 모델
@@ -67,11 +70,11 @@ public class AuthAccount {
     private final String providerId;
     private final String refreshToken;
 
-    public static AuthAccount createForKakao(Long userId, String kakaoId, String refreshToken) {
+    public static AuthAccount createForKakao(Long userId, String providerId, String refreshToken) {
         return AuthAccount.builder()
                 .userId(userId)
                 .provider(AuthProvider.KAKAO)
-                .providerId(kakaoId)
+                .providerId(providerId)
                 .refreshToken(refreshToken)
                 .build();
     }
@@ -89,13 +92,33 @@ public class AuthAccount {
 ```
 
 ```java
-// domain/vo/TokenPair.java - Value Object (불변)
+// domain/vo/OAuthUserInfo.java - Value Object (벤더 중립적)
 package com.hoops.auth.domain.vo;
 
-public record TokenPair(
-    String accessToken,
-    String refreshToken
-) {}
+public record OAuthUserInfo(
+    String providerId,
+    String email,
+    String nickname,
+    String profileImage
+) {
+    public static OAuthUserInfo of(String providerId, String email, String nickname, String profileImage) {
+        return new OAuthUserInfo(providerId, email, nickname, profileImage);
+    }
+}
+```
+
+```java
+// domain/repository/AuthAccountRepository.java - DDD Repository (도메인 계층)
+package com.hoops.auth.domain.repository;
+
+import com.hoops.auth.domain.model.AuthAccount;
+import com.hoops.auth.domain.vo.AuthProvider;
+import java.util.Optional;
+
+public interface AuthAccountRepository {
+    Optional<AuthAccount> findByProviderAndProviderId(AuthProvider provider, String providerId);
+    AuthAccount save(AuthAccount authAccount);
+}
 ```
 
 ```java
@@ -119,55 +142,48 @@ public class InvalidNicknameException extends DomainException {
 
 #### Port 명명 규칙
 
-| 구분 | 위치 | 접미사 | 예시 |
-|-----|------|--------|------|
-| Inbound | port/in/ | `*UseCase` | `SignupUseCase`, `KakaoLoginUseCase` |
-| Outbound | port/out/ | `*Port` | `AuthAccountPort`, `JwtTokenPort` |
+| 구분 | 위치 | 접미사 | 용도 | 예시 |
+|-----|------|--------|------|------|
+| Inbound | port/in/ | `*UseCase` | UseCase 인터페이스 | `SignupUseCase`, `OAuthLoginUseCase` |
+| Outbound | port/out/ | `*Port` | 외부 서비스, ACL | `OAuthPort`, `JwtTokenPort`, `UserInfoPort` |
+| Repository | domain/repository/ | `*Repository` | 영속성 (DDD) | `AuthAccountRepository` |
+
+> **Repository vs Port**: Repository는 DDD 개념으로 `domain/repository/`에 위치. Port는 외부 서비스 통신용.
 
 ```java
-// application/port/in/SignupUseCase.java - Inbound Port
+// application/port/in/OAuthLoginUseCase.java - Inbound Port (벤더 중립적)
 package com.hoops.auth.application.port.in;
 
-import com.hoops.auth.application.dto.AuthResult;
-import com.hoops.auth.application.dto.SignupCommand;
+import com.hoops.auth.application.dto.OAuthCallbackResult;
+import com.hoops.auth.domain.vo.AuthProvider;
 
-public interface SignupUseCase {
-    AuthResult signup(SignupCommand command);
+public interface OAuthLoginUseCase {
+    String getAuthorizationUrl(AuthProvider provider);
+    OAuthCallbackResult processCallback(AuthProvider provider, String code);
 }
 ```
 
 ```java
-// application/port/out/AuthAccountPort.java - Outbound Port
+// application/port/out/OAuthPort.java - Outbound Port (벤더 중립적)
 package com.hoops.auth.application.port.out;
 
-import com.hoops.auth.domain.model.AuthAccount;
-import com.hoops.auth.domain.vo.AuthProvider;
-import java.util.Optional;
+import com.hoops.auth.domain.vo.OAuthTokenInfo;
+import com.hoops.auth.domain.vo.OAuthUserInfo;
 
-public interface AuthAccountPort {
-    Optional<AuthAccount> findByProviderAndProviderId(AuthProvider provider, String providerId);
-    AuthAccount save(AuthAccount authAccount);
+public interface OAuthPort {
+    String getAuthorizationUrl();
+    OAuthTokenInfo getToken(String code);
+    OAuthUserInfo getUserInfo(String accessToken);
 }
 ```
 
 ```java
-// application/dto/SignupCommand.java - UseCase Input
-package com.hoops.auth.application.dto;
-
-public record SignupCommand(
-    String tempToken,
-    String nickname
-) {}
-```
-
-```java
-// application/service/SignupService.java - UseCase 구현체
+// application/service/OAuthLoginService.java - UseCase 구현체
 package com.hoops.auth.application.service;
 
-import com.hoops.auth.application.port.in.SignupUseCase;
-import com.hoops.auth.application.port.out.AuthAccountPort;
-import com.hoops.auth.application.port.out.JwtTokenPort;
-import com.hoops.auth.application.port.out.UserInfoPort;
+import com.hoops.auth.application.port.in.OAuthLoginUseCase;
+import com.hoops.auth.application.port.out.OAuthPort;
+import com.hoops.auth.domain.repository.AuthAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -175,30 +191,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class SignupService implements SignupUseCase {
+public class OAuthLoginService implements OAuthLoginUseCase {
 
-    private final JwtTokenPort jwtTokenPort;
-    private final UserInfoPort userInfoPort;
-    private final AuthAccountPort authAccountPort;
+    private final OAuthPort oauthPort;              // 외부 서비스 Port
+    private final AuthAccountRepository authAccountRepository;  // 도메인 Repository
 
     @Override
-    public AuthResult signup(SignupCommand command) {
+    public OAuthCallbackResult processCallback(AuthProvider provider, String code) {
+        OAuthUserInfo userInfo = fetchUserInfo(code);
         // UseCase 로직
-    }
-}
-```
-
-```java
-// application/exception/DuplicateNicknameException.java - UseCase 실패 예외
-package com.hoops.auth.application.exception;
-
-import com.hoops.common.exception.ApplicationException;
-
-public class DuplicateNicknameException extends ApplicationException {
-    private static final String ERROR_CODE = "DUPLICATE_NICKNAME";
-
-    public DuplicateNicknameException(String nickname) {
-        super(ERROR_CODE, "Nickname already exists: " + nickname);
     }
 }
 ```
@@ -213,12 +214,9 @@ public class DuplicateNicknameException extends ApplicationException {
 // adapter/in/web/AuthController.java
 package com.hoops.auth.adapter.in.web;
 
-import com.hoops.auth.adapter.in.web.dto.SignupRequest;
-import com.hoops.auth.adapter.in.web.dto.AuthResponse;
-import com.hoops.auth.application.port.in.SignupUseCase;
+import com.hoops.auth.application.port.in.OAuthLoginUseCase;
+import com.hoops.auth.domain.vo.AuthProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -226,90 +224,32 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final SignupUseCase signupUseCase;
+    private final OAuthLoginUseCase oauthLoginUseCase;
 
-    @PostMapping("/signup")
-    public ResponseEntity<AuthResponse> signup(@Valid @RequestBody SignupRequest request) {
-        AuthResult result = signupUseCase.signup(request.toCommand());
-        return ResponseEntity.status(HttpStatus.CREATED).body(AuthResponse.from(result));
+    @GetMapping("/kakao")
+    public ResponseEntity<KakaoAuthUrlResponse> getKakaoAuthUrl() {
+        String authUrl = oauthLoginUseCase.getAuthorizationUrl(AuthProvider.KAKAO);
+        return ResponseEntity.ok(new KakaoAuthUrlResponse(authUrl));
     }
 }
 ```
 
-```java
-// adapter/in/web/dto/SignupRequest.java - HTTP Request DTO
-package com.hoops.auth.adapter.in.web.dto;
-
-import com.hoops.auth.application.dto.SignupCommand;
-import jakarta.validation.constraints.NotBlank;
-
-public record SignupRequest(
-    @NotBlank String tempToken,
-    @NotBlank String nickname
-) {
-    public SignupCommand toCommand() {
-        return new SignupCommand(tempToken, nickname);
-    }
-}
-```
-
-#### Outbound Adapter (adapter/out/)
+#### Outbound Adapter - Persistence (adapter/out/persistence/)
 
 ```java
-// adapter/out/persistence/AuthAccountJpaEntity.java - JPA Entity
+// adapter/out/persistence/AuthAccountJpaAdapter.java - Repository 구현체
 package com.hoops.auth.adapter.out.persistence;
 
-import com.hoops.auth.domain.vo.AuthProvider;
-import jakarta.persistence.*;
-import lombok.*;
-
-@Entity
-@Table(name = "auth_accounts")
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
-public class AuthAccountJpaEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private Long userId;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AuthProvider provider;
-
-    @Column(nullable = false)
-    private String providerId;
-
-    private String refreshToken;
-}
-```
-
-```java
-// adapter/out/persistence/AuthAccountJpaAdapter.java - Port 구현체
-package com.hoops.auth.adapter.out.persistence;
-
-import com.hoops.auth.application.port.out.AuthAccountPort;
+import com.hoops.auth.domain.repository.AuthAccountRepository;  // 도메인 Repository 구현
 import com.hoops.auth.domain.model.AuthAccount;
-import com.hoops.auth.domain.vo.AuthProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class AuthAccountJpaAdapter implements AuthAccountPort {
+public class AuthAccountJpaAdapter implements AuthAccountRepository {
 
     private final SpringDataAuthAccountRepository repository;
-
-    @Override
-    public Optional<AuthAccount> findByProviderAndProviderId(AuthProvider provider, String providerId) {
-        return repository.findByProviderAndProviderId(provider, providerId)
-                .map(this::toDomain);
-    }
 
     @Override
     public AuthAccount save(AuthAccount authAccount) {
@@ -318,39 +258,59 @@ public class AuthAccountJpaAdapter implements AuthAccountPort {
         return toDomain(saved);
     }
 
-    private AuthAccount toDomain(AuthAccountJpaEntity entity) {
-        return AuthAccount.builder()
-                .id(entity.getId())
-                .userId(entity.getUserId())
-                .provider(entity.getProvider())
-                .providerId(entity.getProviderId())
-                .refreshToken(entity.getRefreshToken())
-                .build();
-    }
-
-    private AuthAccountJpaEntity toEntity(AuthAccount domain) {
-        return AuthAccountJpaEntity.builder()
-                .id(domain.getId())
-                .userId(domain.getUserId())
-                .provider(domain.getProvider())
-                .providerId(domain.getProviderId())
-                .refreshToken(domain.getRefreshToken())
-                .build();
-    }
+    private AuthAccount toDomain(AuthAccountJpaEntity entity) { /* ... */ }
+    private AuthAccountJpaEntity toEntity(AuthAccount domain) { /* ... */ }
 }
 ```
 
+#### Outbound Adapter - External API (adapter/out/{external}/{provider}/)
+
+**벤더별 구현체를 분리**하여 확장성 확보:
+
+```
+adapter/out/oauth/
+├── kakao/
+│   ├── KakaoOAuthAdapter.java    # implements OAuthPort
+│   └── exception/
+│       ├── InvalidAuthCodeException.java
+│       └── KakaoApiException.java
+└── google/                        # 향후 확장
+    └── GoogleOAuthAdapter.java
+```
+
 ```java
-// adapter/out/oauth/exception/KakaoApiException.java - 외부 API 예외
-package com.hoops.auth.adapter.out.oauth.exception;
+// adapter/out/oauth/kakao/KakaoOAuthAdapter.java
+package com.hoops.auth.adapter.out.oauth.kakao;
 
-import com.hoops.common.exception.ApplicationException;
+import com.hoops.auth.application.port.out.OAuthPort;
+import com.hoops.auth.domain.vo.OAuthTokenInfo;
+import com.hoops.auth.domain.vo.OAuthUserInfo;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-public class KakaoApiException extends ApplicationException {
-    private static final String ERROR_CODE = "KAKAO_API_ERROR";
+@Component
+@RequiredArgsConstructor
+public class KakaoOAuthAdapter implements OAuthPort {
 
-    public KakaoApiException(String message) {
-        super(ERROR_CODE, message);
+    private final KakaoOAuthProperties properties;
+    private final RestTemplate restTemplate;
+
+    @Override
+    public OAuthUserInfo getUserInfo(String accessToken) {
+        Map<String, Object> response = requestUserInfo(accessToken);
+        return toOAuthUserInfo(response);  // Kakao 응답 → 벤더 중립 VO 변환
+    }
+
+    private OAuthUserInfo toOAuthUserInfo(Map<String, Object> body) {
+        String kakaoId = String.valueOf(body.get("id"));
+        Map<String, Object> account = getNestedMap(body, "kakao_account");
+        Map<String, Object> profile = getNestedMap(account, "profile");
+
+        return OAuthUserInfo.of(
+                kakaoId,
+                (String) account.get("email"),
+                (String) profile.get("nickname"),
+                (String) profile.get("profile_image_url"));
     }
 }
 ```
@@ -363,11 +323,12 @@ public class KakaoApiException extends ApplicationException {
 // infrastructure/config/AuthConfig.java
 package com.hoops.auth.infrastructure.config;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@EnableConfigurationProperties(KakaoOAuthProperties.class)
 public class AuthConfig {
-    // Spring 설정
 }
 ```
 
@@ -380,31 +341,30 @@ BusinessException (추상)
 └── ApplicationException (UseCase/외부 API 실패)
     ├── DuplicateNicknameException
     ├── InvalidTempTokenException
-    └── KakaoApiException
+    └── (Adapter 예외도 가능)
 ```
 
 | 위치 | 사용 시점 | 예시 |
 |------|----------|------|
 | `domain/exception/` | 도메인 규칙 위반 | 닉네임 형식 불일치 |
 | `application/exception/` | UseCase 실패 | 중복 닉네임, 토큰 만료 |
-| `adapter/out/{external}/exception/` | 외부 API 실패 | 카카오 API 오류 |
+| `adapter/out/{external}/{provider}/exception/` | 벤더별 API 실패 | 카카오 API 오류 |
 
 ## DTO 구분
 
 | 위치 | 역할 | 예시 |
 |------|------|------|
-| `application/dto/` | UseCase Input/Output | SignupCommand, AuthResult |
-| `adapter/in/web/dto/` | HTTP Request/Response | SignupRequest, AuthResponse |
-| `domain/vo/` | 도메인 개념 표현 | TokenPair, KakaoUserInfo |
+| `application/dto/` | UseCase Input/Output | SignupCommand, OAuthCallbackResult |
+| `adapter/in/web/dto/` | HTTP Request/Response | SignupRequest, OAuthCallbackResponse |
+| `domain/vo/` | 도메인 개념 (벤더 중립) | TokenPair, OAuthUserInfo |
 
 ## Dependency Direction
 
 ```
 adapter/in/web → application/port/in → application/service
                                               ↓
-                                       application/port/out
-                                              ↓
-                                       adapter/out/*
+                              domain/repository ← adapter/out/persistence
+                              application/port/out ← adapter/out/{external}
                                               ↓
                                          domain/*
 ```
@@ -414,19 +374,29 @@ adapter/in/web → application/port/in → application/service
 - application은 domain만 의존
 - adapter는 application과 domain 의존
 
+## 핵심 원칙
+
+1. **벤더 중립적 도메인**: `KakaoUserInfo` ❌ → `OAuthUserInfo` ✅
+2. **Repository는 도메인에**: `domain/repository/` (DDD 스타일)
+3. **Port는 외부 서비스용**: `application/port/out/` (ACL, 외부 API)
+4. **벤더별 Adapter 분리**: `adapter/out/oauth/kakao/`, `adapter/out/oauth/google/`
+5. **Config는 Infrastructure에**: `infrastructure/config/`
+
 ## Checklist
 
 새 도메인 생성 시:
 
 - [ ] `domain/model/` - 도메인 모델 (순수 POJO)
-- [ ] `domain/vo/` - Value Objects
+- [ ] `domain/vo/` - Value Objects (벤더 중립적)
+- [ ] `domain/repository/` - Repository 인터페이스 (DDD)
 - [ ] `domain/exception/` - 도메인 예외
-- [ ] `application/port/in/` - UseCase 인터페이스
-- [ ] `application/port/out/` - Outbound Port (*Port 접미사)
+- [ ] `application/port/in/` - UseCase 인터페이스 (벤더 중립적)
+- [ ] `application/port/out/` - 외부 서비스 Port (벤더 중립적)
 - [ ] `application/service/` - UseCase 구현
 - [ ] `application/dto/` - Command, Response
 - [ ] `application/exception/` - UseCase 예외
 - [ ] `adapter/in/web/` - Controller
 - [ ] `adapter/in/web/dto/` - Request/Response DTO
-- [ ] `adapter/out/persistence/` - JPA Entity, Adapter
+- [ ] `adapter/out/persistence/` - JPA Entity, Repository 구현체
+- [ ] `adapter/out/{external}/{provider}/` - 벤더별 Adapter
 - [ ] `infrastructure/config/` - 필요시 설정 클래스

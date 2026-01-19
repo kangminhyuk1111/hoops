@@ -55,6 +55,13 @@
 4. **Testcontainers**: 테스트 DB는 MySQL Testcontainers 사용 (H2 금지)
 5. **외부 API Mocking**: 외부 API(카카오 등)는 WireMock 사용
 
+## Code Quality Rules
+
+- **메서드 depth**: 최대 2 (중첩 if/for 지양)
+- **메서드 길이**: 최대 20줄
+- **중첩 null 체크**: `Optional` 사용
+- **단일 책임**: 메서드는 한 가지 일만 수행
+
 ## Exception Rules
 
 > 금지: `RuntimeException`, `IllegalArgumentException`, `IllegalStateException` 직접 사용

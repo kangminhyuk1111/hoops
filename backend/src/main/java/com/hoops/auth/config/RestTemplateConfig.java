@@ -1,4 +1,4 @@
-package com.hoops.auth.infrastructure.config;
+package com.hoops.auth.config;
 
 import java.time.Duration;
 import org.springframework.boot.web.client.RestTemplateBuilder;

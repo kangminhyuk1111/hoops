@@ -1,8 +1,8 @@
 package com.hoops.acceptance.mock;
 
-import com.hoops.auth.application.port.out.KakaoOAuthPort;
-import com.hoops.auth.domain.vo.KakaoTokenInfo;
-import com.hoops.auth.domain.vo.KakaoUserInfo;
+import com.hoops.auth.application.port.out.OAuthPort;
+import com.hoops.auth.domain.vo.OAuthTokenInfo;
+import com.hoops.auth.domain.vo.OAuthUserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
@@ -19,11 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Profile("test")
 @Primary
-public class MockKakaoOAuthClient implements KakaoOAuthPort {
+public class MockKakaoOAuthClient implements OAuthPort {
 
     private static final Logger log = LoggerFactory.getLogger(MockKakaoOAuthClient.class);
 
-    private final Map<String, KakaoUserInfo> codeToUserInfo = new ConcurrentHashMap<>();
+    private final Map<String, OAuthUserInfo> codeToUserInfo = new ConcurrentHashMap<>();
 
     @Override
     public String getAuthorizationUrl() {
@@ -31,42 +31,42 @@ public class MockKakaoOAuthClient implements KakaoOAuthPort {
     }
 
     @Override
-    public KakaoTokenInfo getToken(String code) {
+    public OAuthTokenInfo getToken(String code) {
         log.info("[MOCK] 카카오 토큰 교환 요청: code={}", code);
-        return new KakaoTokenInfo("mock-kakao-access-token-" + code, "mock-kakao-refresh-token", 3600);
+        return OAuthTokenInfo.of("mock-kakao-access-token-" + code, "mock-kakao-refresh-token", 3600);
     }
 
     @Override
-    public KakaoUserInfo getUserInfo(String accessToken) {
+    public OAuthUserInfo getUserInfo(String accessToken) {
         log.info("[MOCK] 카카오 사용자 정보 조회: accessToken={}", accessToken);
 
         String code = accessToken.replace("mock-kakao-access-token-", "");
-        KakaoUserInfo userInfo = codeToUserInfo.get(code);
+        OAuthUserInfo userInfo = codeToUserInfo.get(code);
 
         if (userInfo != null) {
-            log.info("[MOCK] 등록된 사용자 정보 반환: kakaoId={}", userInfo.kakaoId());
+            log.info("[MOCK] 등록된 사용자 정보 반환: providerId={}", userInfo.providerId());
             return userInfo;
         }
 
-        KakaoUserInfo defaultUser = new KakaoUserInfo(
+        OAuthUserInfo defaultUser = OAuthUserInfo.of(
                 "default-kakao-id-" + code,
                 "test" + code + "@kakao.com",
                 "테스트유저",
                 "https://example.com/profile.jpg"
         );
-        log.info("[MOCK] 기본 사용자 정보 반환: kakaoId={}", defaultUser.kakaoId());
+        log.info("[MOCK] 기본 사용자 정보 반환: providerId={}", defaultUser.providerId());
         return defaultUser;
     }
 
     /**
-     * 테스트용으로 인증 코드에 대한 카카오 사용자 정보를 등록합니다.
+     * 테스트용으로 인증 코드에 대한 OAuth 사용자 정보를 등록합니다.
      *
-     * @param code 카카오 인가 코드
+     * @param code 인가 코드
      * @param userInfo 사용자 정보
      */
-    public void registerUser(String code, KakaoUserInfo userInfo) {
+    public void registerUser(String code, OAuthUserInfo userInfo) {
         codeToUserInfo.put(code, userInfo);
-        log.info("[MOCK] 사용자 등록: code={}, kakaoId={}", code, userInfo.kakaoId());
+        log.info("[MOCK] 사용자 등록: code={}, providerId={}", code, userInfo.providerId());
     }
 
     /**

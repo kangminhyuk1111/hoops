@@ -1,6 +1,6 @@
 package com.hoops.auth.adapter.out.persistence;
 
-import com.hoops.auth.application.port.out.AuthAccountPort;
+import com.hoops.auth.domain.repository.AuthAccountRepository;
 import com.hoops.auth.domain.model.AuthAccount;
 import com.hoops.auth.domain.vo.AuthProvider;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class AuthAccountJpaAdapter implements AuthAccountPort {
+public class AuthAccountJpaAdapter implements AuthAccountRepository {
 
     private final SpringDataAuthAccountRepository repository;
 

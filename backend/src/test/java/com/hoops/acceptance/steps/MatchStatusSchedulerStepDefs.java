@@ -90,10 +90,12 @@ public class MatchStatusSchedulerStepDefs {
             startTime = LocalTime.of(10, 0);
             endTime = LocalTime.of(12, 0);
         } else if (started) {
-            // 시작 시간이 지났지만 종료 시간은 안 지난 경기: 오늘 1시간 전 ~ 1시간 후
+            // 시작 시간이 지났지만 종료 시간은 안 지난 경기
+            // Note: LocalTime.now().plusHours(1)은 자정 근처에서 wrap되어 버그 발생
+            // 고정된 시간 사용: 오늘 00:01 ~ 23:59 (startTime은 이미 지남, endTime은 아직 안 지남)
             matchDate = LocalDate.now();
-            startTime = LocalTime.now().minusHours(1);
-            endTime = LocalTime.now().plusHours(1);
+            startTime = LocalTime.of(0, 1);
+            endTime = LocalTime.of(23, 59);
         } else {
             // 아직 시작하지 않은 경기: 내일 오후 6시~8시
             matchDate = LocalDate.now().plusDays(1);

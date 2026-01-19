@@ -1,4 +1,4 @@
-package com.hoops.auth.config;
+package com.hoops.auth.infrastructure.config;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

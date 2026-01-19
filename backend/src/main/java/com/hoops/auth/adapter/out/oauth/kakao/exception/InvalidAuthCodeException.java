@@ -1,4 +1,4 @@
-package com.hoops.auth.adapter.out.oauth.exception;
+package com.hoops.auth.adapter.out.oauth.kakao.exception;
 
 import com.hoops.common.exception.DomainException;
 

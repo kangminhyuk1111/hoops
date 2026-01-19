@@ -4,13 +4,13 @@ import com.hoops.auth.application.dto.AuthResult;
 import com.hoops.auth.application.dto.SignupCommand;
 import com.hoops.auth.application.dto.UserInfo;
 import com.hoops.auth.application.port.in.SignupUseCase;
-import com.hoops.auth.application.port.out.AuthAccountPort;
 import com.hoops.auth.application.port.out.JwtTokenPort;
 import com.hoops.auth.application.port.out.UserInfoPort;
 import com.hoops.auth.application.exception.DuplicateNicknameException;
 import com.hoops.auth.application.exception.InvalidTempTokenException;
 import com.hoops.auth.domain.exception.InvalidNicknameException;
 import com.hoops.auth.domain.model.AuthAccount;
+import com.hoops.auth.domain.repository.AuthAccountRepository;
 import com.hoops.auth.domain.vo.AuthUserInfo;
 import com.hoops.auth.application.dto.CreateUserRequest;
 import com.hoops.auth.domain.vo.TokenPair;
@@ -30,7 +30,7 @@ public class SignupService implements SignupUseCase {
 
     private final JwtTokenPort jwtTokenPort;
     private final UserInfoPort userInfoPort;
-    private final AuthAccountPort authAccountPort;
+    private final AuthAccountRepository authAccountRepository;
 
     @Override
     public AuthResult signup(SignupCommand command) {
@@ -89,8 +89,8 @@ public class SignupService implements SignupUseCase {
     }
 
     private void createAuthAccount(Map<String, Object> claims, Long userId, String refreshToken) {
-        String kakaoId = (String) claims.get("kakaoId");
-        AuthAccount authAccount = AuthAccount.createForKakao(userId, kakaoId, refreshToken);
-        authAccountPort.save(authAccount);
+        String providerId = (String) claims.get("providerId");
+        AuthAccount authAccount = AuthAccount.createForKakao(userId, providerId, refreshToken);
+        authAccountRepository.save(authAccount);
     }
 }

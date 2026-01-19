@@ -1,4 +1,4 @@
-package com.hoops.auth.application.port.out;
+package com.hoops.auth.domain.repository;
 
 import com.hoops.auth.domain.model.AuthAccount;
 import com.hoops.auth.domain.vo.AuthProvider;
@@ -6,9 +6,9 @@ import com.hoops.auth.domain.vo.AuthProvider;
 import java.util.Optional;
 
 /**
- * AuthAccount 영속성 Port
+ * AuthAccount 저장소 인터페이스 (DDD Repository)
  */
-public interface AuthAccountPort {
+public interface AuthAccountRepository {
 
     AuthAccount save(AuthAccount authAccount);
 

@@ -2,15 +2,16 @@ package com.hoops.auth.adapter.in.web;
 
 import com.hoops.auth.adapter.in.web.dto.AuthResponse;
 import com.hoops.auth.adapter.in.web.dto.KakaoAuthUrlResponse;
-import com.hoops.auth.adapter.in.web.dto.KakaoCallbackResponse;
+import com.hoops.auth.adapter.in.web.dto.OAuthCallbackResponse;
 import com.hoops.auth.adapter.in.web.dto.RefreshTokenRequest;
 import com.hoops.auth.adapter.in.web.dto.SignupRequest;
 import com.hoops.auth.adapter.in.web.dto.TokenResponse;
 import com.hoops.auth.application.dto.AuthResult;
-import com.hoops.auth.application.dto.KakaoCallbackResult;
-import com.hoops.auth.application.port.in.KakaoLoginUseCase;
+import com.hoops.auth.application.dto.OAuthCallbackResult;
+import com.hoops.auth.application.port.in.OAuthLoginUseCase;
 import com.hoops.auth.application.port.in.SignupUseCase;
 import com.hoops.auth.application.port.in.TokenUseCase;
+import com.hoops.auth.domain.vo.AuthProvider;
 import com.hoops.auth.domain.vo.TokenPair;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final KakaoLoginUseCase kakaoLoginUseCase;
+    private final OAuthLoginUseCase oauthLoginUseCase;
     private final SignupUseCase signupUseCase;
     private final TokenUseCase tokenUseCase;
 
@@ -45,7 +46,7 @@ public class AuthController {
     @GetMapping("/kakao")
     public ResponseEntity<KakaoAuthUrlResponse> getKakaoAuthUrl() {
         log.info("Kakao auth URL requested");
-        String authUrl = kakaoLoginUseCase.getKakaoAuthUrl();
+        String authUrl = oauthLoginUseCase.getAuthorizationUrl(AuthProvider.KAKAO);
         return ResponseEntity.ok(new KakaoAuthUrlResponse(authUrl));
     }
 
@@ -55,10 +56,10 @@ public class AuthController {
             @ApiResponse(responseCode = "202", description = "New user - signup required")
     })
     @GetMapping("/kakao/callback")
-    public ResponseEntity<KakaoCallbackResponse> handleKakaoCallback(
+    public ResponseEntity<OAuthCallbackResponse> handleKakaoCallback(
             @Parameter(description = "Kakao authorization code") @RequestParam("code") String code) {
-        KakaoCallbackResult result = kakaoLoginUseCase.processCallback(code);
-        KakaoCallbackResponse response = KakaoCallbackResponse.from(result);
+        OAuthCallbackResult result = oauthLoginUseCase.processCallback(AuthProvider.KAKAO, code);
+        OAuthCallbackResponse response = OAuthCallbackResponse.from(result);
 
         if (result.isNewUser()) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);

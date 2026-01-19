@@ -1,11 +1,11 @@
-package com.hoops.auth.adapter.out.oauth;
+package com.hoops.auth.adapter.out.oauth.kakao;
 
-import com.hoops.auth.adapter.out.oauth.exception.InvalidAuthCodeException;
-import com.hoops.auth.adapter.out.oauth.exception.KakaoApiException;
-import com.hoops.auth.application.port.out.KakaoOAuthPort;
-import com.hoops.auth.domain.vo.KakaoTokenInfo;
-import com.hoops.auth.domain.vo.KakaoUserInfo;
-import com.hoops.auth.config.KakaoOAuthProperties;
+import com.hoops.auth.adapter.out.oauth.kakao.exception.InvalidAuthCodeException;
+import com.hoops.auth.adapter.out.oauth.kakao.exception.KakaoApiException;
+import com.hoops.auth.application.port.out.OAuthPort;
+import com.hoops.auth.domain.vo.OAuthTokenInfo;
+import com.hoops.auth.domain.vo.OAuthUserInfo;
+import com.hoops.auth.infrastructure.config.KakaoOAuthProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class KakaoOAuthAdapter implements KakaoOAuthPort {
+public class KakaoOAuthAdapter implements OAuthPort {
 
     private static final ParameterizedTypeReference<Map<String, Object>> MAP_TYPE = new ParameterizedTypeReference<>() {};
 
@@ -38,10 +38,10 @@ public class KakaoOAuthAdapter implements KakaoOAuthPort {
     }
 
     @Override
-    public KakaoTokenInfo getToken(String code) {
+    public OAuthTokenInfo getToken(String code) {
         try {
             Map<String, Object> response = requestToken(code);
-            return toKakaoTokenInfo(response);
+            return toOAuthTokenInfo(response);
         } catch (HttpClientErrorException e) {
             throw new InvalidAuthCodeException("Authorization code is expired or invalid");
         } catch (RestClientException e) {
@@ -50,10 +50,10 @@ public class KakaoOAuthAdapter implements KakaoOAuthPort {
     }
 
     @Override
-    public KakaoUserInfo getUserInfo(String accessToken) {
+    public OAuthUserInfo getUserInfo(String accessToken) {
         try {
             Map<String, Object> response = requestUserInfo(accessToken);
-            return toKakaoUserInfo(response);
+            return toOAuthUserInfo(response);
         } catch (RestClientException e) {
             throw new KakaoApiException("Failed to fetch Kakao user info", e);
         }
@@ -116,20 +116,20 @@ public class KakaoOAuthAdapter implements KakaoOAuthPort {
                 .orElseThrow(() -> new KakaoApiException(errorMessage));
     }
 
-    private KakaoTokenInfo toKakaoTokenInfo(Map<String, Object> body) {
-        return new KakaoTokenInfo(
+    private OAuthTokenInfo toOAuthTokenInfo(Map<String, Object> body) {
+        return OAuthTokenInfo.of(
                 (String) body.get("access_token"),
                 (String) body.get("refresh_token"),
                 (Integer) body.get("expires_in"));
     }
 
     @SuppressWarnings("unchecked")
-    private KakaoUserInfo toKakaoUserInfo(Map<String, Object> body) {
+    private OAuthUserInfo toOAuthUserInfo(Map<String, Object> body) {
         String kakaoId = String.valueOf(body.get("id"));
         Map<String, Object> account = getNestedMap(body, "kakao_account");
         Map<String, Object> profile = getNestedMap(account, "profile");
 
-        return new KakaoUserInfo(
+        return OAuthUserInfo.of(
                 kakaoId,
                 (String) account.get("email"),
                 (String) profile.get("nickname"),

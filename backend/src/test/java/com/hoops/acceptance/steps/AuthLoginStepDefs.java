@@ -3,11 +3,11 @@ package com.hoops.acceptance.steps;
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.acceptance.mock.MockKakaoOAuthClient;
-import com.hoops.auth.application.port.out.AuthAccountPort;
 import com.hoops.auth.application.port.out.JwtTokenPort;
 import com.hoops.auth.domain.model.AuthAccount;
+import com.hoops.auth.domain.repository.AuthAccountRepository;
 import com.hoops.auth.domain.vo.AuthProvider;
-import com.hoops.auth.domain.vo.KakaoUserInfo;
+import com.hoops.auth.domain.vo.OAuthUserInfo;
 import com.hoops.auth.domain.vo.TokenPair;
 import com.hoops.user.domain.User;
 import com.hoops.user.domain.repository.UserRepository;
@@ -29,7 +29,7 @@ public class AuthLoginStepDefs {
 
     private final TestAdapter testAdapter;
     private final UserRepository userRepository;
-    private final AuthAccountPort authAccountRepository;
+    private final AuthAccountRepository authAccountRepository;
     private final JwtTokenPort jwtTokenProvider;
     private final MockKakaoOAuthClient mockKakaoOAuthClient;
     private final SharedTestContext sharedContext;
@@ -37,7 +37,7 @@ public class AuthLoginStepDefs {
     public AuthLoginStepDefs(
             TestAdapter testAdapter,
             UserRepository userRepository,
-            AuthAccountPort authAccountRepository,
+            AuthAccountRepository authAccountRepository,
             JwtTokenPort jwtTokenProvider,
             MockKakaoOAuthClient mockKakaoOAuthClient,
             SharedTestContext sharedContext) {
@@ -76,13 +76,13 @@ public class AuthLoginStepDefs {
         );
         authAccountRepository.save(authAccount);
 
-        KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(
+        OAuthUserInfo oauthUserInfo = OAuthUserInfo.of(
                 kakaoId,
                 email,
                 "기존회원",
                 "https://example.com/profile.jpg"
         );
-        mockKakaoOAuthClient.registerUser(code, kakaoUserInfo);
+        mockKakaoOAuthClient.registerUser(code, oauthUserInfo);
 
         sharedContext.setKakaoCode(code);
         sharedContext.setKakaoId(kakaoId);
@@ -112,13 +112,13 @@ public class AuthLoginStepDefs {
         String email = "newuser" + System.currentTimeMillis() + "@kakao.com";
         String code = "new-code-" + UUID.randomUUID().toString().substring(0, 8);
 
-        KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(
+        OAuthUserInfo oauthUserInfo = OAuthUserInfo.of(
                 kakaoId,
                 email,
                 "신규유저",
                 "https://example.com/profile.jpg"
         );
-        mockKakaoOAuthClient.registerUser(code, kakaoUserInfo);
+        mockKakaoOAuthClient.registerUser(code, oauthUserInfo);
 
         sharedContext.setKakaoCode(code);
         sharedContext.setKakaoId(kakaoId);

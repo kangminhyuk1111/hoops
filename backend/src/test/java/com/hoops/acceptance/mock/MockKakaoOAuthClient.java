@@ -1,8 +1,8 @@
 package com.hoops.acceptance.mock;
 
-import com.hoops.auth.application.dto.KakaoTokenResponse;
-import com.hoops.auth.application.dto.KakaoUserInfo;
-import com.hoops.auth.domain.port.KakaoOAuthClient;
+import com.hoops.auth.application.port.out.KakaoOAuthPort;
+import com.hoops.auth.domain.vo.KakaoTokenInfo;
+import com.hoops.auth.domain.vo.KakaoUserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Profile("test")
 @Primary
-public class MockKakaoOAuthClient implements KakaoOAuthClient {
+public class MockKakaoOAuthClient implements KakaoOAuthPort {
 
     private static final Logger log = LoggerFactory.getLogger(MockKakaoOAuthClient.class);
 
@@ -31,9 +31,9 @@ public class MockKakaoOAuthClient implements KakaoOAuthClient {
     }
 
     @Override
-    public KakaoTokenResponse getToken(String code) {
+    public KakaoTokenInfo getToken(String code) {
         log.info("[MOCK] 카카오 토큰 교환 요청: code={}", code);
-        return new KakaoTokenResponse("mock-kakao-access-token-" + code, "mock-kakao-refresh-token", 3600);
+        return new KakaoTokenInfo("mock-kakao-access-token-" + code, "mock-kakao-refresh-token", 3600);
     }
 
     @Override

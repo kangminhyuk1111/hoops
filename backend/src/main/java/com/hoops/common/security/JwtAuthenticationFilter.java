@@ -1,6 +1,6 @@
 package com.hoops.common.security;
 
-import com.hoops.auth.domain.port.JwtTokenProvider;
+import com.hoops.auth.application.port.out.JwtTokenPort;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,9 +25,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenPort jwtTokenProvider;
 
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+    public JwtAuthenticationFilter(JwtTokenPort jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 

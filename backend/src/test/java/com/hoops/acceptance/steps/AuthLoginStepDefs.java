@@ -3,12 +3,12 @@ package com.hoops.acceptance.steps;
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.acceptance.mock.MockKakaoOAuthClient;
-import com.hoops.auth.application.dto.KakaoUserInfo;
-import com.hoops.auth.application.dto.TokenResult;
+import com.hoops.auth.application.port.out.AuthAccountPort;
+import com.hoops.auth.application.port.out.JwtTokenPort;
 import com.hoops.auth.domain.model.AuthAccount;
-import com.hoops.auth.domain.model.AuthProvider;
-import com.hoops.auth.domain.port.AuthAccountPort;
-import com.hoops.auth.domain.port.JwtTokenProvider;
+import com.hoops.auth.domain.vo.AuthProvider;
+import com.hoops.auth.domain.vo.KakaoUserInfo;
+import com.hoops.auth.domain.vo.TokenPair;
 import com.hoops.user.domain.User;
 import com.hoops.user.domain.repository.UserRepository;
 import io.cucumber.java.ko.그리고;
@@ -30,7 +30,7 @@ public class AuthLoginStepDefs {
     private final TestAdapter testAdapter;
     private final UserRepository userRepository;
     private final AuthAccountPort authAccountRepository;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenPort jwtTokenProvider;
     private final MockKakaoOAuthClient mockKakaoOAuthClient;
     private final SharedTestContext sharedContext;
 
@@ -38,7 +38,7 @@ public class AuthLoginStepDefs {
             TestAdapter testAdapter,
             UserRepository userRepository,
             AuthAccountPort authAccountRepository,
-            JwtTokenProvider jwtTokenProvider,
+            JwtTokenPort jwtTokenProvider,
             MockKakaoOAuthClient mockKakaoOAuthClient,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;
@@ -176,7 +176,7 @@ public class AuthLoginStepDefs {
         User savedUser = userRepository.save(user);
         sharedContext.setTestUser(savedUser);
 
-        TokenResult tokens = jwtTokenProvider.createTokens(savedUser.getId());
+        TokenPair tokens = jwtTokenProvider.createTokens(savedUser.getId());
         sharedContext.setAccessToken(tokens.accessToken());
         sharedContext.setRefreshToken(tokens.refreshToken());
 

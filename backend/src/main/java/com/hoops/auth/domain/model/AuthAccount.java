@@ -1,5 +1,6 @@
 package com.hoops.auth.domain.model;
 
+import com.hoops.auth.domain.vo.AuthProvider;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

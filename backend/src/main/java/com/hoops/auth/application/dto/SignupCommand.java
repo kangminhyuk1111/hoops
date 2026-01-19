@@ -1,9 +1,7 @@
 package com.hoops.auth.application.dto;
 
 /**
- * Signup completion command.
- *
- * Contains data required for signup process.
+ * 회원가입 Command
  */
 public record SignupCommand(
         String tempToken,

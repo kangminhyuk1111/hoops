@@ -42,6 +42,7 @@ public interface UserQueryPort {
      */
     record UserDetails(
             Long userId,
+            String email,
             String nickname,
             String profileImage,
             BigDecimal rating,

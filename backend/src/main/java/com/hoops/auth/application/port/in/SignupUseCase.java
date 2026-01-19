@@ -4,17 +4,12 @@ import com.hoops.auth.application.dto.AuthResult;
 import com.hoops.auth.application.dto.SignupCommand;
 
 /**
- * Signup Completion Use Case.
- *
- * Completes signup with nickname input.
+ * 회원가입 UseCase
  */
 public interface SignupUseCase {
 
     /**
-     * Completes signup.
-     *
-     * @param command signup command (temp token, nickname)
-     * @return auth result (JWT token, user info)
+     * 회원가입을 완료합니다.
      */
     AuthResult signup(SignupCommand command);
 }

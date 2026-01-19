@@ -1,11 +1,8 @@
 package com.hoops.auth.adapter.in.web.dto;
 
 import com.hoops.auth.application.dto.KakaoCallbackResult;
-import com.hoops.auth.application.dto.KakaoUserInfo;
+import com.hoops.auth.domain.vo.KakaoUserInfo;
 
-/**
- * 카카오 콜백 응답
- */
 public record KakaoCallbackResponse(
         boolean isNewUser,
         String tempToken,
@@ -14,7 +11,6 @@ public record KakaoCallbackResponse(
         KakaoInfoResponse kakaoInfo,
         UserResponse user
 ) {
-
     public static KakaoCallbackResponse from(KakaoCallbackResult result) {
         KakaoInfoResponse kakaoInfo = null;
         if (result.kakaoInfo() != null) {

@@ -1,6 +1,6 @@
 package com.hoops.auth.application.dto;
 
-import com.hoops.user.domain.User;
+import com.hoops.auth.domain.vo.AuthUserInfo;
 
 /**
  * 사용자 정보 (응답용)
@@ -11,12 +11,12 @@ public record UserInfo(
         String email,
         String profileImage
 ) {
-    public static UserInfo from(User user) {
+    public static UserInfo from(AuthUserInfo authUserInfo) {
         return new UserInfo(
-                user.getId(),
-                user.getNickname(),
-                user.getEmail(),
-                user.getProfileImage()
+                authUserInfo.id(),
+                authUserInfo.nickname(),
+                authUserInfo.email(),
+                authUserInfo.profileImage()
         );
     }
 }

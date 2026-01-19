@@ -2,7 +2,7 @@ package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
-import com.hoops.auth.domain.port.JwtTokenProvider;
+import com.hoops.auth.application.port.out.JwtTokenPort;
 import com.hoops.location.domain.Location;
 import com.hoops.location.domain.repository.LocationRepository;
 import com.hoops.match.application.port.out.MatchRepository;
@@ -32,7 +32,7 @@ public class E2EHappyPathStepDefs {
     private final UserRepository userRepository;
     private final MatchRepository matchRepository;
     private final LocationRepository locationRepository;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenPort jwtTokenProvider;
     private final SharedTestContext sharedContext;
 
     private static final BigDecimal SEOUL_LATITUDE = BigDecimal.valueOf(37.5665);
@@ -43,7 +43,7 @@ public class E2EHappyPathStepDefs {
             UserRepository userRepository,
             MatchRepository matchRepository,
             LocationRepository locationRepository,
-            JwtTokenProvider jwtTokenProvider,
+            JwtTokenPort jwtTokenProvider,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;
         this.userRepository = userRepository;

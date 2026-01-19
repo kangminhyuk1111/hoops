@@ -1,14 +1,13 @@
 # CLAUDE.md
 
 ## Skills
-- `/architecture-patterns` - 아키텍처 패턴 가이드 (Clean Architecture, Hexagonal, DDD)
+- `/architecture-patterns` - Hoops 프로젝트 Hexagonal Architecture 가이드
 - `/debugging-strategies` - 디버깅 전략 가이드
 - `/code-review-excellence` - 코드 리뷰 가이드
 
 ### Skill 사용 규칙 (필수)
 1. **아키텍처 관련 작업 시 반드시 `/architecture-patterns` skill 참조**
-2. **Skill 사용 시 사용자에게 명시적으로 알림**: "skill `/architecture-patterns`를 참조하여 작업합니다"
-3. **Skill 내용과 다른 구조 제안 금지**: skill이 정의한 구조를 따름
+2. **Skill 내용과 다른 구조 제안 금지**: skill이 정의한 구조를 따름
 
 ## Role
 - Java/Spring 생태계에 정통한 시니어 개발자
@@ -20,33 +19,35 @@
 - Kafka, JUnit 5, Cucumber, Testcontainers
 
 ## Package Structure
-> 기준: `/architecture-patterns` skill
+
+> 상세 내용은 `/architecture-patterns` skill 참조
 
 ```
 {domain}/
-├── domain/                    # Pure POJO (no Spring, JPA)
-│   ├── model/                 # Entities, Value Objects
-│   └── port/                  # Outbound interfaces (Repository Port)
+├── domain/                      # 순수 POJO (No Spring, JPA)
+│   ├── model/                   # Identity를 가진 도메인 모델
+│   ├── vo/                      # Value Objects (불변)
+│   └── exception/               # 도메인 규칙 위반 예외
 ├── application/
-│   ├── port/in/               # Inbound interfaces (UseCase)
-│   ├── dto/                   # Command, Response (UseCase Input/Output)
-│   ├── service/               # UseCase Implementation
-│   └── exception/
+│   ├── port/in/                 # Inbound Port (*UseCase)
+│   ├── port/out/                # Outbound Port (*Port)
+│   ├── service/                 # UseCase 구현체
+│   ├── dto/                     # Command, Response
+│   └── exception/               # UseCase 실패 예외
 ├── adapter/
-│   ├── in/web/                # Controller, Request/Response DTO
-│   └── out/persistence/       # Entity, JPA Repository, Mapper
-└── infrastructure/            # Framework concerns
-    └── config/                # Configuration classes
+│   ├── in/web/                  # Controller
+│   │   └── dto/                 # Request/Response DTO
+│   └── out/
+│       ├── persistence/         # JPA Entity, Repository 구현
+│       └── {external}/          # 외부 API Adapter
+│           └── exception/       # 외부 API 예외
+└── infrastructure/
+    └── config/                  # Spring Configuration
 ```
-
-### 핵심 구분
-- **application/dto/**: UseCase 전용 Command, Response
-- **adapter/in/web/**: HTTP Request/Response DTO
-- **infrastructure/config/**: 설정 클래스 (adapter가 아님)
 
 ## Strict Rules
 
-1. **Pure Domain**: `domain/` 패키지는 외부 라이브러리 의존 금지 (Spring, JPA, Lombok @Data)
+1. **Pure Domain**: `domain/` 패키지는 외부 프레임워크 의존 금지 (Spring, JPA, Lombok @Data)
 2. **Constructor Injection**: `@Autowired` 필드 주입 금지
 3. **DTO 사용**: Entity를 Controller에서 직접 반환 금지, `record` 타입 DTO 사용
 4. **Testcontainers**: 테스트 DB는 MySQL Testcontainers 사용 (H2 금지)
@@ -86,7 +87,6 @@ docs/
 ├── spec/           # 기능 스펙, 스키마, 패키지 구조
 │   ├── SPEC.md
 │   ├── schema.md
-│   ├── package-structure.md
 │   └── mvp-features.md
 └── api/            # API 명세
 ```

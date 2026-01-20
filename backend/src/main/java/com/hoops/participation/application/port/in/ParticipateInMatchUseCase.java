@@ -1,6 +1,6 @@
 package com.hoops.participation.application.port.in;
 
-import com.hoops.participation.domain.Participation;
+import com.hoops.participation.domain.model.Participation;
 
 /**
  * 경기 참가 Use Case

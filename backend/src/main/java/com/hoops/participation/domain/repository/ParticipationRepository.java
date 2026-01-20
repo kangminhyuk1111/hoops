@@ -1,6 +1,6 @@
 package com.hoops.participation.domain.repository;
 
-import com.hoops.participation.domain.Participation;
+import com.hoops.participation.domain.model.Participation;
 
 import java.util.List;
 import java.util.Optional;

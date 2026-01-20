@@ -4,7 +4,7 @@ import com.hoops.common.event.ParticipationCreatedEvent;
 import com.hoops.participation.application.port.in.ParticipateInMatchCommand;
 import com.hoops.participation.application.port.out.MatchInfo;
 import com.hoops.participation.application.port.out.ParticipationEventPublisher;
-import com.hoops.participation.domain.Participation;
+import com.hoops.participation.domain.model.Participation;
 import com.hoops.participation.domain.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

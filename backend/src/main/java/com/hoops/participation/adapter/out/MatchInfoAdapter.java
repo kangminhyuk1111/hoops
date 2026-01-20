@@ -1,4 +1,4 @@
-package com.hoops.participation.infrastructure.adapter;
+package com.hoops.participation.adapter.out;
 
 import com.hoops.match.application.port.out.MatchParticipationPort;
 import com.hoops.participation.application.exception.ParticipationMatchNotFoundException;

@@ -1,52 +1,49 @@
-package com.hoops.participation.infrastructure.adapter;
+package com.hoops.participation.adapter.out.persistence;
 
-import com.hoops.participation.domain.Participation;
-import com.hoops.participation.domain.ParticipationStatus;
+import com.hoops.participation.domain.model.Participation;
+import com.hoops.participation.domain.vo.ParticipationStatus;
 import com.hoops.participation.domain.repository.ParticipationRepository;
-import com.hoops.participation.infrastructure.ParticipationEntity;
-import com.hoops.participation.infrastructure.jpa.JpaParticipationRepository;
-import com.hoops.participation.infrastructure.mapper.ParticipationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-import static com.hoops.participation.domain.ParticipationStatus.CONFIRMED;
-import static com.hoops.participation.domain.ParticipationStatus.PENDING;
+import static com.hoops.participation.domain.vo.ParticipationStatus.CONFIRMED;
+import static com.hoops.participation.domain.vo.ParticipationStatus.PENDING;
 
 @Repository
 @RequiredArgsConstructor
-public class ParticipationRepositoryImpl implements ParticipationRepository {
+public class ParticipationJpaAdapter implements ParticipationRepository {
 
-    private final JpaParticipationRepository jpaParticipationRepository;
+    private final SpringDataParticipationRepository springDataParticipationRepository;
 
     @Override
     public Participation save(Participation participation) {
-        ParticipationEntity entity = ParticipationMapper.toEntity(participation);
-        ParticipationEntity savedEntity = jpaParticipationRepository.save(entity);
+        ParticipationJpaEntity entity = ParticipationMapper.toEntity(participation);
+        ParticipationJpaEntity savedEntity = springDataParticipationRepository.save(entity);
         return ParticipationMapper.toDomain(savedEntity);
     }
 
     @Override
     public Optional<Participation> findById(Long id) {
-        return jpaParticipationRepository.findById(id).map(ParticipationMapper::toDomain);
+        return springDataParticipationRepository.findById(id).map(ParticipationMapper::toDomain);
     }
 
     @Override
     public boolean existsByMatchIdAndUserId(Long matchId, Long userId) {
-        return jpaParticipationRepository.existsByMatchIdAndUserId(matchId, userId);
+        return springDataParticipationRepository.existsByMatchIdAndUserId(matchId, userId);
     }
 
     @Override
     public boolean existsActiveParticipation(Long matchId, Long userId) {
-        return jpaParticipationRepository.existsByMatchIdAndUserIdAndStatusIn(
+        return springDataParticipationRepository.existsByMatchIdAndUserIdAndStatusIn(
                 matchId, userId, List.of(PENDING, CONFIRMED));
     }
 
     @Override
     public List<Participation> findByUserIdAndNotCancelled(Long userId) {
-        return jpaParticipationRepository
+        return springDataParticipationRepository
                 .findByUserIdAndStatusNot(userId, ParticipationStatus.CANCELLED)
                 .stream()
                 .map(ParticipationMapper::toDomain)
@@ -55,7 +52,7 @@ public class ParticipationRepositoryImpl implements ParticipationRepository {
 
     @Override
     public List<Participation> findActiveParticipationsByUserId(Long userId) {
-        return jpaParticipationRepository
+        return springDataParticipationRepository
                 .findByUserIdAndStatusIn(userId, List.of(PENDING, CONFIRMED))
                 .stream()
                 .map(ParticipationMapper::toDomain)
@@ -64,7 +61,7 @@ public class ParticipationRepositoryImpl implements ParticipationRepository {
 
     @Override
     public List<Participation> findByMatchIdAndNotCancelled(Long matchId) {
-        return jpaParticipationRepository
+        return springDataParticipationRepository
                 .findByMatchIdAndStatusNot(matchId, ParticipationStatus.CANCELLED)
                 .stream()
                 .map(ParticipationMapper::toDomain)
@@ -73,7 +70,7 @@ public class ParticipationRepositoryImpl implements ParticipationRepository {
 
     @Override
     public Optional<Participation> findCancelledParticipation(Long matchId, Long userId) {
-        return jpaParticipationRepository
+        return springDataParticipationRepository
                 .findByMatchIdAndUserIdAndStatus(matchId, userId, ParticipationStatus.CANCELLED)
                 .map(ParticipationMapper::toDomain);
     }

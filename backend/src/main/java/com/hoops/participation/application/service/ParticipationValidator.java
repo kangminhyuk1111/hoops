@@ -12,7 +12,7 @@ import com.hoops.participation.application.exception.NotParticipantException;
 import com.hoops.participation.application.exception.OverlappingParticipationException;
 import com.hoops.participation.application.port.out.MatchInfo;
 import com.hoops.participation.application.port.out.MatchInfoProvider;
-import com.hoops.participation.domain.Participation;
+import com.hoops.participation.domain.model.Participation;
 import com.hoops.participation.domain.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.hoops.participation.infrastructure.kafka;
+package com.hoops.participation.adapter.out.kafka;
 
 import com.hoops.common.event.ParticipationEvent;
 import com.hoops.participation.application.port.out.ParticipationEventPublisher;

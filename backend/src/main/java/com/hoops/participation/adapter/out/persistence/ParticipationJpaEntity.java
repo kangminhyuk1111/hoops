@@ -1,7 +1,7 @@
-package com.hoops.participation.infrastructure;
+package com.hoops.participation.adapter.out.persistence;
 
 import com.hoops.common.infrastructure.persistence.BaseTimeEntity;
-import com.hoops.participation.domain.ParticipationStatus;
+import com.hoops.participation.domain.vo.ParticipationStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ParticipationEntity extends BaseTimeEntity {
+public class ParticipationJpaEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,11 +46,11 @@ public class ParticipationEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDateTime joinedAt;
 
-    public ParticipationEntity(Long matchId, Long userId) {
+    public ParticipationJpaEntity(Long matchId, Long userId) {
         this(matchId, userId, ParticipationStatus.PENDING, LocalDateTime.now());
     }
 
-    public ParticipationEntity(Long matchId, Long userId, ParticipationStatus status,
+    public ParticipationJpaEntity(Long matchId, Long userId, ParticipationStatus status,
             LocalDateTime joinedAt) {
         this.matchId = matchId;
         this.userId = userId;
@@ -58,7 +58,7 @@ public class ParticipationEntity extends BaseTimeEntity {
         this.joinedAt = joinedAt;
     }
 
-    public ParticipationEntity(Long id, Long matchId, Long userId, ParticipationStatus status,
+    public ParticipationJpaEntity(Long id, Long matchId, Long userId, ParticipationStatus status,
             LocalDateTime joinedAt) {
         this.id = id;
         this.matchId = matchId;
@@ -67,7 +67,7 @@ public class ParticipationEntity extends BaseTimeEntity {
         this.joinedAt = joinedAt;
     }
 
-    public ParticipationEntity(Long id, Long version, Long matchId, Long userId, ParticipationStatus status,
+    public ParticipationJpaEntity(Long id, Long version, Long matchId, Long userId, ParticipationStatus status,
             LocalDateTime joinedAt) {
         this.id = id;
         this.version = version;

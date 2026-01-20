@@ -1,11 +1,13 @@
-package com.hoops.participation.infrastructure.mapper;
+package com.hoops.participation.adapter.out.persistence;
 
-import com.hoops.participation.domain.Participation;
-import com.hoops.participation.infrastructure.ParticipationEntity;
+import com.hoops.participation.domain.model.Participation;
 
 public class ParticipationMapper {
 
-    public static Participation toDomain(ParticipationEntity entity) {
+    private ParticipationMapper() {
+    }
+
+    public static Participation toDomain(ParticipationJpaEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -18,12 +20,12 @@ public class ParticipationMapper {
                 entity.getJoinedAt());
     }
 
-    public static ParticipationEntity toEntity(Participation domain) {
+    public static ParticipationJpaEntity toEntity(Participation domain) {
         if (domain == null) {
             return null;
         }
         if (domain.getId() != null) {
-            return new ParticipationEntity(
+            return new ParticipationJpaEntity(
                     domain.getId(),
                     domain.getVersion(),
                     domain.getMatchId(),
@@ -31,7 +33,7 @@ public class ParticipationMapper {
                     domain.getStatus(),
                     domain.getJoinedAt());
         }
-        return new ParticipationEntity(
+        return new ParticipationJpaEntity(
                 domain.getMatchId(),
                 domain.getUserId(),
                 domain.getStatus(),

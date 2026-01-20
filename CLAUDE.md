@@ -2,14 +2,17 @@
 
 ## Skills
 - `/architecture-patterns` - Hoops 프로젝트 Hexagonal Architecture 가이드
+- `/tdd-workflow` - ATDD 워크플로우 (Cucumber 시나리오 우선)
 - `/create-pull-request` - PR 생성 가이드 (테스트 필수)
-- `/debugging-strategies` - 디버깅 전략 가이드
 - `/code-review-excellence` - 코드 리뷰 가이드
+- `/debugging-strategies` - 디버깅 전략 가이드
+- `/skill-creator` - 새 스킬 생성 가이드
 
 ### Skill 사용 규칙 (필수)
 1. **아키텍처 관련 작업 시 반드시 `/architecture-patterns` skill 참조**
-2. **PR 생성 시 반드시 `/create-pull-request` skill 참조**
-3. **Skill 내용과 다른 구조 제안 금지**: skill이 정의한 구조를 따름
+2. **기능 구현 시 `/tdd-workflow` skill 참조** (Cucumber 시나리오 우선 작성)
+3. **PR 생성 시 반드시 `/create-pull-request` skill 참조**
+4. **Skill 내용과 다른 구조 제안 금지**: skill이 정의한 구조를 따름
 
 ## Role
 - Java/Spring 생태계에 정통한 시니어 개발자

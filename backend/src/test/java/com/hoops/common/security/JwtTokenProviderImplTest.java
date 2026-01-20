@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.hoops.auth.application.exception.InvalidRefreshTokenException;
 import com.hoops.auth.application.exception.InvalidTempTokenException;
+import com.hoops.auth.domain.vo.AuthProvider;
+import com.hoops.auth.domain.vo.TempTokenClaims;
 import com.hoops.auth.domain.vo.TokenPair;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,9 +87,12 @@ class JwtTokenProviderImplTest {
     @DisplayName("클레임을 포함한 임시 토큰을 생성한다")
     void createTempToken_WithClaims_ReturnsTempToken() {
         // given
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("kakaoId", "12345");
-        claims.put("email", "test@example.com");
+        TempTokenClaims claims = TempTokenClaims.of(
+                AuthProvider.KAKAO,
+                "12345",
+                "test@example.com",
+                "https://example.com/profile.jpg"
+        );
 
         // when
         String tempToken = jwtTokenProvider.createTempToken(claims);
@@ -102,17 +105,22 @@ class JwtTokenProviderImplTest {
     @DisplayName("임시 토큰에서 클레임을 추출한다")
     void getClaimsFromTempToken_WithValidToken_ReturnsClaims() {
         // given
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("kakaoId", "12345");
-        claims.put("email", "test@example.com");
+        TempTokenClaims claims = TempTokenClaims.of(
+                AuthProvider.KAKAO,
+                "12345",
+                "test@example.com",
+                "https://example.com/profile.jpg"
+        );
         String tempToken = jwtTokenProvider.createTempToken(claims);
 
         // when
-        Map<String, Object> extractedClaims = jwtTokenProvider.getClaimsFromTempToken(tempToken);
+        TempTokenClaims extractedClaims = jwtTokenProvider.getClaimsFromTempToken(tempToken);
 
         // then
-        assertThat(extractedClaims.get("kakaoId")).isEqualTo("12345");
-        assertThat(extractedClaims.get("email")).isEqualTo("test@example.com");
+        assertThat(extractedClaims.provider()).isEqualTo(AuthProvider.KAKAO);
+        assertThat(extractedClaims.providerId()).isEqualTo("12345");
+        assertThat(extractedClaims.email()).isEqualTo("test@example.com");
+        assertThat(extractedClaims.profileImage()).isEqualTo("https://example.com/profile.jpg");
     }
 
     @Test

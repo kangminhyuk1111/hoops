@@ -3,6 +3,8 @@ package com.hoops.common.security;
 import com.hoops.auth.application.port.out.JwtTokenPort;
 import com.hoops.auth.application.exception.InvalidRefreshTokenException;
 import com.hoops.auth.application.exception.InvalidTempTokenException;
+import com.hoops.auth.domain.vo.AuthProvider;
+import com.hoops.auth.domain.vo.TempTokenClaims;
 import com.hoops.auth.domain.vo.TokenPair;
 import com.hoops.common.exception.InvalidTokenClaimException;
 import io.jsonwebtoken.Claims;
@@ -28,6 +30,10 @@ public class JwtTokenProviderImpl implements JwtTokenPort {
     private static final String TOKEN_TYPE_REFRESH = "refresh";
     private static final String TOKEN_TYPE_TEMP = "temp";
     private static final String USER_ID_CLAIM = "userId";
+    private static final String PROVIDER_CLAIM = "provider";
+    private static final String PROVIDER_ID_CLAIM = "providerId";
+    private static final String EMAIL_CLAIM = "email";
+    private static final String PROFILE_IMAGE_CLAIM = "profileImage";
 
     private final JwtProperties jwtProperties;
     private final SecretKey secretKey;
@@ -47,15 +53,19 @@ public class JwtTokenProviderImpl implements JwtTokenPort {
     }
 
     @Override
-    public String createTempToken(Map<String, Object> claims) {
+    public String createTempToken(TempTokenClaims claims) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + jwtProperties.tempTokenExpiry());
 
-        Map<String, Object> allClaims = new HashMap<>(claims);
-        allClaims.put(TOKEN_TYPE_CLAIM, TOKEN_TYPE_TEMP);
+        Map<String, Object> jwtClaims = new HashMap<>();
+        jwtClaims.put(TOKEN_TYPE_CLAIM, TOKEN_TYPE_TEMP);
+        jwtClaims.put(PROVIDER_CLAIM, claims.provider().name());
+        jwtClaims.put(PROVIDER_ID_CLAIM, claims.providerId());
+        jwtClaims.put(EMAIL_CLAIM, claims.email());
+        jwtClaims.put(PROFILE_IMAGE_CLAIM, claims.profileImage());
 
         return Jwts.builder()
-                .claims(allClaims)
+                .claims(jwtClaims)
                 .issuedAt(now)
                 .expiration(expiry)
                 .signWith(secretKey)
@@ -77,7 +87,7 @@ public class JwtTokenProviderImpl implements JwtTokenPort {
     }
 
     @Override
-    public Map<String, Object> getClaimsFromTempToken(String tempToken) {
+    public TempTokenClaims getClaimsFromTempToken(String tempToken) {
         try {
             Claims claims = parseClaimsFromToken(tempToken);
 
@@ -86,11 +96,12 @@ public class JwtTokenProviderImpl implements JwtTokenPort {
                 throw new InvalidTempTokenException("Not a temporary token");
             }
 
-            Map<String, Object> result = new HashMap<>();
-            claims.forEach(result::put);
-            result.remove(TOKEN_TYPE_CLAIM);
-
-            return result;
+            return TempTokenClaims.of(
+                    AuthProvider.valueOf(claims.get(PROVIDER_CLAIM, String.class)),
+                    claims.get(PROVIDER_ID_CLAIM, String.class),
+                    claims.get(EMAIL_CLAIM, String.class),
+                    claims.get(PROFILE_IMAGE_CLAIM, String.class)
+            );
         } catch (ExpiredJwtException e) {
             throw new InvalidTempTokenException("Temporary token has expired");
         } catch (JwtException e) {

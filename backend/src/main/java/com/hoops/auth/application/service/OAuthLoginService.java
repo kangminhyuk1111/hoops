@@ -13,13 +13,12 @@ import com.hoops.auth.domain.vo.AuthProvider;
 import com.hoops.auth.domain.vo.AuthUserInfo;
 import com.hoops.auth.domain.vo.OAuthTokenInfo;
 import com.hoops.auth.domain.vo.OAuthUserInfo;
+import com.hoops.auth.domain.vo.TempTokenClaims;
 import com.hoops.auth.domain.vo.TokenPair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -68,12 +67,7 @@ public class OAuthLoginService implements OAuthLoginUseCase {
     }
 
     private OAuthCallbackResult handleNewUser(AuthProvider provider, OAuthUserInfo oauthUserInfo) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("provider", provider.name());
-        claims.put("providerId", oauthUserInfo.providerId());
-        claims.put("email", oauthUserInfo.email());
-        claims.put("profileImage", oauthUserInfo.profileImage());
-
+        TempTokenClaims claims = TempTokenClaims.fromOAuthUserInfo(provider, oauthUserInfo);
         String tempToken = jwtTokenPort.createTempToken(claims);
         return OAuthCallbackResult.forNewUser(tempToken, oauthUserInfo);
     }

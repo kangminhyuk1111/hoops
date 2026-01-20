@@ -11,15 +11,13 @@ import com.hoops.auth.application.exception.InvalidTempTokenException;
 import com.hoops.auth.domain.exception.InvalidNicknameException;
 import com.hoops.auth.domain.model.AuthAccount;
 import com.hoops.auth.domain.repository.AuthAccountRepository;
-import com.hoops.auth.domain.vo.AuthProvider;
 import com.hoops.auth.domain.vo.AuthUserInfo;
 import com.hoops.auth.application.dto.CreateUserRequest;
+import com.hoops.auth.domain.vo.TempTokenClaims;
 import com.hoops.auth.domain.vo.TokenPair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Map;
 
 @Service
 @Transactional
@@ -35,7 +33,7 @@ public class SignupService implements SignupUseCase {
 
     @Override
     public AuthResult signup(SignupCommand command) {
-        Map<String, Object> claims = validateAndExtractClaims(command);
+        TempTokenClaims claims = validateAndExtractClaims(command);
 
         AuthUserInfo savedUserInfo = createUser(claims, command.nickname());
         TokenPair tokens = jwtTokenPort.createTokens(savedUserInfo.id());
@@ -48,14 +46,14 @@ public class SignupService implements SignupUseCase {
         );
     }
 
-    private Map<String, Object> validateAndExtractClaims(SignupCommand command) {
-        Map<String, Object> claims = extractTempTokenClaims(command.tempToken());
+    private TempTokenClaims validateAndExtractClaims(SignupCommand command) {
+        TempTokenClaims claims = extractTempTokenClaims(command.tempToken());
         validateNickname(command.nickname());
         validateNicknameNotDuplicated(command.nickname());
         return claims;
     }
 
-    private Map<String, Object> extractTempTokenClaims(String tempToken) {
+    private TempTokenClaims extractTempTokenClaims(String tempToken) {
         try {
             return jwtTokenPort.getClaimsFromTempToken(tempToken);
         } catch (Exception e) {
@@ -81,18 +79,22 @@ public class SignupService implements SignupUseCase {
         }
     }
 
-    private AuthUserInfo createUser(Map<String, Object> claims, String nickname) {
-        String email = (String) claims.get("email");
-        String profileImage = (String) claims.get("profileImage");
-
-        CreateUserRequest request = CreateUserRequest.of(email, nickname, profileImage);
+    private AuthUserInfo createUser(TempTokenClaims claims, String nickname) {
+        CreateUserRequest request = CreateUserRequest.of(
+                claims.email(),
+                nickname,
+                claims.profileImage()
+        );
         return userInfoPort.createUser(request);
     }
 
-    private void createAuthAccount(Map<String, Object> claims, Long userId, String refreshToken) {
-        AuthProvider provider = AuthProvider.valueOf((String) claims.get("provider"));
-        String providerId = (String) claims.get("providerId");
-        AuthAccount authAccount = AuthAccount.create(userId, provider, providerId, refreshToken);
+    private void createAuthAccount(TempTokenClaims claims, Long userId, String refreshToken) {
+        AuthAccount authAccount = AuthAccount.create(
+                userId,
+                claims.provider(),
+                claims.providerId(),
+                refreshToken
+        );
         authAccountRepository.save(authAccount);
     }
 }

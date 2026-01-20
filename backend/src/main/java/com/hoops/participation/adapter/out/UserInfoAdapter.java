@@ -1,4 +1,4 @@
-package com.hoops.participation.infrastructure.adapter;
+package com.hoops.participation.adapter.out;
 
 import com.hoops.participation.application.port.out.UserInfo;
 import com.hoops.participation.application.port.out.UserInfoProvider;

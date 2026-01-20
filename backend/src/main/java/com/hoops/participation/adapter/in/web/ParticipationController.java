@@ -14,7 +14,7 @@ import com.hoops.participation.application.port.in.RejectParticipationCommand;
 import com.hoops.participation.application.port.in.RejectParticipationUseCase;
 import com.hoops.participation.application.port.out.UserInfo;
 import com.hoops.participation.application.port.out.UserInfoProvider;
-import com.hoops.participation.domain.Participation;
+import com.hoops.participation.domain.model.Participation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -2,7 +2,7 @@ package com.hoops.user.adapter.in.web;
 
 import com.hoops.participation.adapter.in.web.dto.ParticipationResponse;
 import com.hoops.participation.application.port.in.GetMyParticipationsUseCase;
-import com.hoops.participation.domain.Participation;
+import com.hoops.participation.domain.model.Participation;
 import com.hoops.user.adapter.in.web.dto.UpdateUserRequest;
 import com.hoops.user.adapter.in.web.dto.UserResponse;
 import com.hoops.user.application.port.in.GetMyProfileUseCase;

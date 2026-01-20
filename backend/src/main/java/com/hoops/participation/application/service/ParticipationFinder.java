@@ -1,7 +1,7 @@
 package com.hoops.participation.application.service;
 
 import com.hoops.participation.application.exception.ParticipationNotFoundException;
-import com.hoops.participation.domain.Participation;
+import com.hoops.participation.domain.model.Participation;
 import com.hoops.participation.domain.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

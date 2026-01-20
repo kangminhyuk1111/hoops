@@ -1,5 +1,6 @@
-package com.hoops.participation.domain;
+package com.hoops.participation.domain.model;
 
+import com.hoops.participation.domain.vo.ParticipationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

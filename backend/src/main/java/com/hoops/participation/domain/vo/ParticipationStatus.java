@@ -1,4 +1,4 @@
-package com.hoops.participation.domain;
+package com.hoops.participation.domain.vo;
 
 public enum ParticipationStatus {
     PENDING,

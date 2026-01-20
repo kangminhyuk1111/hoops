@@ -1,6 +1,6 @@
 package com.hoops.participation.adapter.in.web.dto;
 
-import com.hoops.participation.domain.Participation;
+import com.hoops.participation.domain.model.Participation;
 import java.time.LocalDateTime;
 
 /**

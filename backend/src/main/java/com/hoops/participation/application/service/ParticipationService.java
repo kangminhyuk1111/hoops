@@ -15,7 +15,7 @@ import com.hoops.participation.application.port.in.RejectParticipationCommand;
 import com.hoops.participation.application.port.in.RejectParticipationUseCase;
 import com.hoops.participation.application.port.out.MatchInfo;
 import com.hoops.participation.application.port.out.MatchInfoProvider;
-import com.hoops.participation.domain.Participation;
+import com.hoops.participation.domain.model.Participation;
 import com.hoops.participation.domain.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.OptimisticLockingFailureException;

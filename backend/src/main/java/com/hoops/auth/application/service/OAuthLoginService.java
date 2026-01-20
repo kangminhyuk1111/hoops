@@ -46,7 +46,7 @@ public class OAuthLoginService implements OAuthLoginUseCase {
 
         return existingAccount
                 .map(this::handleExistingUser)
-                .orElseGet(() -> handleNewUser(oauthUserInfo));
+                .orElseGet(() -> handleNewUser(provider, oauthUserInfo));
     }
 
     private OAuthUserInfo fetchOAuthUserInfo(String code) {
@@ -67,8 +67,9 @@ public class OAuthLoginService implements OAuthLoginUseCase {
         );
     }
 
-    private OAuthCallbackResult handleNewUser(OAuthUserInfo oauthUserInfo) {
+    private OAuthCallbackResult handleNewUser(AuthProvider provider, OAuthUserInfo oauthUserInfo) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("provider", provider.name());
         claims.put("providerId", oauthUserInfo.providerId());
         claims.put("email", oauthUserInfo.email());
         claims.put("profileImage", oauthUserInfo.profileImage());

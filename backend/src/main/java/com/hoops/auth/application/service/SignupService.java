@@ -11,6 +11,7 @@ import com.hoops.auth.application.exception.InvalidTempTokenException;
 import com.hoops.auth.domain.exception.InvalidNicknameException;
 import com.hoops.auth.domain.model.AuthAccount;
 import com.hoops.auth.domain.repository.AuthAccountRepository;
+import com.hoops.auth.domain.vo.AuthProvider;
 import com.hoops.auth.domain.vo.AuthUserInfo;
 import com.hoops.auth.application.dto.CreateUserRequest;
 import com.hoops.auth.domain.vo.TokenPair;
@@ -89,8 +90,9 @@ public class SignupService implements SignupUseCase {
     }
 
     private void createAuthAccount(Map<String, Object> claims, Long userId, String refreshToken) {
+        AuthProvider provider = AuthProvider.valueOf((String) claims.get("provider"));
         String providerId = (String) claims.get("providerId");
-        AuthAccount authAccount = AuthAccount.createForKakao(userId, providerId, refreshToken);
+        AuthAccount authAccount = AuthAccount.create(userId, provider, providerId, refreshToken);
         authAccountRepository.save(authAccount);
     }
 }

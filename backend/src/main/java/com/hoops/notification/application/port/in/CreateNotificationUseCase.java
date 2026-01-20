@@ -1,7 +1,7 @@
 package com.hoops.notification.application.port.in;
 
-import com.hoops.notification.domain.Notification;
-import com.hoops.notification.domain.NotificationType;
+import com.hoops.notification.domain.model.Notification;
+import com.hoops.notification.domain.vo.NotificationType;
 
 /**
  * 알림 생성 유스케이스

@@ -1,6 +1,6 @@
-package com.hoops.notification.infrastructure;
+package com.hoops.notification.adapter.out.persistence;
 
-import com.hoops.notification.domain.NotificationType;
+import com.hoops.notification.domain.vo.NotificationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class NotificationEntity {
+public class NotificationJpaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,12 +52,12 @@ public class NotificationEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public NotificationEntity(Long userId, NotificationType type, String title, String message,
+    public NotificationJpaEntity(Long userId, NotificationType type, String title, String message,
             Long relatedMatchId) {
         this(userId, type, title, message, relatedMatchId, false, LocalDateTime.now());
     }
 
-    public NotificationEntity(Long userId, NotificationType type, String title, String message,
+    public NotificationJpaEntity(Long userId, NotificationType type, String title, String message,
             Long relatedMatchId, Boolean isRead, LocalDateTime createdAt) {
         this.userId = userId;
         this.type = type;
@@ -68,7 +68,7 @@ public class NotificationEntity {
         this.createdAt = createdAt;
     }
 
-    public NotificationEntity(Long id, Long userId, NotificationType type, String title, String message,
+    public NotificationJpaEntity(Long id, Long userId, NotificationType type, String title, String message,
             Long relatedMatchId, Boolean isRead, LocalDateTime createdAt) {
         this.id = id;
         this.userId = userId;

@@ -1,4 +1,4 @@
-package com.hoops.notification.domain;
+package com.hoops.notification.domain.vo;
 
 public enum NotificationType {
     PARTICIPATION_CREATED,

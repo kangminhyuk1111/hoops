@@ -5,7 +5,7 @@ import com.hoops.notification.adapter.in.web.dto.UnreadCountResponse;
 import com.hoops.notification.application.port.in.GetNotificationsUseCase;
 import com.hoops.notification.application.port.in.GetUnreadCountUseCase;
 import com.hoops.notification.application.port.in.MarkNotificationAsReadUseCase;
-import com.hoops.notification.domain.Notification;
+import com.hoops.notification.domain.model.Notification;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

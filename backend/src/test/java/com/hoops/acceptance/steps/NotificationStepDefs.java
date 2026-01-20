@@ -2,8 +2,8 @@ package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
-import com.hoops.notification.domain.Notification;
-import com.hoops.notification.domain.NotificationType;
+import com.hoops.notification.domain.model.Notification;
+import com.hoops.notification.domain.vo.NotificationType;
 import com.hoops.notification.domain.repository.NotificationRepository;
 import com.hoops.user.domain.model.User;
 import io.cucumber.java.ko.그러면;

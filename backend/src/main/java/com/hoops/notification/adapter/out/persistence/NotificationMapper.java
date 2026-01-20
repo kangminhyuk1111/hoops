@@ -1,11 +1,13 @@
-package com.hoops.notification.infrastructure.mapper;
+package com.hoops.notification.adapter.out.persistence;
 
-import com.hoops.notification.domain.Notification;
-import com.hoops.notification.infrastructure.NotificationEntity;
+import com.hoops.notification.domain.model.Notification;
 
 public class NotificationMapper {
 
-    public static Notification toDomain(NotificationEntity entity) {
+    private NotificationMapper() {
+    }
+
+    public static Notification toDomain(NotificationJpaEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -20,12 +22,12 @@ public class NotificationMapper {
                 entity.getCreatedAt());
     }
 
-    public static NotificationEntity toEntity(Notification domain) {
+    public static NotificationJpaEntity toEntity(Notification domain) {
         if (domain == null) {
             return null;
         }
         if (domain.getId() != null) {
-            return new NotificationEntity(
+            return new NotificationJpaEntity(
                     domain.getId(),
                     domain.getUserId(),
                     domain.getType(),
@@ -35,7 +37,7 @@ public class NotificationMapper {
                     domain.getIsRead(),
                     domain.getCreatedAt());
         }
-        return new NotificationEntity(
+        return new NotificationJpaEntity(
                 domain.getUserId(),
                 domain.getType(),
                 domain.getTitle(),

@@ -1,10 +1,10 @@
-package com.hoops.notification.infrastructure.kafka;
+package com.hoops.notification.adapter.in.kafka;
 
 import com.hoops.common.event.ParticipationCancelledEvent;
 import com.hoops.common.event.ParticipationCreatedEvent;
 import com.hoops.common.event.ParticipationEvent;
 import com.hoops.notification.application.port.in.CreateNotificationUseCase;
-import com.hoops.notification.domain.NotificationType;
+import com.hoops.notification.domain.vo.NotificationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;

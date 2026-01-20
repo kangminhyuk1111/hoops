@@ -1,7 +1,7 @@
 package com.hoops.notification.adapter.in.web.dto;
 
-import com.hoops.notification.domain.Notification;
-import com.hoops.notification.domain.NotificationType;
+import com.hoops.notification.domain.model.Notification;
+import com.hoops.notification.domain.vo.NotificationType;
 
 import java.time.LocalDateTime;
 

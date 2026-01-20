@@ -384,63 +384,62 @@ adapter/in/web → application/port/in → application/service
 
 ## Object-Oriented Design Principles
 
-### SOLID 원칙
+### SOLID Principles
 
-| 원칙 | 설명 | 적용 |
-|------|------|------|
-| **SRP** | 클래스/메서드는 하나의 책임만 | `validateAndCreate()` 금지 → 검증/생성 분리 |
-| **OCP** | 확장에 열려있고 수정에 닫혀있음 | if-else 분기 대신 다형성 활용 |
-| **LSP** | 하위 타입은 상위 타입 대체 가능 | Port/Adapter 구현 시 준수 |
-| **ISP** | 클라이언트별 인터페이스 분리 | 불필요한 메서드 의존 금지 |
-| **DIP** | 추상화에 의존 | Port/Adapter 패턴으로 구현 |
+| Principle | Description | Application |
+|-----------|-------------|-------------|
+| **SRP** | Single Responsibility | No `validateAndCreate()` - separate validation and creation |
+| **OCP** | Open/Closed | Use polymorphism instead of if-else branching |
+| **LSP** | Liskov Substitution | Follow when implementing Port/Adapter |
+| **ISP** | Interface Segregation | No unnecessary method dependencies |
+| **DIP** | Dependency Inversion | Implemented via Port/Adapter pattern |
 
-### Domain Model 생성 규칙
+### Domain Model Creation Rules
 
-**정적 팩토리 메서드 패턴 필수**:
-- 생성자 직접 호출 금지
-- 의미있는 이름의 팩토리 메서드 제공
-- null 주입 금지 (필수 필드는 반드시 값 제공)
+**Static Factory Method Pattern Required**:
+- No direct constructor calls
+- Provide meaningful factory methods
+- No null injection (required fields must have values)
 
 ```java
-// Good - 정적 팩토리 메서드
+// Good - Static factory method
 public class Match {
     private Match(Long id, Long hostId, Long locationId, ...) {
         this.id = id;
         this.hostId = hostId;
         this.locationId = locationId;
-        // ...
     }
 
-    // 새 Match 생성 (id 없음)
+    // Create new Match (no id)
     public static Match create(Long hostId, Long locationId, LocalDateTime matchDate, ...) {
         validateCreation(hostId, locationId, matchDate);
         return new Match(null, hostId, locationId, ...);
     }
 
-    // DB에서 조회한 Match 복원 (id 있음)
+    // Reconstitute Match from DB (has id)
     public static Match reconstitute(Long id, Long hostId, Long locationId, ...) {
         return new Match(id, hostId, locationId, ...);
     }
 }
 
-// Bad - 서비스에서 생성자 직접 호출 + null 주입
+// Bad - Direct constructor call with null injection in service
 Match match = new Match(null, hostId, locationId, ...);
 ```
 
-### 검증 로직 설계 원칙
+### Validation Logic Design Principles
 
-**1. 검증과 생성/변경 분리 (SRP)**
+**1. Separate Validation and Creation/Modification (SRP)**
 
 ```java
-// Bad - 검증 + 생성 혼합 (SRP 위반)
+// Bad - Mixed validation + creation (SRP violation)
 public class MatchPolicyValidator {
     public Match validateAndCreate(CreateMatchCommand command) {
         validate(command);
-        return new Match(...);  // 두 가지 책임
+        return new Match(...);  // Two responsibilities
     }
 }
 
-// Good - 검증만 수행
+// Good - Validation only
 public class MatchPolicyValidator {
     public void validate(CreateMatchCommand command) {
         validateTimeRange(command);
@@ -448,15 +447,15 @@ public class MatchPolicyValidator {
     }
 }
 
-// 서비스에서 분리 호출
+// Service calls separately
 matchPolicyValidator.validate(command);
 Match match = Match.create(...);
 ```
 
-**2. 도메인 객체가 스스로 검증 (Tell, Don't Ask)**
+**2. Domain Object Self-Validation (Tell, Don't Ask)**
 
 ```java
-// Bad - 서비스에서 if-else 분기 검증 (절차지향)
+// Bad - if-else validation in service (procedural)
 public class MatchReactivator {
     public Match reactivate(ReactivateMatchCommand command) {
         Match match = matchRepository.findById(command.matchId());
@@ -471,7 +470,7 @@ public class MatchReactivator {
     }
 }
 
-// Good - 도메인 객체가 스스로 검증 (객체지향)
+// Good - Domain object self-validates (OOP)
 public class Match {
     public void reactivate(Long requestUserId) {
         validateHost(requestUserId);
@@ -492,7 +491,7 @@ public class Match {
     }
 }
 
-// 서비스는 단순히 위임
+// Service simply delegates
 public class MatchReactivator {
     public Match reactivate(ReactivateMatchCommand command) {
         Match match = matchRepository.findById(command.matchId());
@@ -502,22 +501,22 @@ public class MatchReactivator {
 }
 ```
 
-**3. Policy/Validator 사용 기준**
+**3. Policy/Validator Usage Guidelines**
 
-| 검증 유형 | 위치 | 예시 |
-|----------|------|------|
-| 단일 객체 상태 검증 | Domain Model 내부 | `match.reactivate()` |
-| 복잡한 교차 검증 | domain/policy/ | 시간 범위, 중복 참가 검증 |
-| 외부 의존 필요한 검증 | application/service/ | DB 조회 필요한 검증 |
+| Validation Type | Location | Example |
+|-----------------|----------|---------|
+| Single object state | Domain Model internal | `match.reactivate()` |
+| Complex cross-validation | domain/policy/ | Time range, duplicate participation |
+| Requires external dependency | application/service/ | DB lookup required |
 
-### 불변 객체 설계
+### Immutable Object Design
 
-- 가능한 모든 필드를 `final`로 선언
-- setter 대신 `with*()` 메서드로 새 객체 반환
-- 상태 변경이 필요한 경우에만 mutable 필드 허용
+- Declare all fields as `final` when possible
+- Use `with*()` methods instead of setters to return new objects
+- Allow mutable fields only when state changes are necessary
 
 ```java
-// Good - 불변 객체 + with 메서드
+// Good - Immutable object + with method
 public class AuthAccount {
     private final Long id;
     private final Long userId;

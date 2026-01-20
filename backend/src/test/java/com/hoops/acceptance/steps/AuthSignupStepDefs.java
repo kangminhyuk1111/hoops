@@ -4,6 +4,8 @@ import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.acceptance.mock.MockKakaoOAuthClient;
 import com.hoops.auth.application.port.out.JwtTokenPort;
+import com.hoops.auth.domain.vo.AuthProvider;
+import com.hoops.auth.domain.vo.TempTokenClaims;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;
 import io.cucumber.java.ko.만일;
@@ -40,11 +42,12 @@ public class AuthSignupStepDefs {
         String providerId = "new-user-kakao-" + UUID.randomUUID().toString().substring(0, 8);
         String email = "newuser" + System.currentTimeMillis() + "@kakao.com";
 
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("provider", "KAKAO");
-        claims.put("providerId", providerId);
-        claims.put("email", email);
-        claims.put("profileImage", "https://example.com/profile.jpg");
+        TempTokenClaims claims = TempTokenClaims.of(
+                AuthProvider.KAKAO,
+                providerId,
+                email,
+                "https://example.com/profile.jpg"
+        );
 
         String tempToken = jwtTokenProvider.createTempToken(claims);
 

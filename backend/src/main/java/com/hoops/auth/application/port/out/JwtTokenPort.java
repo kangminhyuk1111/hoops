@@ -1,8 +1,7 @@
 package com.hoops.auth.application.port.out;
 
+import com.hoops.auth.domain.vo.TempTokenClaims;
 import com.hoops.auth.domain.vo.TokenPair;
-
-import java.util.Map;
 
 /**
  * JWT 토큰 Port
@@ -17,7 +16,7 @@ public interface JwtTokenPort {
     /**
      * 임시 토큰을 생성합니다 (회원가입 전 사용).
      */
-    String createTempToken(Map<String, Object> claims);
+    String createTempToken(TempTokenClaims claims);
 
     /**
      * 토큰에서 userId를 추출합니다.
@@ -27,7 +26,7 @@ public interface JwtTokenPort {
     /**
      * 임시 토큰에서 클레임을 추출합니다.
      */
-    Map<String, Object> getClaimsFromTempToken(String tempToken);
+    TempTokenClaims getClaimsFromTempToken(String tempToken);
 
     /**
      * Refresh Token으로 새로운 토큰을 발급합니다.

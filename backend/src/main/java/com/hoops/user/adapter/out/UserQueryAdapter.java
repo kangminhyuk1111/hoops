@@ -1,8 +1,9 @@
-package com.hoops.user.infrastructure.adapter;
+package com.hoops.user.adapter.out;
 
 import com.hoops.user.application.port.out.UserQueryPort;
-import com.hoops.user.domain.User;
+import com.hoops.user.domain.model.User;
 import com.hoops.user.domain.repository.UserRepository;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class UserQueryAdapter implements UserQueryPort {
 
     @Override
     public Map<Long, UserDetails> findUserDetailsByIds(List<Long> userIds) {
-        return userRepository.findAllByIds(new java.util.HashSet<>(userIds)).stream()
+        return userRepository.findAllByIds(new HashSet<>(userIds)).stream()
                 .map(this::toUserDetails)
                 .collect(Collectors.toMap(UserDetails::userId, Function.identity()));
     }

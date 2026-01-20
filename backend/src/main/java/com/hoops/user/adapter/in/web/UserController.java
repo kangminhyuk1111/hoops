@@ -8,7 +8,7 @@ import com.hoops.user.adapter.in.web.dto.UserResponse;
 import com.hoops.user.application.port.in.GetMyProfileUseCase;
 import com.hoops.user.application.port.in.GetUserProfileUseCase;
 import com.hoops.user.application.port.in.UpdateUserProfileUseCase;
-import com.hoops.user.domain.User;
+import com.hoops.user.domain.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -8,7 +8,7 @@ import com.hoops.location.domain.repository.LocationRepository;
 import com.hoops.match.domain.repository.MatchRepository;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.vo.MatchStatus;
-import com.hoops.user.domain.User;
+import com.hoops.user.domain.model.User;
 import com.hoops.user.domain.repository.UserRepository;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;

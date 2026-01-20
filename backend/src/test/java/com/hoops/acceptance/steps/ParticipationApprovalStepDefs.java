@@ -16,7 +16,7 @@ import java.time.LocalTime;
 import com.hoops.participation.domain.Participation;
 import com.hoops.participation.domain.ParticipationStatus;
 import com.hoops.participation.domain.repository.ParticipationRepository;
-import com.hoops.user.domain.User;
+import com.hoops.user.domain.model.User;
 import com.hoops.user.domain.repository.UserRepository;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;

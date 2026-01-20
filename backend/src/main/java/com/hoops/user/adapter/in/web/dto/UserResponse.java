@@ -1,6 +1,6 @@
 package com.hoops.user.adapter.in.web.dto;
 
-import com.hoops.user.domain.User;
+import com.hoops.user.domain.model.User;
 import java.math.BigDecimal;
 
 public record UserResponse(

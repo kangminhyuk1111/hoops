@@ -1,4 +1,4 @@
-package com.hoops.user.infrastructure;
+package com.hoops.user.adapter.out.persistence;
 
 import com.hoops.common.infrastructure.persistence.BaseTimeEntity;
 import jakarta.persistence.Column;
@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserEntity extends BaseTimeEntity {
+public class UserJpaEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +38,7 @@ public class UserEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer totalMatches;
 
-    public UserEntity(String email, String nickname, String profileImage) {
+    public UserJpaEntity(String email, String nickname, String profileImage) {
         this.email = email;
         this.nickname = nickname;
         this.profileImage = profileImage;

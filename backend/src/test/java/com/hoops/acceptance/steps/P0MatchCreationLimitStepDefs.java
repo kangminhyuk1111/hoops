@@ -4,7 +4,7 @@ import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.location.domain.model.Location;
 import com.hoops.location.domain.repository.LocationRepository;
-import com.hoops.user.domain.User;
+import com.hoops.user.domain.model.User;
 import io.cucumber.java.ko.만일;
 
 import java.math.BigDecimal;

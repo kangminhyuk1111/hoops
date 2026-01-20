@@ -1,6 +1,6 @@
 package com.hoops.user.domain.repository;
 
-import com.hoops.user.domain.User;
+import com.hoops.user.domain.model.User;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

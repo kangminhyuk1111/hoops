@@ -1,4 +1,4 @@
-package com.hoops.location.domain;
+package com.hoops.location.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.hoops.location.application.exception;
+package com.hoops.location.domain.exception;
 
 import com.hoops.common.exception.DomainException;
 

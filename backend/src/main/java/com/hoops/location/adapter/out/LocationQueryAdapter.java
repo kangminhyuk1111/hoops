@@ -1,4 +1,4 @@
-package com.hoops.location.infrastructure.adapter;
+package com.hoops.location.adapter.out;
 
 import com.hoops.location.application.port.out.LocationQueryPort;
 import com.hoops.location.domain.repository.LocationRepository;

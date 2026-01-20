@@ -4,7 +4,7 @@ import com.hoops.location.adapter.in.web.dto.CreateLocationRequest;
 import com.hoops.location.adapter.in.web.dto.LocationResponse;
 import com.hoops.location.application.port.in.CreateLocationUseCase;
 import com.hoops.location.application.port.in.LocationQueryUseCase;
-import com.hoops.location.domain.Location;
+import com.hoops.location.domain.model.Location;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

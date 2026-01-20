@@ -1,6 +1,6 @@
 package com.hoops.location.domain.repository;
 
-import com.hoops.location.domain.Location;
+import com.hoops.location.domain.model.Location;
 import java.util.List;
 import java.util.Optional;
 

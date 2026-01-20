@@ -1,10 +1,10 @@
 package com.hoops.location.application.service;
 
 import com.hoops.location.application.exception.DuplicateLocationNameException;
-import com.hoops.location.application.exception.InvalidLocationNameException;
+import com.hoops.location.domain.exception.InvalidLocationNameException;
 import com.hoops.location.application.port.in.CreateLocationCommand;
 import com.hoops.location.application.port.in.CreateLocationUseCase;
-import com.hoops.location.domain.Location;
+import com.hoops.location.domain.model.Location;
 import com.hoops.location.domain.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

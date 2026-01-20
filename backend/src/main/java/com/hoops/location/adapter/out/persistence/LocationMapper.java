@@ -1,11 +1,10 @@
-package com.hoops.location.infrastructure.mapper;
+package com.hoops.location.adapter.out.persistence;
 
-import com.hoops.location.domain.Location;
-import com.hoops.location.infrastructure.LocationEntity;
+import com.hoops.location.domain.model.Location;
 
 public class LocationMapper {
 
-    public static Location toDomain(LocationEntity entity) {
+    public static Location toDomain(LocationJpaEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -18,11 +17,11 @@ public class LocationMapper {
                 entity.getAddress());
     }
 
-    public static LocationEntity toEntity(Location domain) {
+    public static LocationJpaEntity toEntity(Location domain) {
         if (domain == null) {
             return null;
         }
-        return new LocationEntity(
+        return new LocationJpaEntity(
                 domain.getUserId(),
                 domain.getAlias(),
                 domain.getLatitude(),

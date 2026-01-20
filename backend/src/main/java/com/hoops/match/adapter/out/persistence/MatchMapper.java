@@ -1,11 +1,10 @@
-package com.hoops.match.adapter.out.mapper;
+package com.hoops.match.adapter.out.persistence;
 
-import com.hoops.match.domain.Match;
-import com.hoops.match.adapter.out.MatchEntity;
+import com.hoops.match.domain.model.Match;
 
 public class MatchMapper {
 
-    public static Match toDomain(MatchEntity entity) {
+    public static Match toDomain(MatchJpaEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -28,15 +27,14 @@ public class MatchMapper {
                 entity.getCancelledAt());
     }
 
-    public static MatchEntity toEntity(Match domain) {
+    public static MatchJpaEntity toEntity(Match domain) {
         if (domain == null) {
             return null;
         }
 
-        MatchEntity entity;
-        // id가 있으면 업데이트, 없으면 새로 생성
+        MatchJpaEntity entity;
         if (domain.getId() != null) {
-            entity = new MatchEntity(
+            entity = new MatchJpaEntity(
                     domain.getId(),
                     domain.getVersion(),
                     domain.getHostId(),
@@ -53,7 +51,7 @@ public class MatchMapper {
                     domain.getCurrentParticipants(),
                     domain.getStatus());
         } else {
-            entity = new MatchEntity(
+            entity = new MatchJpaEntity(
                     domain.getHostId(),
                     domain.getHostNickname(),
                     domain.getTitle(),

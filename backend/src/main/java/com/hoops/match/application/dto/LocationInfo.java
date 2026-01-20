@@ -1,4 +1,4 @@
-package com.hoops.match.application.port.out;
+package com.hoops.match.application.dto;
 
 import java.math.BigDecimal;
 

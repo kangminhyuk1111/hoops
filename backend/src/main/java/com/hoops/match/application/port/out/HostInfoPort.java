@@ -1,5 +1,7 @@
 package com.hoops.match.application.port.out;
 
+import com.hoops.match.application.dto.HostInfo;
+
 /**
  * 호스트 정보 제공 포트
  *
@@ -8,7 +10,7 @@ package com.hoops.match.application.port.out;
  *
  * @see HostInfo
  */
-public interface HostInfoProvider {
+public interface HostInfoPort {
 
     /**
      * 호스트 정보를 조회합니다.

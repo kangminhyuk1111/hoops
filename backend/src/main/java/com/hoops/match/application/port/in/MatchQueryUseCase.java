@@ -1,6 +1,6 @@
 package com.hoops.match.application.port.in;
 
-import com.hoops.match.domain.Match;
+import com.hoops.match.domain.model.Match;
 import java.math.BigDecimal;
 import java.util.List;
 

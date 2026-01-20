@@ -1,6 +1,6 @@
 package com.hoops.match.application.port.in;
 
-import com.hoops.match.domain.Match;
+import com.hoops.match.domain.model.Match;
 
 /**
  * 경기 수정 유스케이스

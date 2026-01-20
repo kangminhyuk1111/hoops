@@ -2,8 +2,8 @@ package com.hoops.match.application.service;
 
 import com.hoops.match.application.exception.MatchNotFoundException;
 import com.hoops.match.application.port.in.MatchQueryUseCase;
-import com.hoops.match.application.port.out.MatchRepository;
-import com.hoops.match.domain.Match;
+import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.domain.model.Match;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

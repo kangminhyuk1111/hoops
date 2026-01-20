@@ -1,4 +1,4 @@
-package com.hoops.match.application.port.out;
+package com.hoops.match.application.dto;
 
 /**
  * 경기 호스트 정보

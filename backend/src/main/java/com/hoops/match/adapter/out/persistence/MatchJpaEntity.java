@@ -1,7 +1,7 @@
-package com.hoops.match.adapter.out;
+package com.hoops.match.adapter.out.persistence;
 
 import com.hoops.common.infrastructure.persistence.BaseTimeEntity;
-import com.hoops.match.domain.MatchStatus;
+import com.hoops.match.domain.vo.MatchStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,7 +18,7 @@ import java.time.LocalTime;
 
 @Entity
 @Table(name = "matches")
-public class MatchEntity extends BaseTimeEntity {
+public class MatchJpaEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,10 +70,10 @@ public class MatchEntity extends BaseTimeEntity {
     @Column(name = "cancelled_at")
     private LocalDateTime cancelledAt;
 
-    protected MatchEntity() {
+    protected MatchJpaEntity() {
     }
 
-    public MatchEntity(Long hostId, String hostNickname, String title, String description,
+    public MatchJpaEntity(Long hostId, String hostNickname, String title, String description,
             BigDecimal latitude, BigDecimal longitude, String address, LocalDate matchDate,
             LocalTime startTime, LocalTime endTime, Integer maxParticipants,
             Integer currentParticipants, MatchStatus status) {
@@ -92,7 +92,7 @@ public class MatchEntity extends BaseTimeEntity {
         this.status = status;
     }
 
-    public MatchEntity(Long id, Long version, Long hostId, String hostNickname, String title,
+    public MatchJpaEntity(Long id, Long version, Long hostId, String hostNickname, String title,
             String description, BigDecimal latitude, BigDecimal longitude, String address,
             LocalDate matchDate, LocalTime startTime, LocalTime endTime, Integer maxParticipants,
             Integer currentParticipants, MatchStatus status) {
@@ -113,7 +113,6 @@ public class MatchEntity extends BaseTimeEntity {
         this.status = status;
     }
 
-    // Getters
     public Long getId() {
         return id;
     }

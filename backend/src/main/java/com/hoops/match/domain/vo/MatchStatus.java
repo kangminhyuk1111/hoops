@@ -1,4 +1,4 @@
-package com.hoops.match.domain;
+package com.hoops.match.domain.vo;
 
 public enum MatchStatus {
     PENDING,

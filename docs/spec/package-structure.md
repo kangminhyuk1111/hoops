@@ -8,79 +8,159 @@
 
 ```
 {domain}/
-├── domain/                        # Pure Domain (POJO only)
-│   ├── model/                     # Domain Models
-│   │   ├── {Entity}.java          # Entity
-│   │   └── {ValueObject}.java     # Value Object (optional)
-│   └── port/                      # Outbound Port (from domain)
-│       └── {Entity}Port.java      # Repository/Gateway interface
+├── domain/                           # 순수 POJO (No Spring, JPA)
+│   ├── model/                        # Identity를 가진 도메인 모델
+│   │   └── {Entity}.java
+│   ├── vo/                           # Value Objects (불변)
+│   │   └── {ValueObject}.java
+│   ├── repository/                   # DDD Repository (인터페이스)
+│   │   └── {Entity}Repository.java
+│   ├── exception/                    # 도메인 규칙 위반 예외
+│   │   └── {Rule}Exception.java
+│   └── policy/                       # 도메인 정책 검증 (순수 POJO)
+│       └── {Entity}PolicyValidator.java
 │
-├── application/                   # Application Layer
-│   ├── port/in/                   # Inbound Port
-│   │   └── {Action}UseCase.java   # UseCase Interface
-│   ├── dto/                       # UseCase Input/Output
-│   │   ├── {Action}Command.java   # Input (Command)
-│   │   └── {Action}Result.java    # Output (Result)
-│   ├── service/                   # UseCase Implementation
+├── application/                      # 애플리케이션 계층
+│   ├── port/
+│   │   ├── in/                       # Inbound Port (*UseCase)
+│   │   │   └── {Action}UseCase.java
+│   │   └── out/                      # Outbound Port (*Port, 외부 서비스)
+│   │       └── {Service}Port.java
+│   ├── dto/                          # UseCase I/O
+│   │   ├── {Action}Command.java      # Input
+│   │   └── {Info}.java               # Output/Data Transfer
+│   ├── service/                      # UseCase 구현체
 │   │   └── {Action}Service.java
-│   └── exception/                 # Application Exception
+│   └── exception/                    # UseCase 실패 예외
 │       └── {Entity}{Reason}Exception.java
 │
 ├── adapter/
-│   ├── in/web/                    # REST Controller
-│   │   ├── {Entity}Controller.java
-│   │   └── dto/                   # HTTP Request/Response
-│   │       ├── {Action}Request.java
-│   │       └── {Entity}Response.java
-│   └── out/persistence/           # JPA Implementation
-│       ├── entity/
-│       │   └── {Entity}Entity.java
-│       ├── repository/
-│       │   ├── {Entity}PersistenceAdapter.java  # Port implementation
-│       │   └── {Entity}JpaRepository.java       # Spring Data JPA
-│       └── mapper/
-│           └── {Entity}Mapper.java
+│   ├── in/
+│   │   └── web/                      # REST Controller
+│   │       ├── {Entity}Controller.java
+│   │       └── dto/                  # HTTP Request/Response
+│   │           ├── {Action}Request.java
+│   │           └── {Entity}Response.java
+│   └── out/
+│       ├── persistence/              # JPA 영속성 관련
+│       │   ├── {Entity}JpaEntity.java
+│       │   ├── {Entity}JpaAdapter.java       # Repository 구현
+│       │   ├── SpringData{Entity}Repository.java
+│       │   └── {Entity}Mapper.java
+│       └── {external}/               # 외부 API Adapter
+│           └── {Service}Adapter.java
 │
-└── infrastructure/                # Framework concerns (NOT adapter)
-    └── config/                    # Configuration classes
-        └── {Feature}Config.java
+└── infrastructure/
+    └── config/                       # Spring Configuration
+        └── {Domain}Config.java       # Bean 등록 등
 ```
 
-## 핵심 구분
+## 핵심 원칙
 
-| 위치 | 목적 | 예시 |
+### 1. Repository vs Port
+
+| 구분 | 위치 | 용도 | 예시 |
+|------|------|------|------|
+| Repository | `domain/repository/` | 영속성 추상화 (DDD) | `MatchRepository` |
+| Port | `application/port/out/` | 외부 서비스/ACL | `HostInfoPort`, `OAuthPort` |
+
+### 2. DTO 위치
+
+| 위치 | 역할 | 예시 |
 |------|------|------|
-| `domain/port/` | Outbound interface (추상화) | `UserPort`, `MatchPort` |
-| `application/dto/` | UseCase Input/Output | `LoginCommand`, `LoginResult` |
-| `adapter/in/web/dto/` | HTTP Request/Response | `LoginRequest`, `UserResponse` |
-| `infrastructure/config/` | 설정 클래스 | `KakaoOAuthConfig`, `JwtConfig` |
+| `application/dto/` | UseCase Input/Output | `CreateMatchCommand`, `HostInfo` |
+| `adapter/in/web/dto/` | HTTP Request/Response | `CreateMatchRequest`, `MatchResponse` |
+| `domain/vo/` | 도메인 개념 (불변) | `MatchStatus`, `TokenPair` |
+
+### 3. 예외 분류
+
+| 위치 | 용도 | 예시 |
+|------|------|------|
+| `domain/exception/` | 도메인 규칙 위반 | `InvalidTimeRangeException` |
+| `application/exception/` | UseCase 실패 | `MatchNotFoundException`, `NotMatchHostException` |
 
 ## Layer Rules
 
 | Layer | Allowed Dependencies | Forbidden |
 |-------|---------------------|-----------|
 | domain/ | Pure Java only | Spring, JPA, Lombok(@Data) |
-| application/ | domain, port interfaces | adapter, infrastructure |
+| application/ | domain only | adapter, infrastructure |
 | adapter/in/ | application/port/in | adapter/out, domain directly |
-| adapter/out/ | domain/port, domain/model | adapter/in |
+| adapter/out/ | domain/repository, application/port/out | adapter/in |
 | infrastructure/ | Spring Framework | domain, application |
 
 ## Naming Convention
 
 | Type | Pattern | Example |
 |------|---------|---------|
-| Domain Model | `{Entity}` | `Match`, `User` |
-| Outbound Port | `{Entity}Port` | `MatchPort`, `UserPort` |
+| Domain Model | `{Entity}` | `Match`, `User`, `AuthAccount` |
+| Value Object | `{Concept}` | `MatchStatus`, `TokenPair` |
+| Repository Interface | `{Entity}Repository` | `MatchRepository` |
+| Outbound Port | `{Service}Port` | `HostInfoPort`, `OAuthPort` |
 | UseCase Interface | `{Action}UseCase` | `CreateMatchUseCase` |
-| UseCase Impl | `{Action}Service` | `CreateMatchService` |
+| UseCase Impl | `{Action}Service` or `{Actor}` | `MatchCreator`, `OAuthLoginService` |
 | Command | `{Action}Command` | `CreateMatchCommand` |
-| Result | `{Action}Result` | `LoginResult` |
-| Persistence Adapter | `{Entity}PersistenceAdapter` | `MatchPersistenceAdapter` |
-| JPA Repository | `{Entity}JpaRepository` | `MatchJpaRepository` |
-| JPA Entity | `{Entity}Entity` | `MatchEntity` |
+| JPA Entity | `{Entity}JpaEntity` | `MatchJpaEntity` |
+| JPA Adapter | `{Entity}JpaAdapter` | `MatchJpaAdapter` |
+| Spring Data | `SpringData{Entity}Repository` | `SpringDataMatchRepository` |
 | HTTP Request | `{Action}Request` | `CreateMatchRequest` |
 | HTTP Response | `{Entity}Response` | `MatchResponse` |
-| Config | `{Feature}Config` | `KakaoOAuthConfig` |
+| Config | `{Domain}Config` | `MatchConfig`, `AuthConfig` |
+
+## Example: Match Domain
+
+```
+match/
+├── domain/
+│   ├── model/
+│   │   └── Match.java
+│   ├── vo/
+│   │   └── MatchStatus.java
+│   ├── repository/
+│   │   └── MatchRepository.java
+│   ├── exception/
+│   │   ├── InvalidTimeRangeException.java
+│   │   └── InvalidMaxParticipantsException.java
+│   └── policy/
+│       └── MatchPolicyValidator.java
+│
+├── application/
+│   ├── port/
+│   │   ├── in/
+│   │   │   ├── CreateMatchUseCase.java
+│   │   │   └── MatchQueryUseCase.java
+│   │   └── out/
+│   │       ├── HostInfoPort.java
+│   │       └── LocationInfoPort.java
+│   ├── dto/
+│   │   ├── HostInfo.java
+│   │   └── LocationInfo.java
+│   ├── service/
+│   │   ├── MatchCreator.java
+│   │   └── MatchFinder.java
+│   └── exception/
+│       ├── MatchNotFoundException.java
+│       └── NotMatchHostException.java
+│
+├── adapter/
+│   ├── in/web/
+│   │   ├── MatchController.java
+│   │   └── dto/
+│   │       ├── CreateMatchRequest.java
+│   │       └── MatchResponse.java
+│   └── out/
+│       ├── persistence/
+│       │   ├── MatchJpaEntity.java
+│       │   ├── MatchJpaAdapter.java
+│       │   ├── SpringDataMatchRepository.java
+│       │   └── MatchMapper.java
+│       ├── LocationInfoAdapter.java
+│       └── UserHostInfoAdapter.java
+│
+└── infrastructure/
+    └── config/
+        └── MatchConfig.java
+```
 
 ## Example: Auth Domain
 
@@ -88,27 +168,34 @@
 auth/
 ├── domain/
 │   ├── model/
-│   │   ├── AuthAccount.java
-│   │   └── AuthProvider.java
-│   └── port/
-│       └── AuthAccountPort.java
+│   │   └── AuthAccount.java
+│   ├── vo/
+│   │   ├── AuthProvider.java
+│   │   ├── OAuthUserInfo.java
+│   │   └── TokenPair.java
+│   ├── repository/
+│   │   └── AuthAccountRepository.java
+│   └── exception/
+│       └── InvalidNicknameException.java
 │
 ├── application/
-│   ├── port/in/
-│   │   ├── KakaoLoginUseCase.java
-│   │   ├── SignupUseCase.java
-│   │   └── RefreshTokenUseCase.java
+│   ├── port/
+│   │   ├── in/
+│   │   │   ├── OAuthLoginUseCase.java
+│   │   │   └── SignupUseCase.java
+│   │   └── out/
+│   │       ├── OAuthPort.java
+│   │       ├── JwtTokenPort.java
+│   │       └── UserInfoPort.java
 │   ├── dto/
-│   │   ├── KakaoUserInfo.java
 │   │   ├── SignupCommand.java
-│   │   ├── TokenResult.java
-│   │   └── LoginResult.java
+│   │   └── OAuthCallbackResult.java
 │   ├── service/
-│   │   ├── KakaoCallbackHandler.java
-│   │   ├── SignupProcessor.java
-│   │   └── TokenRefresher.java
+│   │   ├── OAuthLoginService.java
+│   │   └── SignupService.java
 │   └── exception/
-│       └── InvalidAuthCodeException.java
+│       ├── DuplicateNicknameException.java
+│       └── InvalidTempTokenException.java
 │
 ├── adapter/
 │   ├── in/web/
@@ -118,20 +205,15 @@ auth/
 │   │       └── TokenResponse.java
 │   └── out/
 │       ├── persistence/
-│       │   ├── entity/
-│       │   │   └── AuthAccountEntity.java
-│       │   ├── repository/
-│       │   │   ├── AuthAccountPersistenceAdapter.java
-│       │   │   └── AuthAccountJpaRepository.java
-│       │   └── mapper/
-│       │       └── AuthAccountMapper.java
-│       └── oauth/
-│           └── KakaoOAuthClientImpl.java
+│       │   ├── AuthAccountJpaEntity.java
+│       │   ├── AuthAccountJpaAdapter.java
+│       │   └── SpringDataAuthAccountRepository.java
+│       └── oauth/kakao/
+│           └── KakaoOAuthAdapter.java
 │
 └── infrastructure/
     └── config/
-        ├── KakaoOAuthConfig.java
-        └── JwtConfig.java
+        └── AuthConfig.java
 ```
 
 ## Common Package

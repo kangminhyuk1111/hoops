@@ -1,4 +1,4 @@
-package com.hoops.match.adapter.dto;
+package com.hoops.match.adapter.in.web.dto;
 
 import com.hoops.match.application.port.in.CreateMatchCommand;
 import jakarta.validation.constraints.Min;

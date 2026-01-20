@@ -1,7 +1,7 @@
-package com.hoops.match.application.port.out;
+package com.hoops.match.domain.repository;
 
-import com.hoops.match.domain.Match;
-import com.hoops.match.domain.MatchStatus;
+import com.hoops.match.domain.model.Match;
+import com.hoops.match.domain.vo.MatchStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -9,6 +9,11 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Match 도메인 Repository 인터페이스 (DDD)
+ *
+ * 도메인 계층에 위치하여 영속성 추상화를 제공합니다.
+ */
 public interface MatchRepository {
     Match save(Match match);
 

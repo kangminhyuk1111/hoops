@@ -103,6 +103,10 @@ docs/
 └── api/            # API 명세
 ```
 
+### 문서 작성 규칙
+- **ASCII 다이어그램 금지**: 그림 형태의 텍스트(박스, 화살표 등) 사용 금지
+- 구조 설명은 **테이블** 또는 **목록** 형태로 작성
+
 ## Test
 
 - **Acceptance Test**: Cucumber + Testcontainers (`backend/src/test/java/com/hoops/acceptance/`)

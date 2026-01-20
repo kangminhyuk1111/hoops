@@ -1,11 +1,13 @@
-package com.hoops.user.infrastructure.mapper;
+package com.hoops.user.adapter.out.persistence;
 
-import com.hoops.user.domain.User;
-import com.hoops.user.infrastructure.UserEntity;
+import com.hoops.user.domain.model.User;
 
 public class UserMapper {
 
-    public static User toDomain(UserEntity entity) {
+    private UserMapper() {
+    }
+
+    public static User toDomain(UserJpaEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -18,11 +20,11 @@ public class UserMapper {
                 entity.getTotalMatches());
     }
 
-    public static UserEntity toEntity(User domain) {
+    public static UserJpaEntity toEntity(User domain) {
         if (domain == null) {
             return null;
         }
-        return new UserEntity(
+        return new UserJpaEntity(
                 domain.getEmail(),
                 domain.getNickname(),
                 domain.getProfileImage());

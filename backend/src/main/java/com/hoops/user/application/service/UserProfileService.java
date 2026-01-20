@@ -6,7 +6,7 @@ import com.hoops.user.application.port.in.GetMyProfileUseCase;
 import com.hoops.user.application.port.in.GetUserProfileUseCase;
 import com.hoops.user.application.port.in.UpdateUserProfileCommand;
 import com.hoops.user.application.port.in.UpdateUserProfileUseCase;
-import com.hoops.user.domain.User;
+import com.hoops.user.domain.model.User;
 import com.hoops.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

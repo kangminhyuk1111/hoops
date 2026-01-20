@@ -3,7 +3,7 @@ package com.hoops.acceptance.steps;
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.auth.application.port.out.JwtTokenPort;
-import com.hoops.user.domain.User;
+import com.hoops.user.domain.model.User;
 import com.hoops.user.domain.repository.UserRepository;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;

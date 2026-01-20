@@ -9,7 +9,7 @@ import com.hoops.auth.domain.repository.AuthAccountRepository;
 import com.hoops.auth.domain.vo.AuthProvider;
 import com.hoops.auth.domain.vo.OAuthUserInfo;
 import com.hoops.auth.domain.vo.TokenPair;
-import com.hoops.user.domain.User;
+import com.hoops.user.domain.model.User;
 import com.hoops.user.domain.repository.UserRepository;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;

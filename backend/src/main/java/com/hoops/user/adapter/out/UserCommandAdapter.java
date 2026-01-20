@@ -1,8 +1,8 @@
-package com.hoops.user.infrastructure.adapter;
+package com.hoops.user.adapter.out;
 
 import com.hoops.user.application.port.out.UserCommandPort;
 import com.hoops.user.application.port.out.UserQueryPort.UserDetails;
-import com.hoops.user.domain.User;
+import com.hoops.user.domain.model.User;
 import com.hoops.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

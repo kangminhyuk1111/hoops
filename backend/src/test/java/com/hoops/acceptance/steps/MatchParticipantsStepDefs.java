@@ -2,7 +2,7 @@ package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
-import com.hoops.match.domain.Match;
+import com.hoops.match.domain.model.Match;
 import com.hoops.participation.domain.Participation;
 import com.hoops.participation.domain.ParticipationStatus;
 import com.hoops.participation.domain.repository.ParticipationRepository;

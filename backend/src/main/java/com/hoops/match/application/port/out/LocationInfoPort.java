@@ -1,5 +1,7 @@
 package com.hoops.match.application.port.out;
 
+import com.hoops.match.application.dto.LocationInfo;
+
 /**
  * 장소 정보 제공 포트
  *
@@ -8,7 +10,7 @@ package com.hoops.match.application.port.out;
  *
  * @see LocationInfo
  */
-public interface LocationInfoProvider {
+public interface LocationInfoPort {
 
     /**
      * 장소 정보를 조회합니다.

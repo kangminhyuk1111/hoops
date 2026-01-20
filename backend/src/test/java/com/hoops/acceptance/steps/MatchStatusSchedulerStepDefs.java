@@ -1,9 +1,9 @@
 package com.hoops.acceptance.steps;
 
 import com.hoops.match.application.port.in.UpdateMatchStatusUseCase;
-import com.hoops.match.application.port.out.MatchRepository;
-import com.hoops.match.domain.Match;
-import com.hoops.match.domain.MatchStatus;
+import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.domain.model.Match;
+import com.hoops.match.domain.vo.MatchStatus;
 import com.hoops.user.domain.User;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;

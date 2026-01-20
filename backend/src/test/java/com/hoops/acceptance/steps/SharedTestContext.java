@@ -2,7 +2,7 @@ package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.location.domain.Location;
-import com.hoops.match.domain.Match;
+import com.hoops.match.domain.model.Match;
 import com.hoops.user.domain.User;
 import org.springframework.stereotype.Component;
 

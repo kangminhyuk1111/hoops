@@ -1,10 +1,10 @@
-package com.hoops.match.adapter.out.adapter;
+package com.hoops.match.adapter.out;
 
 import com.hoops.match.application.exception.MatchFullException;
 import com.hoops.match.application.exception.MatchNotFoundException;
 import com.hoops.match.application.port.out.MatchParticipationPort;
-import com.hoops.match.application.port.out.MatchRepository;
-import com.hoops.match.domain.Match;
+import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.domain.model.Match;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -53,11 +53,9 @@ public class MatchParticipationAdapter implements MatchParticipationPort {
     @Override
     @Transactional(timeout = 5)
     public void addParticipant(Long matchId) {
-        // 비관적 락을 사용하여 동시성 문제 방지
         Match match = matchRepository.findByIdWithLock(matchId)
                 .orElseThrow(() -> new MatchNotFoundException(matchId));
 
-        // 락 획득 후 다시 정원 확인 (Race Condition 방지)
         if (match.isFull()) {
             throw new MatchFullException(matchId);
         }

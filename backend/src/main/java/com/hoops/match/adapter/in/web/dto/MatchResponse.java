@@ -1,6 +1,6 @@
-package com.hoops.match.adapter.dto;
+package com.hoops.match.adapter.in.web.dto;
 
-import com.hoops.match.domain.Match;
+import com.hoops.match.domain.model.Match;
 import java.math.BigDecimal;
 
 /**

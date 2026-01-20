@@ -1,24 +1,21 @@
-package com.hoops.match.adapter.out.adapter;
+package com.hoops.match.adapter.out;
 
 import com.hoops.location.application.port.out.LocationQueryPort;
 import com.hoops.match.application.exception.MatchLocationNotFoundException;
-import com.hoops.match.application.port.out.LocationInfo;
-import com.hoops.match.application.port.out.LocationInfoProvider;
+import com.hoops.match.application.dto.LocationInfo;
+import com.hoops.match.application.port.out.LocationInfoPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
  * Location Context를 통한 장소 정보 제공 어댑터
  *
- * Match Context의 LocationInfoProvider 포트를 구현하여
+ * Match Context의 LocationInfoPort를 구현하여
  * Location Context가 제공하는 LocationQueryPort를 통해 장소 정보를 조회합니다.
- *
- * Location Context의 내부 구현(Repository)에 직접 의존하지 않고,
- * Location Context가 외부에 제공하는 Port만 사용합니다.
  */
 @Component
 @RequiredArgsConstructor
-public class LocationInfoAdapter implements LocationInfoProvider {
+public class LocationInfoAdapter implements LocationInfoPort {
 
     private final LocationQueryPort locationQueryPort;
 

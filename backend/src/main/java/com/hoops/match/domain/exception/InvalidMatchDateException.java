@@ -1,4 +1,4 @@
-package com.hoops.match.application.exception;
+package com.hoops.match.domain.exception;
 
 import com.hoops.common.exception.DomainException;
 import java.time.LocalDate;

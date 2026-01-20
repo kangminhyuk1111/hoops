@@ -6,8 +6,8 @@ import com.hoops.match.application.exception.MatchNotFoundException;
 import com.hoops.match.application.exception.NotMatchHostException;
 import com.hoops.match.application.port.in.UpdateMatchCommand;
 import com.hoops.match.application.port.in.UpdateMatchUseCase;
-import com.hoops.match.application.port.out.MatchRepository;
-import com.hoops.match.domain.Match;
+import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.policy.MatchPolicyValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,12 @@ public class MatchUpdater implements UpdateMatchUseCase {
 
         validateUpdate(match, command);
 
-        policyValidator.validateUpdateMatch(command);
+        policyValidator.validateUpdateMatch(
+                command.matchDate(),
+                command.startTime(),
+                command.endTime(),
+                command.maxParticipants()
+        );
 
         Match updatedMatch = match.update(
                 command.title(),

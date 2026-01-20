@@ -1,5 +1,6 @@
-package com.hoops.match.domain;
+package com.hoops.match.domain.model;
 
+import com.hoops.match.domain.vo.MatchStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

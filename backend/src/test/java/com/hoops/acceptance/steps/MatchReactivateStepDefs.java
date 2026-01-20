@@ -2,9 +2,9 @@ package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
-import com.hoops.match.adapter.out.MatchEntity;
-import com.hoops.match.adapter.out.jpa.JpaMatchRepository;
-import com.hoops.match.domain.MatchStatus;
+import com.hoops.match.adapter.out.persistence.MatchJpaEntity;
+import com.hoops.match.adapter.out.persistence.SpringDataMatchRepository;
+import com.hoops.match.domain.vo.MatchStatus;
 import com.hoops.user.domain.User;
 import com.hoops.user.domain.repository.UserRepository;
 import io.cucumber.java.ko.먼저;
@@ -18,13 +18,13 @@ import java.time.LocalTime;
 public class MatchReactivateStepDefs {
 
     private final TestAdapter testAdapter;
-    private final JpaMatchRepository jpaMatchRepository;
+    private final SpringDataMatchRepository jpaMatchRepository;
     private final UserRepository userRepository;
     private final SharedTestContext sharedContext;
 
     public MatchReactivateStepDefs(
             TestAdapter testAdapter,
-            JpaMatchRepository jpaMatchRepository,
+            SpringDataMatchRepository jpaMatchRepository,
             UserRepository userRepository,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;
@@ -38,7 +38,7 @@ public class MatchReactivateStepDefs {
         User testUser = sharedContext.getTestUser();
         sharedContext.clearTestMatches();
 
-        MatchEntity entity = new MatchEntity(
+        MatchJpaEntity entity = new MatchJpaEntity(
                 testUser.getId(),
                 testUser.getNickname(),
                 "내가 생성한 취소된 경기",
@@ -54,7 +54,7 @@ public class MatchReactivateStepDefs {
                 MatchStatus.CANCELLED
         );
         entity.setCancelledAt(LocalDateTime.now());
-        MatchEntity savedEntity = jpaMatchRepository.save(entity);
+        MatchJpaEntity savedEntity = jpaMatchRepository.save(entity);
 
         sharedContext.addTestMatch(toMatch(savedEntity));
     }
@@ -71,7 +71,7 @@ public class MatchReactivateStepDefs {
 
         sharedContext.clearTestMatches();
 
-        MatchEntity entity = new MatchEntity(
+        MatchJpaEntity entity = new MatchJpaEntity(
                 otherUser.getId(),
                 otherUser.getNickname(),
                 "다른 사용자의 취소된 경기",
@@ -87,7 +87,7 @@ public class MatchReactivateStepDefs {
                 MatchStatus.CANCELLED
         );
         entity.setCancelledAt(LocalDateTime.now());
-        MatchEntity savedEntity = jpaMatchRepository.save(entity);
+        MatchJpaEntity savedEntity = jpaMatchRepository.save(entity);
 
         sharedContext.addTestMatch(toMatch(savedEntity));
     }
@@ -97,7 +97,7 @@ public class MatchReactivateStepDefs {
         User testUser = sharedContext.getTestUser();
         sharedContext.clearTestMatches();
 
-        MatchEntity entity = new MatchEntity(
+        MatchJpaEntity entity = new MatchJpaEntity(
                 testUser.getId(),
                 testUser.getNickname(),
                 "1시간 전에 취소된 경기",
@@ -113,7 +113,7 @@ public class MatchReactivateStepDefs {
                 MatchStatus.CANCELLED
         );
         entity.setCancelledAt(LocalDateTime.now().minusHours(1).minusMinutes(1));
-        MatchEntity savedEntity = jpaMatchRepository.save(entity);
+        MatchJpaEntity savedEntity = jpaMatchRepository.save(entity);
 
         sharedContext.addTestMatch(toMatch(savedEntity));
     }
@@ -123,7 +123,7 @@ public class MatchReactivateStepDefs {
         User testUser = sharedContext.getTestUser();
         sharedContext.clearTestMatches();
 
-        MatchEntity entity = new MatchEntity(
+        MatchJpaEntity entity = new MatchJpaEntity(
                 testUser.getId(),
                 testUser.getNickname(),
                 "경기 날짜가 지난 취소된 경기",
@@ -139,7 +139,7 @@ public class MatchReactivateStepDefs {
                 MatchStatus.CANCELLED
         );
         entity.setCancelledAt(LocalDateTime.now().minusMinutes(30));
-        MatchEntity savedEntity = jpaMatchRepository.save(entity);
+        MatchJpaEntity savedEntity = jpaMatchRepository.save(entity);
 
         sharedContext.addTestMatch(toMatch(savedEntity));
     }
@@ -170,8 +170,8 @@ public class MatchReactivateStepDefs {
         sharedContext.setLastResponse(response);
     }
 
-    private com.hoops.match.domain.Match toMatch(MatchEntity entity) {
-        return com.hoops.match.domain.Match.builder()
+    private com.hoops.match.domain.model.Match toMatch(MatchJpaEntity entity) {
+        return com.hoops.match.domain.model.Match.builder()
                 .id(entity.getId())
                 .version(entity.getVersion())
                 .hostId(entity.getHostId())

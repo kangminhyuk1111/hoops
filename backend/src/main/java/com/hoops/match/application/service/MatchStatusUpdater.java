@@ -1,9 +1,9 @@
 package com.hoops.match.application.service;
 
 import com.hoops.match.application.port.in.UpdateMatchStatusUseCase;
-import com.hoops.match.application.port.out.MatchRepository;
-import com.hoops.match.domain.Match;
-import com.hoops.match.domain.MatchStatus;
+import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.domain.model.Match;
+import com.hoops.match.domain.vo.MatchStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

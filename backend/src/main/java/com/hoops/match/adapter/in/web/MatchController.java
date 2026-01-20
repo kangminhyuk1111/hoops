@@ -1,9 +1,9 @@
 package com.hoops.match.adapter.in.web;
 
-import com.hoops.match.adapter.dto.CancelMatchRequest;
-import com.hoops.match.adapter.dto.CreateMatchRequest;
-import com.hoops.match.adapter.dto.MatchResponse;
-import com.hoops.match.adapter.dto.UpdateMatchRequest;
+import com.hoops.match.adapter.in.web.dto.CancelMatchRequest;
+import com.hoops.match.adapter.in.web.dto.CreateMatchRequest;
+import com.hoops.match.adapter.in.web.dto.MatchResponse;
+import com.hoops.match.adapter.in.web.dto.UpdateMatchRequest;
 import com.hoops.match.application.port.in.CancelMatchCommand;
 import com.hoops.match.application.port.in.CancelMatchUseCase;
 import com.hoops.match.application.port.in.CreateMatchUseCase;
@@ -11,7 +11,7 @@ import com.hoops.match.application.port.in.MatchQueryUseCase;
 import com.hoops.match.application.port.in.ReactivateMatchCommand;
 import com.hoops.match.application.port.in.ReactivateMatchUseCase;
 import com.hoops.match.application.port.in.UpdateMatchUseCase;
-import com.hoops.match.domain.Match;
+import com.hoops.match.domain.model.Match;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -1,4 +1,4 @@
-package com.hoops.location.infrastructure;
+package com.hoops.location.adapter.out.persistence;
 
 import com.hoops.common.infrastructure.persistence.BaseTimeEntity;
 import jakarta.persistence.Column;
@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @Table(name = "locations")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LocationEntity extends BaseTimeEntity {
+public class LocationJpaEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +38,7 @@ public class LocationEntity extends BaseTimeEntity {
     @Column(length = 500)
     private String address;
 
-    public LocationEntity(Long userId, String alias, BigDecimal latitude, BigDecimal longitude,
+    public LocationJpaEntity(Long userId, String alias, BigDecimal latitude, BigDecimal longitude,
             String address) {
         this.userId = userId;
         this.alias = alias;

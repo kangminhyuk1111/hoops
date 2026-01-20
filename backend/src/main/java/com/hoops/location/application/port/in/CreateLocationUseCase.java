@@ -1,6 +1,6 @@
 package com.hoops.location.application.port.in;
 
-import com.hoops.location.domain.Location;
+import com.hoops.location.domain.model.Location;
 
 /**
  * 장소 생성 Use Case

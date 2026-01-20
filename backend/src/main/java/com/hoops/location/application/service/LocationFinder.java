@@ -2,7 +2,7 @@ package com.hoops.location.application.service;
 
 import com.hoops.location.application.exception.LocationNotFoundException;
 import com.hoops.location.application.port.in.LocationQueryUseCase;
-import com.hoops.location.domain.Location;
+import com.hoops.location.domain.model.Location;
 import com.hoops.location.domain.repository.LocationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

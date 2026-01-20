@@ -6,7 +6,7 @@ import com.hoops.auth.application.port.out.JwtTokenPort;
 import com.hoops.auth.domain.model.AuthAccount;
 import com.hoops.auth.domain.repository.AuthAccountRepository;
 import com.hoops.auth.domain.vo.AuthProvider;
-import com.hoops.location.domain.Location;
+import com.hoops.location.domain.model.Location;
 import com.hoops.location.domain.repository.LocationRepository;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.vo.MatchStatus;

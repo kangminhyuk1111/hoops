@@ -2,7 +2,7 @@ package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
-import com.hoops.location.domain.Location;
+import com.hoops.location.domain.model.Location;
 import com.hoops.location.domain.repository.LocationRepository;
 import com.hoops.user.domain.User;
 import io.cucumber.java.ko.그리고;

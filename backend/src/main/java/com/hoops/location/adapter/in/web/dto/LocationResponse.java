@@ -1,6 +1,6 @@
 package com.hoops.location.adapter.in.web.dto;
 
-import com.hoops.location.domain.Location;
+import com.hoops.location.domain.model.Location;
 import java.math.BigDecimal;
 
 /**

@@ -1,16 +1,15 @@
 package com.hoops.match.application.service;
 
+import com.hoops.match.application.dto.HostInfo;
+import com.hoops.match.application.dto.LocationInfo;
 import com.hoops.match.application.exception.OverlappingHostingException;
 import com.hoops.match.application.port.in.CreateMatchCommand;
 import com.hoops.match.application.port.in.CreateMatchUseCase;
-import com.hoops.match.application.dto.HostInfo;
 import com.hoops.match.application.port.out.HostInfoPort;
-import com.hoops.match.application.dto.LocationInfo;
 import com.hoops.match.application.port.out.LocationInfoPort;
-import com.hoops.match.domain.repository.MatchRepository;
 import com.hoops.match.domain.model.Match;
-import com.hoops.match.domain.vo.MatchStatus;
 import com.hoops.match.domain.policy.MatchPolicyValidator;
+import com.hoops.match.domain.repository.MatchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +21,6 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class MatchCreator implements CreateMatchUseCase {
-
-    private static final int INITIAL_PARTICIPANTS = 1;
 
     private final MatchRepository matchRepository;
     private final HostInfoPort hostInfoPort;
@@ -44,9 +41,7 @@ public class MatchCreator implements CreateMatchUseCase {
         HostInfo host = hostInfoPort.getHostInfo(command.hostId());
         LocationInfo location = locationInfoPort.getLocationInfo(command.locationId());
 
-        Match match = new Match(
-                null,
-                null,
+        Match match = Match.create(
                 host.hostId(),
                 host.nickname(),
                 command.title(),
@@ -57,10 +52,7 @@ public class MatchCreator implements CreateMatchUseCase {
                 command.matchDate(),
                 command.startTime(),
                 command.endTime(),
-                command.maxParticipants(),
-                INITIAL_PARTICIPANTS,
-                MatchStatus.PENDING,
-                null
+                command.maxParticipants()
         );
 
         return matchRepository.save(match);

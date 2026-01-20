@@ -171,23 +171,23 @@ public class MatchReactivateStepDefs {
     }
 
     private com.hoops.match.domain.model.Match toMatch(MatchJpaEntity entity) {
-        return com.hoops.match.domain.model.Match.builder()
-                .id(entity.getId())
-                .version(entity.getVersion())
-                .hostId(entity.getHostId())
-                .hostNickname(entity.getHostNickname())
-                .title(entity.getTitle())
-                .description(entity.getDescription())
-                .latitude(entity.getLatitude())
-                .longitude(entity.getLongitude())
-                .address(entity.getAddress())
-                .matchDate(entity.getMatchDate())
-                .startTime(entity.getStartTime())
-                .endTime(entity.getEndTime())
-                .maxParticipants(entity.getMaxParticipants())
-                .currentParticipants(entity.getCurrentParticipants())
-                .status(entity.getStatus())
-                .cancelledAt(entity.getCancelledAt())
-                .build();
+        return com.hoops.match.domain.model.Match.reconstitute(
+                entity.getId(),
+                entity.getVersion(),
+                entity.getHostId(),
+                entity.getHostNickname(),
+                entity.getTitle(),
+                entity.getDescription(),
+                entity.getLatitude(),
+                entity.getLongitude(),
+                entity.getAddress(),
+                entity.getMatchDate(),
+                entity.getStartTime(),
+                entity.getEndTime(),
+                entity.getMaxParticipants(),
+                entity.getCurrentParticipants(),
+                entity.getStatus(),
+                entity.getCancelledAt()
+        );
     }
 }

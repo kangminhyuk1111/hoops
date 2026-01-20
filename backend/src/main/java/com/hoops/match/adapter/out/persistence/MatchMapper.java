@@ -8,7 +8,7 @@ public class MatchMapper {
         if (entity == null) {
             return null;
         }
-        return new Match(
+        return Match.reconstitute(
                 entity.getId(),
                 entity.getVersion(),
                 entity.getHostId(),
@@ -24,7 +24,8 @@ public class MatchMapper {
                 entity.getMaxParticipants(),
                 entity.getCurrentParticipants(),
                 entity.getStatus(),
-                entity.getCancelledAt());
+                entity.getCancelledAt()
+        );
     }
 
     public static MatchJpaEntity toEntity(Match domain) {

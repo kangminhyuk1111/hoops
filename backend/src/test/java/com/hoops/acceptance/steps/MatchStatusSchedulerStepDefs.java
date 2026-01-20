@@ -103,22 +103,24 @@ public class MatchStatusSchedulerStepDefs {
             endTime = LocalTime.of(20, 0);
         }
 
-        Match match = Match.builder()
-                .version(0L)
-                .hostId(testUser.getId())
-                .hostNickname(testUser.getNickname())
-                .title("스케줄러 테스트 경기")
-                .description("테스트 경기 설명")
-                .latitude(BigDecimal.valueOf(37.5665))
-                .longitude(BigDecimal.valueOf(126.9780))
-                .address("서울시 중구")
-                .matchDate(matchDate)
-                .startTime(startTime)
-                .endTime(endTime)
-                .maxParticipants(10)
-                .currentParticipants(0)
-                .status(status)
-                .build();
+        Match match = Match.reconstitute(
+                null,
+                0L,
+                testUser.getId(),
+                testUser.getNickname(),
+                "스케줄러 테스트 경기",
+                "테스트 경기 설명",
+                BigDecimal.valueOf(37.5665),
+                BigDecimal.valueOf(126.9780),
+                "서울시 중구",
+                matchDate,
+                startTime,
+                endTime,
+                10,
+                0,
+                status,
+                null
+        );
 
         Match savedMatch = matchRepository.save(match);
         sharedContext.addTestMatch(savedMatch);

@@ -44,22 +44,24 @@ public class MatchUpdateStepDefs {
         User testUser = sharedContext.getTestUser();
         sharedContext.clearTestMatches();
 
-        Match match = Match.builder()
-                .version(0L)
-                .hostId(testUser.getId())
-                .hostNickname(testUser.getNickname())
-                .title("내가 생성한 경기")
-                .description("테스트 경기 설명")
-                .latitude(BigDecimal.valueOf(37.5665))
-                .longitude(BigDecimal.valueOf(126.9780))
-                .address("서울시 중구")
-                .matchDate(LocalDate.now().plusDays(7))
-                .startTime(LocalTime.of(18, 0))
-                .endTime(LocalTime.of(20, 0))
-                .maxParticipants(10)
-                .currentParticipants(participantCount)
-                .status(MatchStatus.PENDING)
-                .build();
+        Match match = Match.reconstitute(
+                null,
+                0L,
+                testUser.getId(),
+                testUser.getNickname(),
+                "내가 생성한 경기",
+                "테스트 경기 설명",
+                BigDecimal.valueOf(37.5665),
+                BigDecimal.valueOf(126.9780),
+                "서울시 중구",
+                LocalDate.now().plusDays(7),
+                LocalTime.of(18, 0),
+                LocalTime.of(20, 0),
+                10,
+                participantCount,
+                MatchStatus.PENDING,
+                null
+        );
         Match savedMatch = matchRepository.save(match);
         sharedContext.addTestMatch(savedMatch);
     }

@@ -60,10 +60,18 @@ public class P0MatchCreationLimitStepDefs {
         String accessToken = sharedContext.getAccessToken();
         ensureLocationExists();
 
+        // Use today's date with a time that's less than 1 hour from now
+        // This tests MATCH_TOO_SOON validation
         LocalDateTime startDateTime = LocalDateTime.now().plusMinutes(minutesLater);
         LocalDate matchDate = startDateTime.toLocalDate();
         LocalTime startTime = startDateTime.toLocalTime();
+
+        // Ensure endTime doesn't wrap past midnight by limiting duration
         LocalTime endTime = startTime.plusHours(2);
+        if (endTime.isBefore(startTime)) {
+            // Time wraps past midnight - adjust to end before midnight
+            endTime = LocalTime.of(23, 59);
+        }
 
         Map<String, Object> request = createMatchRequest(matchDate, startTime, endTime, 10);
 

@@ -165,21 +165,23 @@ public class MatchQueryStepDefs {
     }
 
     private Match createMatch(User host, BigDecimal latitude, BigDecimal longitude, String title) {
-        return Match.builder()
-                .version(0L)
-                .hostId(host.getId())
-                .hostNickname(host.getNickname())
-                .title(title)
-                .description("테스트 경기 설명")
-                .latitude(latitude)
-                .longitude(longitude)
-                .address("테스트 주소")
-                .matchDate(LocalDate.now().plusDays(7))
-                .startTime(LocalTime.of(18, 0))
-                .endTime(LocalTime.of(20, 0))
-                .maxParticipants(10)
-                .currentParticipants(0)
-                .status(MatchStatus.PENDING)
-                .build();
+        return Match.reconstitute(
+                null,
+                0L,
+                host.getId(),
+                host.getNickname(),
+                title,
+                "테스트 경기 설명",
+                latitude,
+                longitude,
+                "테스트 주소",
+                LocalDate.now().plusDays(7),
+                LocalTime.of(18, 0),
+                LocalTime.of(20, 0),
+                10,
+                0,
+                MatchStatus.PENDING,
+                null
+        );
     }
 }

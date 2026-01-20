@@ -71,7 +71,7 @@ public class E2EHappyPathStepDefs {
         LocalTime startTime = LocalTime.of(18, 0);
         LocalTime endTime = LocalTime.of(20, 0);
 
-        Match match = new Match(
+        Match match = Match.reconstitute(
                 null,
                 0L,
                 host.getId(),

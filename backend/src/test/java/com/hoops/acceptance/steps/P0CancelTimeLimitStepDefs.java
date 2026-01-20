@@ -59,22 +59,24 @@ public class P0CancelTimeLimitStepDefs {
         LocalTime startTime = startDateTime.toLocalTime();
         LocalTime endTime = startTime.plusHours(2);
 
-        Match match = Match.builder()
-                .version(0L)
-                .hostId(testUser.getId())
-                .hostNickname(testUser.getNickname())
-                .title(hoursLater + "시간 후 시작 경기")
-                .description("테스트 경기 설명")
-                .latitude(BigDecimal.valueOf(37.5665))
-                .longitude(BigDecimal.valueOf(126.9780))
-                .address("서울시 중구")
-                .matchDate(matchDate)
-                .startTime(startTime)
-                .endTime(endTime)
-                .maxParticipants(10)
-                .currentParticipants(1)
-                .status(MatchStatus.PENDING)
-                .build();
+        Match match = Match.reconstitute(
+                null,
+                0L,
+                testUser.getId(),
+                testUser.getNickname(),
+                hoursLater + "시간 후 시작 경기",
+                "테스트 경기 설명",
+                BigDecimal.valueOf(37.5665),
+                BigDecimal.valueOf(126.9780),
+                "서울시 중구",
+                matchDate,
+                startTime,
+                endTime,
+                10,
+                1,
+                MatchStatus.PENDING,
+                null
+        );
         Match savedMatch = matchRepository.save(match);
         sharedContext.addTestMatch(savedMatch);
     }
@@ -90,22 +92,24 @@ public class P0CancelTimeLimitStepDefs {
         LocalTime startTime = startDateTime.toLocalTime();
         LocalTime endTime = startTime.plusHours(2);
 
-        Match match = Match.builder()
-                .version(0L)
-                .hostId(otherUser.getId())
-                .hostNickname(otherUser.getNickname())
-                .title(hoursLater + "시간 후 시작 경기")
-                .description("테스트 경기 설명")
-                .latitude(BigDecimal.valueOf(37.5665))
-                .longitude(BigDecimal.valueOf(126.9780))
-                .address("서울시 중구")
-                .matchDate(matchDate)
-                .startTime(startTime)
-                .endTime(endTime)
-                .maxParticipants(10)
-                .currentParticipants(1)
-                .status(MatchStatus.PENDING)
-                .build();
+        Match match = Match.reconstitute(
+                null,
+                0L,
+                otherUser.getId(),
+                otherUser.getNickname(),
+                hoursLater + "시간 후 시작 경기",
+                "테스트 경기 설명",
+                BigDecimal.valueOf(37.5665),
+                BigDecimal.valueOf(126.9780),
+                "서울시 중구",
+                matchDate,
+                startTime,
+                endTime,
+                10,
+                1,
+                MatchStatus.PENDING,
+                null
+        );
         Match savedMatch = matchRepository.save(match);
         sharedContext.addTestMatch(savedMatch);
     }

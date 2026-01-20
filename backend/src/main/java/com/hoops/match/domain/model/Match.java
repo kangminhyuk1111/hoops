@@ -1,8 +1,12 @@
 package com.hoops.match.domain.model;
 
+import com.hoops.match.domain.exception.CancelTimeExceededException;
+import com.hoops.match.domain.exception.InvalidMaxParticipantsUpdateException;
+import com.hoops.match.domain.exception.MatchCannotBeCancelledException;
+import com.hoops.match.domain.exception.MatchCannotBeUpdatedException;
+import com.hoops.match.domain.exception.MatchCannotReactivateException;
+import com.hoops.match.domain.exception.NotMatchHostException;
 import com.hoops.match.domain.vo.MatchStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -11,12 +15,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
-@Builder
-@AllArgsConstructor
 public class Match {
 
     private static final int REACTIVATE_TIME_LIMIT_HOURS = 1;
     private static final int CANCEL_DEADLINE_HOURS = 2;
+    private static final int INITIAL_PARTICIPANTS = 1;
 
     private final Long id;
     private final Long version;
@@ -35,6 +38,187 @@ public class Match {
     private MatchStatus status;
     private LocalDateTime cancelledAt;
 
+    // Private constructor - use factory methods
+    private Match(Long id, Long version, Long hostId, String hostNickname,
+                  String title, String description, BigDecimal latitude, BigDecimal longitude,
+                  String address, LocalDate matchDate, LocalTime startTime, LocalTime endTime,
+                  Integer maxParticipants, Integer currentParticipants, MatchStatus status,
+                  LocalDateTime cancelledAt) {
+        this.id = id;
+        this.version = version;
+        this.hostId = hostId;
+        this.hostNickname = hostNickname;
+        this.title = title;
+        this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.address = address;
+        this.matchDate = matchDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.maxParticipants = maxParticipants;
+        this.currentParticipants = currentParticipants;
+        this.status = status;
+        this.cancelledAt = cancelledAt;
+    }
+
+    // ==================== Factory Methods ====================
+
+    /**
+     * Create a new Match (no id yet)
+     */
+    public static Match create(Long hostId, String hostNickname, String title, String description,
+                               BigDecimal latitude, BigDecimal longitude, String address,
+                               LocalDate matchDate, LocalTime startTime, LocalTime endTime,
+                               Integer maxParticipants) {
+        return new Match(
+                null,
+                null,
+                hostId,
+                hostNickname,
+                title,
+                description,
+                latitude,
+                longitude,
+                address,
+                matchDate,
+                startTime,
+                endTime,
+                maxParticipants,
+                INITIAL_PARTICIPANTS,
+                MatchStatus.PENDING,
+                null
+        );
+    }
+
+    /**
+     * Reconstitute a Match from persistence (has id)
+     */
+    public static Match reconstitute(Long id, Long version, Long hostId, String hostNickname,
+                                     String title, String description, BigDecimal latitude,
+                                     BigDecimal longitude, String address, LocalDate matchDate,
+                                     LocalTime startTime, LocalTime endTime, Integer maxParticipants,
+                                     Integer currentParticipants, MatchStatus status,
+                                     LocalDateTime cancelledAt) {
+        return new Match(id, version, hostId, hostNickname, title, description,
+                latitude, longitude, address, matchDate, startTime, endTime,
+                maxParticipants, currentParticipants, status, cancelledAt);
+    }
+
+    // ==================== Domain Behaviors with Self-Validation ====================
+
+    /**
+     * Reactivate a cancelled match (validates host and reactivation rules)
+     */
+    public void reactivate(Long requestUserId) {
+        validateHost(requestUserId);
+        validateReactivatable();
+        this.status = MatchStatus.PENDING;
+        this.cancelledAt = null;
+    }
+
+    /**
+     * Cancel the match (validates host and cancellation rules)
+     */
+    public void cancel(Long requestUserId) {
+        validateHost(requestUserId);
+        validateCancellable();
+        this.status = MatchStatus.CANCELLED;
+        this.cancelledAt = LocalDateTime.now();
+    }
+
+    /**
+     * Validate and update the match (returns new Match instance)
+     */
+    public Match updateWith(Long requestUserId, String newTitle, String newDescription,
+                            LocalDate newMatchDate, LocalTime newStartTime, LocalTime newEndTime,
+                            Integer newMaxParticipants) {
+        validateHost(requestUserId);
+        validateUpdatable();
+        if (newMaxParticipants != null) {
+            validateMaxParticipantsUpdate(newMaxParticipants);
+        }
+
+        MatchStatus newStatus = calculateNewStatus(newMaxParticipants);
+
+        return new Match(
+                this.id,
+                this.version,
+                this.hostId,
+                this.hostNickname,
+                newTitle != null ? newTitle : this.title,
+                newDescription != null ? newDescription : this.description,
+                this.latitude,
+                this.longitude,
+                this.address,
+                newMatchDate != null ? newMatchDate : this.matchDate,
+                newStartTime != null ? newStartTime : this.startTime,
+                newEndTime != null ? newEndTime : this.endTime,
+                newMaxParticipants != null ? newMaxParticipants : this.maxParticipants,
+                this.currentParticipants,
+                newStatus,
+                this.cancelledAt
+        );
+    }
+
+    // ==================== Validation Methods ====================
+
+    private void validateHost(Long userId) {
+        if (!this.hostId.equals(userId)) {
+            throw new NotMatchHostException(this.id, userId);
+        }
+    }
+
+    private void validateReactivatable() {
+        if (this.status != MatchStatus.CANCELLED) {
+            throw new MatchCannotReactivateException(this.id, "Only cancelled matches can be reactivated");
+        }
+        if (this.cancelledAt == null) {
+            throw new MatchCannotReactivateException(this.id, "Cancellation time not recorded");
+        }
+        if (this.matchDate.isBefore(LocalDate.now())) {
+            throw new MatchCannotReactivateException(this.id, "Match date has already passed");
+        }
+        LocalDateTime reactivateDeadline = this.cancelledAt.plusHours(REACTIVATE_TIME_LIMIT_HOURS);
+        if (LocalDateTime.now().isAfter(reactivateDeadline)) {
+            throw new MatchCannotReactivateException(this.id, "Reactivation time limit (1 hour) exceeded");
+        }
+    }
+
+    private void validateCancellable() {
+        if (!canCancel()) {
+            throw new MatchCannotBeCancelledException(this.id, "Match is already started, ended, or cancelled");
+        }
+        if (!canCancelByTime()) {
+            throw new CancelTimeExceededException(this.id);
+        }
+    }
+
+    private void validateUpdatable() {
+        if (!canUpdate()) {
+            throw new MatchCannotBeUpdatedException(this.id, this.status.name());
+        }
+    }
+
+    private void validateMaxParticipantsUpdate(Integer newMaxParticipants) {
+        if (newMaxParticipants < this.currentParticipants) {
+            throw new InvalidMaxParticipantsUpdateException(this.id, this.currentParticipants, newMaxParticipants);
+        }
+    }
+
+    private MatchStatus calculateNewStatus(Integer newMaxParticipants) {
+        if (newMaxParticipants != null && this.currentParticipants >= newMaxParticipants) {
+            return MatchStatus.FULL;
+        }
+        if (this.status == MatchStatus.FULL && newMaxParticipants != null
+                && this.currentParticipants < newMaxParticipants) {
+            return MatchStatus.PENDING;
+        }
+        return this.status;
+    }
+
+    // ==================== Participant Management ====================
+
     public void addParticipant() {
         this.currentParticipants++;
         if (this.currentParticipants >= this.maxParticipants) {
@@ -49,6 +233,26 @@ public class Match {
         if (this.status == MatchStatus.FULL) {
             this.status = MatchStatus.PENDING;
         }
+    }
+
+    // ==================== Status Transitions ====================
+
+    public void startMatch() {
+        if (canTransitionToInProgress()) {
+            this.status = MatchStatus.IN_PROGRESS;
+        }
+    }
+
+    public void endMatch() {
+        if (canTransitionToEnded()) {
+            this.status = MatchStatus.ENDED;
+        }
+    }
+
+    // ==================== Query Methods ====================
+
+    public boolean isHost(Long userId) {
+        return this.hostId.equals(userId);
     }
 
     public boolean hasStarted() {
@@ -79,18 +283,6 @@ public class Match {
         return this.status == MatchStatus.IN_PROGRESS;
     }
 
-    public void startMatch() {
-        if (canTransitionToInProgress()) {
-            this.status = MatchStatus.IN_PROGRESS;
-        }
-    }
-
-    public void endMatch() {
-        if (canTransitionToEnded()) {
-            this.status = MatchStatus.ENDED;
-        }
-    }
-
     public boolean canParticipate() {
         return (this.status == MatchStatus.PENDING || this.status == MatchStatus.CONFIRMED)
                 && this.currentParticipants < this.maxParticipants;
@@ -98,15 +290,6 @@ public class Match {
 
     public boolean isFull() {
         return this.currentParticipants >= this.maxParticipants;
-    }
-
-    public boolean isHost(Long userId) {
-        return this.hostId.equals(userId);
-    }
-
-    public void cancel() {
-        this.status = MatchStatus.CANCELLED;
-        this.cancelledAt = LocalDateTime.now();
     }
 
     public boolean canCancel() {
@@ -121,18 +304,9 @@ public class Match {
         return LocalDateTime.now().isBefore(cancelDeadline);
     }
 
-    public LocalDateTime getStartDateTime() {
-        return LocalDateTime.of(this.matchDate, this.startTime);
-    }
-
-    public LocalDateTime getEndDateTime() {
-        return LocalDateTime.of(this.matchDate, this.endTime);
-    }
-
-    public boolean overlapsWithTime(LocalDateTime otherStart, LocalDateTime otherEnd) {
-        LocalDateTime thisStart = getStartDateTime();
-        LocalDateTime thisEnd = getEndDateTime();
-        return thisStart.isBefore(otherEnd) && otherStart.isBefore(thisEnd);
+    public boolean canUpdate() {
+        return this.status == MatchStatus.PENDING
+                || this.status == MatchStatus.CONFIRMED;
     }
 
     public boolean canReactivate() {
@@ -149,43 +323,17 @@ public class Match {
         return LocalDateTime.now().isBefore(reactivateDeadline);
     }
 
-    public void reactivate() {
-        this.status = MatchStatus.PENDING;
-        this.cancelledAt = null;
+    public LocalDateTime getStartDateTime() {
+        return LocalDateTime.of(this.matchDate, this.startTime);
     }
 
-    public boolean canUpdate() {
-        return this.status == MatchStatus.PENDING
-                || this.status == MatchStatus.CONFIRMED;
+    public LocalDateTime getEndDateTime() {
+        return LocalDateTime.of(this.matchDate, this.endTime);
     }
 
-    public Match update(String title, String description, LocalDate matchDate,
-                        LocalTime startTime, LocalTime endTime, Integer maxParticipants) {
-        MatchStatus newStatus = this.status;
-        if (maxParticipants != null && this.currentParticipants >= maxParticipants) {
-            newStatus = MatchStatus.FULL;
-        } else if (this.status == MatchStatus.FULL && maxParticipants != null
-                && this.currentParticipants < maxParticipants) {
-            newStatus = MatchStatus.PENDING;
-        }
-
-        return new Match(
-                this.id,
-                this.version,
-                this.hostId,
-                this.hostNickname,
-                title != null ? title : this.title,
-                description != null ? description : this.description,
-                this.latitude,
-                this.longitude,
-                this.address,
-                matchDate != null ? matchDate : this.matchDate,
-                startTime != null ? startTime : this.startTime,
-                endTime != null ? endTime : this.endTime,
-                maxParticipants != null ? maxParticipants : this.maxParticipants,
-                this.currentParticipants,
-                newStatus,
-                this.cancelledAt
-        );
+    public boolean overlapsWithTime(LocalDateTime otherStart, LocalDateTime otherEnd) {
+        LocalDateTime thisStart = getStartDateTime();
+        LocalDateTime thisEnd = getEndDateTime();
+        return thisStart.isBefore(otherEnd) && otherStart.isBefore(thisEnd);
     }
 }

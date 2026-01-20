@@ -58,7 +58,7 @@ public class MyHostedMatchesStepDefs {
         LocalTime endTime = LocalTime.of(20, 0);
 
         for (int i = 0; i < count; i++) {
-            Match match = new Match(
+            Match match = Match.reconstitute(
                     null,
                     null,
                     user.getId(),

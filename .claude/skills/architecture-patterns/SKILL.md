@@ -382,6 +382,154 @@ adapter/in/web → application/port/in → application/service
 4. **벤더별 Adapter 분리**: `adapter/out/oauth/kakao/`, `adapter/out/oauth/google/`
 5. **Config는 Infrastructure에**: `infrastructure/config/`
 
+## Object-Oriented Design Principles
+
+### SOLID 원칙
+
+| 원칙 | 설명 | 적용 |
+|------|------|------|
+| **SRP** | 클래스/메서드는 하나의 책임만 | `validateAndCreate()` 금지 → 검증/생성 분리 |
+| **OCP** | 확장에 열려있고 수정에 닫혀있음 | if-else 분기 대신 다형성 활용 |
+| **LSP** | 하위 타입은 상위 타입 대체 가능 | Port/Adapter 구현 시 준수 |
+| **ISP** | 클라이언트별 인터페이스 분리 | 불필요한 메서드 의존 금지 |
+| **DIP** | 추상화에 의존 | Port/Adapter 패턴으로 구현 |
+
+### Domain Model 생성 규칙
+
+**정적 팩토리 메서드 패턴 필수**:
+- 생성자 직접 호출 금지
+- 의미있는 이름의 팩토리 메서드 제공
+- null 주입 금지 (필수 필드는 반드시 값 제공)
+
+```java
+// Good - 정적 팩토리 메서드
+public class Match {
+    private Match(Long id, Long hostId, Long locationId, ...) {
+        this.id = id;
+        this.hostId = hostId;
+        this.locationId = locationId;
+        // ...
+    }
+
+    // 새 Match 생성 (id 없음)
+    public static Match create(Long hostId, Long locationId, LocalDateTime matchDate, ...) {
+        validateCreation(hostId, locationId, matchDate);
+        return new Match(null, hostId, locationId, ...);
+    }
+
+    // DB에서 조회한 Match 복원 (id 있음)
+    public static Match reconstitute(Long id, Long hostId, Long locationId, ...) {
+        return new Match(id, hostId, locationId, ...);
+    }
+}
+
+// Bad - 서비스에서 생성자 직접 호출 + null 주입
+Match match = new Match(null, hostId, locationId, ...);
+```
+
+### 검증 로직 설계 원칙
+
+**1. 검증과 생성/변경 분리 (SRP)**
+
+```java
+// Bad - 검증 + 생성 혼합 (SRP 위반)
+public class MatchPolicyValidator {
+    public Match validateAndCreate(CreateMatchCommand command) {
+        validate(command);
+        return new Match(...);  // 두 가지 책임
+    }
+}
+
+// Good - 검증만 수행
+public class MatchPolicyValidator {
+    public void validate(CreateMatchCommand command) {
+        validateTimeRange(command);
+        validateMaxParticipants(command);
+    }
+}
+
+// 서비스에서 분리 호출
+matchPolicyValidator.validate(command);
+Match match = Match.create(...);
+```
+
+**2. 도메인 객체가 스스로 검증 (Tell, Don't Ask)**
+
+```java
+// Bad - 서비스에서 if-else 분기 검증 (절차지향)
+public class MatchReactivator {
+    public Match reactivate(ReactivateMatchCommand command) {
+        Match match = matchRepository.findById(command.matchId());
+        if (match.getStatus() != MatchStatus.CANCELLED) {
+            throw new MatchCannotReactivateException(match.getId());
+        }
+        if (!match.getHostId().equals(command.userId())) {
+            throw new NotMatchHostException(match.getId());
+        }
+        match.setStatus(MatchStatus.RECRUITING);
+        return matchRepository.save(match);
+    }
+}
+
+// Good - 도메인 객체가 스스로 검증 (객체지향)
+public class Match {
+    public void reactivate(Long requestUserId) {
+        validateHost(requestUserId);
+        validateReactivatable();
+        this.status = MatchStatus.RECRUITING;
+    }
+
+    private void validateHost(Long userId) {
+        if (!this.hostId.equals(userId)) {
+            throw new NotMatchHostException(this.id);
+        }
+    }
+
+    private void validateReactivatable() {
+        if (this.status != MatchStatus.CANCELLED) {
+            throw new MatchCannotReactivateException(this.id);
+        }
+    }
+}
+
+// 서비스는 단순히 위임
+public class MatchReactivator {
+    public Match reactivate(ReactivateMatchCommand command) {
+        Match match = matchRepository.findById(command.matchId());
+        match.reactivate(command.userId());
+        return matchRepository.save(match);
+    }
+}
+```
+
+**3. Policy/Validator 사용 기준**
+
+| 검증 유형 | 위치 | 예시 |
+|----------|------|------|
+| 단일 객체 상태 검증 | Domain Model 내부 | `match.reactivate()` |
+| 복잡한 교차 검증 | domain/policy/ | 시간 범위, 중복 참가 검증 |
+| 외부 의존 필요한 검증 | application/service/ | DB 조회 필요한 검증 |
+
+### 불변 객체 설계
+
+- 가능한 모든 필드를 `final`로 선언
+- setter 대신 `with*()` 메서드로 새 객체 반환
+- 상태 변경이 필요한 경우에만 mutable 필드 허용
+
+```java
+// Good - 불변 객체 + with 메서드
+public class AuthAccount {
+    private final Long id;
+    private final Long userId;
+    private final AuthProvider provider;
+    private final String refreshToken;
+
+    public AuthAccount withRefreshToken(String newToken) {
+        return new AuthAccount(this.id, this.userId, this.provider, newToken);
+    }
+}
+```
+
 ## Checklist
 
 새 도메인 생성 시:

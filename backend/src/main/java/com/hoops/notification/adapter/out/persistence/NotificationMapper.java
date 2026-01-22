@@ -11,7 +11,7 @@ public class NotificationMapper {
         if (entity == null) {
             return null;
         }
-        return new Notification(
+        return Notification.reconstitute(
                 entity.getId(),
                 entity.getUserId(),
                 entity.getType(),

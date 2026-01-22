@@ -35,15 +35,16 @@ public class NotificationStepDefs {
     public void 내게_알림이_N개_있다(int count) {
         User user = sharedContext.getTestUser();
         for (int i = 0; i < count; i++) {
-            Notification notification = Notification.builder()
-                    .userId(user.getId())
-                    .type(NotificationType.MATCH_UPCOMING)
-                    .title("알림 제목 " + i)
-                    .message("알림 메시지 " + i)
-                    .relatedMatchId(1L)
-                    .isRead(false)
-                    .createdAt(LocalDateTime.now())
-                    .build();
+            Notification notification = Notification.reconstitute(
+                    null,
+                    user.getId(),
+                    NotificationType.MATCH_UPCOMING,
+                    "알림 제목 " + i,
+                    "알림 메시지 " + i,
+                    1L,
+                    false,
+                    LocalDateTime.now()
+            );
             notificationRepository.save(notification);
         }
     }
@@ -51,15 +52,16 @@ public class NotificationStepDefs {
     @먼저("내게 읽지 않은 알림이 있다")
     public void 내게_읽지_않은_알림이_있다() {
         User user = sharedContext.getTestUser();
-        Notification notification = Notification.builder()
-                .userId(user.getId())
-                .type(NotificationType.PARTICIPATION_CREATED)
-                .title("참가 알림")
-                .message("경기에 참가 신청되었습니다")
-                .relatedMatchId(1L)
-                .isRead(false)
-                .createdAt(LocalDateTime.now())
-                .build();
+        Notification notification = Notification.reconstitute(
+                null,
+                user.getId(),
+                NotificationType.PARTICIPATION_CREATED,
+                "참가 알림",
+                "경기에 참가 신청되었습니다",
+                1L,
+                false,
+                LocalDateTime.now()
+        );
         testNotification = notificationRepository.save(notification);
     }
 
@@ -67,15 +69,16 @@ public class NotificationStepDefs {
     public void 내게_읽지_않은_알림이_N개_있다(int count) {
         User user = sharedContext.getTestUser();
         for (int i = 0; i < count; i++) {
-            Notification notification = Notification.builder()
-                    .userId(user.getId())
-                    .type(NotificationType.MATCH_UPCOMING)
-                    .title("알림 제목 " + i)
-                    .message("알림 메시지 " + i)
-                    .relatedMatchId(1L)
-                    .isRead(false)
-                    .createdAt(LocalDateTime.now())
-                    .build();
+            Notification notification = Notification.reconstitute(
+                    null,
+                    user.getId(),
+                    NotificationType.MATCH_UPCOMING,
+                    "알림 제목 " + i,
+                    "알림 메시지 " + i,
+                    1L,
+                    false,
+                    LocalDateTime.now()
+            );
             notificationRepository.save(notification);
         }
     }

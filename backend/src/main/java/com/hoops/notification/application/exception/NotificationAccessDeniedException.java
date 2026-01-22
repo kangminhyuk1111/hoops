@@ -1,11 +1,11 @@
 package com.hoops.notification.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
 /**
  * 알림에 대한 접근 권한이 없을 때 발생하는 예외
  */
-public class NotificationAccessDeniedException extends DomainException {
+public class NotificationAccessDeniedException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "NOTIFICATION_ACCESS_DENIED";
 

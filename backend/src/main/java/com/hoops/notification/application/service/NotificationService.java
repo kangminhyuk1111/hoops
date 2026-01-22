@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -59,15 +58,7 @@ public class NotificationService implements
     @Transactional
     public Notification createNotification(Long userId, NotificationType type, String title,
                                            String message, Long relatedMatchId) {
-        Notification notification = Notification.builder()
-                .userId(userId)
-                .type(type)
-                .title(title)
-                .message(message)
-                .relatedMatchId(relatedMatchId)
-                .isRead(false)
-                .createdAt(LocalDateTime.now())
-                .build();
+        Notification notification = Notification.createNew(userId, type, title, message, relatedMatchId);
 
         Notification saved = notificationRepository.save(notification);
         log.info("알림 생성 완료: userId={}, type={}, matchId={}", userId, type, relatedMatchId);

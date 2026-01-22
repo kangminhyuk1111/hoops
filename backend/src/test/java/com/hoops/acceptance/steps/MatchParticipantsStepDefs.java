@@ -47,12 +47,9 @@ public class MatchParticipantsStepDefs {
                     0);
             User savedParticipant = userRepository.save(participant);
 
-            Participation participation = Participation.builder()
-                    .matchId(match.getId())
-                    .userId(savedParticipant.getId())
-                    .status(ParticipationStatus.CONFIRMED)
-                    .joinedAt(LocalDateTime.now())
-                    .build();
+            Participation participation = Participation.reconstitute(
+                    null, null, match.getId(), savedParticipant.getId(),
+                    ParticipationStatus.CONFIRMED, LocalDateTime.now());
             participationRepository.save(participation);
         }
     }
@@ -106,12 +103,9 @@ public class MatchParticipantsStepDefs {
                 2);
         User savedParticipant = userRepository.save(participant);
 
-        Participation participation = Participation.builder()
-                .matchId(match.getId())
-                .userId(savedParticipant.getId())
-                .status(ParticipationStatus.CONFIRMED)
-                .joinedAt(LocalDateTime.now())
-                .build();
+        Participation participation = Participation.reconstitute(
+                null, null, match.getId(), savedParticipant.getId(),
+                ParticipationStatus.CONFIRMED, LocalDateTime.now());
         participationRepository.save(participation);
     }
 

@@ -1,8 +1,8 @@
 package com.hoops.participation.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
-public class CancelTimeExceededException extends DomainException {
+public class CancelTimeExceededException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "CANCEL_TIME_EXCEEDED";
 

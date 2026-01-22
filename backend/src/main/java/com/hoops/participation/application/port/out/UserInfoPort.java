@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 사용자 정보 제공 포트
+ * 사용자 정보 Outbound Port
  *
  * Participation Context에서 사용자 정보를 조회하기 위한 아웃바운드 포트입니다.
  * User Context에 직접 의존하지 않고 이 인터페이스를 통해 필요한 정보만 조회합니다.
  */
-public interface UserInfoProvider {
+public interface UserInfoPort {
 
     /**
      * 사용자 정보를 조회합니다.

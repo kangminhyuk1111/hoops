@@ -65,6 +65,24 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * ApplicationException 처리
+     * 유스케이스 실패 시 발생하는 예외를 처리한다
+     * HTTP Status: 400 BAD_REQUEST, 404 NOT_FOUND, 409 CONFLICT 등
+     */
+    @ExceptionHandler(ApplicationException.class)
+    public ResponseEntity<ErrorResponse> handleApplicationException(ApplicationException exception) {
+        logger.warn("Application exception occurred: {} - {}", exception.getErrorCode(), exception.getMessage());
+
+        HttpStatus status = determineHttpStatus(exception);
+        ErrorResponse errorResponse = ErrorResponse.of(
+                exception.getErrorCode(),
+                exception.getMessage()
+        );
+
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    /**
      * BusinessException 처리 (DomainException을 제외한 나머지)
      * ApplicationException, InfrastructureException 등을 처리한다
      * HTTP Status: 500 INTERNAL_SERVER_ERROR 또는 503 SERVICE_UNAVAILABLE
@@ -153,6 +171,11 @@ public class GlobalExceptionHandler {
 
         // DomainException의 기본값
         if (exception instanceof DomainException) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        // ApplicationException의 기본값
+        if (exception instanceof ApplicationException) {
             return HttpStatus.BAD_REQUEST;
         }
 

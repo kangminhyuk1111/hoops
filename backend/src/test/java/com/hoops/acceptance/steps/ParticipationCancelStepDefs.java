@@ -50,12 +50,9 @@ public class ParticipationCancelStepDefs {
         User testUser = sharedContext.getTestUser();
         Match match = sharedContext.getTestMatches().get(0);
 
-        Participation participation = Participation.builder()
-                .matchId(match.getId())
-                .userId(testUser.getId())
-                .status(ParticipationStatus.CONFIRMED)
-                .joinedAt(LocalDateTime.now())
-                .build();
+        Participation participation = Participation.reconstitute(
+                null, null, match.getId(), testUser.getId(),
+                ParticipationStatus.CONFIRMED, LocalDateTime.now());
         myParticipation = participationRepository.save(participation);
     }
 
@@ -64,12 +61,9 @@ public class ParticipationCancelStepDefs {
         User testUser = sharedContext.getTestUser();
         Match match = sharedContext.getTestMatches().get(0);
 
-        Participation participation = Participation.builder()
-                .matchId(match.getId())
-                .userId(testUser.getId())
-                .status(ParticipationStatus.PENDING)
-                .joinedAt(LocalDateTime.now())
-                .build();
+        Participation participation = Participation.reconstitute(
+                null, null, match.getId(), testUser.getId(),
+                ParticipationStatus.PENDING, LocalDateTime.now());
         myParticipation = participationRepository.save(participation);
     }
 
@@ -78,12 +72,9 @@ public class ParticipationCancelStepDefs {
         User otherUser = createOtherUser("otherparticipant");
         Match match = sharedContext.getTestMatches().get(0);
 
-        Participation participation = Participation.builder()
-                .matchId(match.getId())
-                .userId(otherUser.getId())
-                .status(ParticipationStatus.CONFIRMED)
-                .joinedAt(LocalDateTime.now())
-                .build();
+        Participation participation = Participation.reconstitute(
+                null, null, match.getId(), otherUser.getId(),
+                ParticipationStatus.CONFIRMED, LocalDateTime.now());
         otherParticipation = participationRepository.save(participation);
     }
 

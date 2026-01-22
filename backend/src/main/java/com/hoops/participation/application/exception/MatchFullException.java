@@ -1,12 +1,12 @@
 package com.hoops.participation.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
 /**
  * 경기 정원 초과 예외
  * 경기 정원이 다 찼을 때 발생합니다
  */
-public class MatchFullException extends DomainException {
+public class MatchFullException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "MATCH_FULL";
 

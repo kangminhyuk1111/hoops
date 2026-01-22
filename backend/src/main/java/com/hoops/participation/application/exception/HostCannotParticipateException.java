@@ -1,12 +1,12 @@
 package com.hoops.participation.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
 /**
  * 호스트 참가 불가 예외
  * 경기 호스트가 자신의 경기에 참가 신청할 때 발생합니다
  */
-public class HostCannotParticipateException extends DomainException {
+public class HostCannotParticipateException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "HOST_CANNOT_PARTICIPATE";
 

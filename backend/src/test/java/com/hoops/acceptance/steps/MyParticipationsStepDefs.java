@@ -72,12 +72,9 @@ public class MyParticipationsStepDefs {
         User testUser = sharedContext.getTestUser();
         Match firstMatch = sharedContext.getTestMatches().get(0);
 
-        Participation participation = Participation.builder()
-                .matchId(firstMatch.getId())
-                .userId(testUser.getId())
-                .status(ParticipationStatus.CONFIRMED)
-                .joinedAt(LocalDateTime.now())
-                .build();
+        Participation participation = Participation.reconstitute(
+                null, null, firstMatch.getId(), testUser.getId(),
+                ParticipationStatus.CONFIRMED, LocalDateTime.now());
         participationRepository.save(participation);
     }
 

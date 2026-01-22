@@ -1,12 +1,12 @@
 package com.hoops.participation.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
 /**
  * 유효하지 않은 경기 상태 예외
  * 참가 불가능한 상태의 경기에 참가 신청할 때 발생합니다
  */
-public class InvalidMatchStatusException extends DomainException {
+public class InvalidMatchStatusException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "INVALID_MATCH_STATUS";
 

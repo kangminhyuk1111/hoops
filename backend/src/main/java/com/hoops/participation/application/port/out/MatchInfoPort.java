@@ -3,12 +3,12 @@ package com.hoops.participation.application.port.out;
 import java.util.List;
 
 /**
- * 경기 정보 제공 포트
+ * 경기 정보 Outbound Port
  *
  * Participation Context에서 Match 정보를 조회하기 위한 아웃바운드 포트입니다.
  * Match Context에 직접 의존하지 않고 이 인터페이스를 통해 필요한 정보만 조회합니다.
  */
-public interface MatchInfoProvider {
+public interface MatchInfoPort {
 
     /**
      * 참가 검증을 위한 경기 정보를 조회합니다.

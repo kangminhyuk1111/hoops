@@ -14,7 +14,7 @@ import com.hoops.participation.application.port.in.ParticipateInMatchUseCase;
 import com.hoops.participation.application.port.in.RejectParticipationCommand;
 import com.hoops.participation.application.port.in.RejectParticipationUseCase;
 import com.hoops.participation.application.port.out.MatchInfo;
-import com.hoops.participation.application.port.out.MatchInfoProvider;
+import com.hoops.participation.application.port.out.MatchInfoPort;
 import com.hoops.participation.domain.model.Participation;
 import com.hoops.participation.domain.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
         ApproveParticipationUseCase, RejectParticipationUseCase, GetMyParticipationsUseCase, GetMatchParticipantsUseCase {
 
     private final ParticipationRepository participationRepository;
-    private final MatchInfoProvider matchInfoProvider;
+    private final MatchInfoPort matchInfoProvider;
     private final ParticipationValidator validator;
     private final ParticipationFinder finder;
     private final ParticipationCreator creator;
@@ -92,7 +92,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
         Participation participation = finder.findById(command.participationId());
 
         validator.validateHostPermission(matchInfo, command.hostUserId());
-        validator.validateCanBeApprovedOrRejected(participation);
+        // Entity validates state in approve() method
 
         Participation approved = participationRepository.save(participation.approve());
         matchInfoProvider.addParticipant(command.matchId());
@@ -111,7 +111,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
         Participation participation = finder.findById(command.participationId());
 
         validator.validateHostPermission(matchInfo, command.hostUserId());
-        validator.validateCanBeApprovedOrRejected(participation);
+        // Entity validates state in reject() method
 
         return participationRepository.save(participation.reject());
     }

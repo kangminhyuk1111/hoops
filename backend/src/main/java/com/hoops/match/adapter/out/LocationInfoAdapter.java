@@ -1,8 +1,8 @@
 package com.hoops.match.adapter.out;
 
 import com.hoops.location.application.port.out.LocationQueryPort;
+import com.hoops.match.application.dto.LocationInfoResult;
 import com.hoops.match.application.exception.MatchLocationNotFoundException;
-import com.hoops.match.application.dto.LocationInfo;
 import com.hoops.match.application.port.out.LocationInfoPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -20,11 +20,11 @@ public class LocationInfoAdapter implements LocationInfoPort {
     private final LocationQueryPort locationQueryPort;
 
     @Override
-    public LocationInfo getLocationInfo(Long locationId) {
+    public LocationInfoResult getLocationInfo(Long locationId) {
         LocationQueryPort.LocationData data = locationQueryPort.findById(locationId)
                 .orElseThrow(() -> new MatchLocationNotFoundException(locationId));
 
-        return new LocationInfo(
+        return new LocationInfoResult(
                 data.id(),
                 data.latitude(),
                 data.longitude(),

@@ -117,23 +117,23 @@ public class ParticipationApprovalStepDefs {
         LocalTime startTime = LocalTime.of(18, 0);
         LocalTime endTime = LocalTime.of(20, 0);
 
-        Match match = new Match(
-                null,
-                null,
-                host.getId(),
-                host.getNickname(),
-                "테스트 경기",
-                "테스트 경기입니다",
-                savedLocation.getLatitude(),
-                savedLocation.getLongitude(),
-                savedLocation.getAddress(),
-                matchDate,
-                startTime,
-                endTime,
-                10,
-                1,
-                MatchStatus.PENDING,
-                null
+        Match match = Match.reconstitute(
+                null,  // id
+                0L,    // version
+                host.getId(),  // hostId
+                host.getNickname(),  // hostNickname
+                "테스트 경기",  // title
+                "테스트 경기입니다",  // description
+                savedLocation.getLatitude(),  // latitude
+                savedLocation.getLongitude(),  // longitude
+                savedLocation.getAddress(),  // address
+                matchDate,  // matchDate
+                startTime,  // startTime
+                endTime,  // endTime
+                10,  // maxParticipants
+                1,   // currentParticipants
+                MatchStatus.PENDING,  // status
+                null  // cancelledAt
         );
         Match savedMatch = matchRepository.save(match);
         sharedContext.addTestMatch(savedMatch);

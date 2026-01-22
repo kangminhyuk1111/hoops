@@ -58,23 +58,23 @@ public class MyHostedMatchesStepDefs {
         LocalTime endTime = LocalTime.of(20, 0);
 
         for (int i = 0; i < count; i++) {
-            Match match = new Match(
-                    null,
-                    null,
-                    user.getId(),
-                    user.getNickname(),
-                    "테스트 경기 " + (i + 1),
-                    "테스트 경기입니다",
-                    savedLocation.getLatitude(),
-                    savedLocation.getLongitude(),
-                    savedLocation.getAddress(),
-                    matchDate.plusDays(i),
-                    startTime,
-                    endTime,
-                    10,
-                    1,
-                    MatchStatus.PENDING,
-                    null
+            Match match = Match.reconstitute(
+                    null,  // id
+                    0L,    // version
+                    user.getId(),  // hostId
+                    user.getNickname(),  // hostNickname
+                    "테스트 경기 " + (i + 1),  // title
+                    "테스트 경기입니다",  // description
+                    savedLocation.getLatitude(),  // latitude
+                    savedLocation.getLongitude(),  // longitude
+                    savedLocation.getAddress(),  // address
+                    matchDate.plusDays(i),  // matchDate
+                    startTime,  // startTime
+                    endTime,  // endTime
+                    10,  // maxParticipants
+                    1,   // currentParticipants
+                    MatchStatus.PENDING,  // status
+                    null  // cancelledAt
             );
             Match savedMatch = matchRepository.save(match);
             sharedContext.addTestMatch(savedMatch);

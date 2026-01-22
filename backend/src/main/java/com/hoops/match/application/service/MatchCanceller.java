@@ -1,10 +1,10 @@
 package com.hoops.match.application.service;
 
 import com.hoops.match.application.exception.CancelReasonRequiredException;
-import com.hoops.match.application.exception.CancelTimeExceededException;
 import com.hoops.match.application.exception.MatchAlreadyStartedException;
 import com.hoops.match.application.exception.MatchNotFoundException;
-import com.hoops.match.application.exception.NotMatchHostException;
+import com.hoops.match.domain.exception.CancelTimeExceededException;
+import com.hoops.match.domain.exception.NotMatchHostException;
 import com.hoops.match.application.port.in.CancelMatchCommand;
 import com.hoops.match.application.port.in.CancelMatchUseCase;
 import com.hoops.match.domain.repository.MatchRepository;

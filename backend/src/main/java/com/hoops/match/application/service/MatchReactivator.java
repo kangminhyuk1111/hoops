@@ -1,8 +1,8 @@
 package com.hoops.match.application.service;
 
-import com.hoops.match.application.exception.MatchCannotReactivateException;
 import com.hoops.match.application.exception.MatchNotFoundException;
-import com.hoops.match.application.exception.NotMatchHostException;
+import com.hoops.match.domain.exception.MatchCannotReactivateException;
+import com.hoops.match.domain.exception.NotMatchHostException;
 import com.hoops.match.application.port.in.ReactivateMatchCommand;
 import com.hoops.match.application.port.in.ReactivateMatchUseCase;
 import com.hoops.match.domain.repository.MatchRepository;

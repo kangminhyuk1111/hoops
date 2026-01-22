@@ -44,22 +44,24 @@ public class MyParticipationsStepDefs {
         sharedContext.clearTestMatches();
 
         for (int i = 0; i < count; i++) {
-            Match match = Match.builder()
-                    .version(0L)
-                    .hostId(testUser.getId())
-                    .hostNickname(testUser.getNickname())
-                    .title("테스트 경기 " + (i + 1))
-                    .description("테스트 경기 설명")
-                    .latitude(BigDecimal.valueOf(37.5665))
-                    .longitude(BigDecimal.valueOf(126.9780))
-                    .address("서울시 중구")
-                    .matchDate(LocalDate.now().plusDays(7))
-                    .startTime(LocalTime.of(18, 0))
-                    .endTime(LocalTime.of(20, 0))
-                    .maxParticipants(10)
-                    .currentParticipants(0)
-                    .status(MatchStatus.PENDING)
-                    .build();
+            Match match = Match.reconstitute(
+                    null,  // id
+                    0L,    // version
+                    testUser.getId(),  // hostId
+                    testUser.getNickname(),  // hostNickname
+                    "테스트 경기 " + (i + 1),  // title
+                    "테스트 경기 설명",  // description
+                    BigDecimal.valueOf(37.5665),  // latitude
+                    BigDecimal.valueOf(126.9780),  // longitude
+                    "서울시 중구",  // address
+                    LocalDate.now().plusDays(7),  // matchDate
+                    LocalTime.of(18, 0),  // startTime
+                    LocalTime.of(20, 0),  // endTime
+                    10,  // maxParticipants
+                    0,   // currentParticipants
+                    MatchStatus.PENDING,  // status
+                    null  // cancelledAt
+            );
             Match savedMatch = matchRepository.save(match);
             sharedContext.addTestMatch(savedMatch);
         }

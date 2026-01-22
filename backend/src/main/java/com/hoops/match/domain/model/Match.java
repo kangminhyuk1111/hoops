@@ -1,8 +1,6 @@
 package com.hoops.match.domain.model;
 
 import com.hoops.match.domain.vo.MatchStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -11,12 +9,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
-@Builder
-@AllArgsConstructor
 public class Match {
 
     private static final int REACTIVATE_TIME_LIMIT_HOURS = 1;
     private static final int CANCEL_DEADLINE_HOURS = 2;
+    private static final int INITIAL_PARTICIPANTS = 1;
 
     private final Long id;
     private final Long version;
@@ -35,6 +32,75 @@ public class Match {
     private MatchStatus status;
     private LocalDateTime cancelledAt;
 
+    // Private constructor - use factory methods
+    private Match(Long id, Long version, Long hostId, String hostNickname,
+                  String title, String description, BigDecimal latitude, BigDecimal longitude,
+                  String address, LocalDate matchDate, LocalTime startTime, LocalTime endTime,
+                  Integer maxParticipants, Integer currentParticipants, MatchStatus status,
+                  LocalDateTime cancelledAt) {
+        this.id = id;
+        this.version = version;
+        this.hostId = hostId;
+        this.hostNickname = hostNickname;
+        this.title = title;
+        this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.address = address;
+        this.matchDate = matchDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.maxParticipants = maxParticipants;
+        this.currentParticipants = currentParticipants;
+        this.status = status;
+        this.cancelledAt = cancelledAt;
+    }
+
+    // ==================== Factory Methods ====================
+
+    /**
+     * Create a new Match (no id yet)
+     */
+    public static Match create(Long hostId, String hostNickname, String title, String description,
+                               BigDecimal latitude, BigDecimal longitude, String address,
+                               LocalDate matchDate, LocalTime startTime, LocalTime endTime,
+                               Integer maxParticipants) {
+        return new Match(
+                null,
+                null,
+                hostId,
+                hostNickname,
+                title,
+                description,
+                latitude,
+                longitude,
+                address,
+                matchDate,
+                startTime,
+                endTime,
+                maxParticipants,
+                INITIAL_PARTICIPANTS,
+                MatchStatus.PENDING,
+                null
+        );
+    }
+
+    /**
+     * Reconstitute a Match from persistence (has id)
+     */
+    public static Match reconstitute(Long id, Long version, Long hostId, String hostNickname,
+                                     String title, String description, BigDecimal latitude,
+                                     BigDecimal longitude, String address, LocalDate matchDate,
+                                     LocalTime startTime, LocalTime endTime, Integer maxParticipants,
+                                     Integer currentParticipants, MatchStatus status,
+                                     LocalDateTime cancelledAt) {
+        return new Match(id, version, hostId, hostNickname, title, description,
+                latitude, longitude, address, matchDate, startTime, endTime,
+                maxParticipants, currentParticipants, status, cancelledAt);
+    }
+
+    // ==================== Domain Behaviors ====================
+
     public void addParticipant() {
         this.currentParticipants++;
         if (this.currentParticipants >= this.maxParticipants) {
@@ -51,32 +117,14 @@ public class Match {
         }
     }
 
-    public boolean hasStarted() {
-        LocalDateTime matchStartDateTime = LocalDateTime.of(this.matchDate, this.startTime);
-        return LocalDateTime.now().isAfter(matchStartDateTime);
+    public void cancel() {
+        this.status = MatchStatus.CANCELLED;
+        this.cancelledAt = LocalDateTime.now();
     }
 
-    public boolean hasEnded() {
-        LocalDateTime matchEndDateTime = LocalDateTime.of(this.matchDate, this.endTime);
-        return LocalDateTime.now().isAfter(matchEndDateTime);
-    }
-
-    public boolean shouldStartNow() {
-        return hasStarted() && !hasEnded() && canTransitionToInProgress();
-    }
-
-    public boolean shouldEndNow() {
-        return hasEnded() && canTransitionToEnded();
-    }
-
-    public boolean canTransitionToInProgress() {
-        return this.status == MatchStatus.PENDING
-                || this.status == MatchStatus.CONFIRMED
-                || this.status == MatchStatus.FULL;
-    }
-
-    public boolean canTransitionToEnded() {
-        return this.status == MatchStatus.IN_PROGRESS;
+    public void reactivate() {
+        this.status = MatchStatus.PENDING;
+        this.cancelledAt = null;
     }
 
     public void startMatch() {
@@ -89,74 +137,6 @@ public class Match {
         if (canTransitionToEnded()) {
             this.status = MatchStatus.ENDED;
         }
-    }
-
-    public boolean canParticipate() {
-        return (this.status == MatchStatus.PENDING || this.status == MatchStatus.CONFIRMED)
-                && this.currentParticipants < this.maxParticipants;
-    }
-
-    public boolean isFull() {
-        return this.currentParticipants >= this.maxParticipants;
-    }
-
-    public boolean isHost(Long userId) {
-        return this.hostId.equals(userId);
-    }
-
-    public void cancel() {
-        this.status = MatchStatus.CANCELLED;
-        this.cancelledAt = LocalDateTime.now();
-    }
-
-    public boolean canCancel() {
-        return this.status != MatchStatus.IN_PROGRESS
-                && this.status != MatchStatus.ENDED
-                && this.status != MatchStatus.CANCELLED;
-    }
-
-    public boolean canCancelByTime() {
-        LocalDateTime matchStartDateTime = LocalDateTime.of(this.matchDate, this.startTime);
-        LocalDateTime cancelDeadline = matchStartDateTime.minusHours(CANCEL_DEADLINE_HOURS);
-        return LocalDateTime.now().isBefore(cancelDeadline);
-    }
-
-    public LocalDateTime getStartDateTime() {
-        return LocalDateTime.of(this.matchDate, this.startTime);
-    }
-
-    public LocalDateTime getEndDateTime() {
-        return LocalDateTime.of(this.matchDate, this.endTime);
-    }
-
-    public boolean overlapsWithTime(LocalDateTime otherStart, LocalDateTime otherEnd) {
-        LocalDateTime thisStart = getStartDateTime();
-        LocalDateTime thisEnd = getEndDateTime();
-        return thisStart.isBefore(otherEnd) && otherStart.isBefore(thisEnd);
-    }
-
-    public boolean canReactivate() {
-        if (this.status != MatchStatus.CANCELLED) {
-            return false;
-        }
-        if (this.cancelledAt == null) {
-            return false;
-        }
-        if (this.matchDate.isBefore(LocalDate.now())) {
-            return false;
-        }
-        LocalDateTime reactivateDeadline = this.cancelledAt.plusHours(REACTIVATE_TIME_LIMIT_HOURS);
-        return LocalDateTime.now().isBefore(reactivateDeadline);
-    }
-
-    public void reactivate() {
-        this.status = MatchStatus.PENDING;
-        this.cancelledAt = null;
-    }
-
-    public boolean canUpdate() {
-        return this.status == MatchStatus.PENDING
-                || this.status == MatchStatus.CONFIRMED;
     }
 
     public Match update(String title, String description, LocalDate matchDate,
@@ -187,5 +167,93 @@ public class Match {
                 newStatus,
                 this.cancelledAt
         );
+    }
+
+    // ==================== Query Methods ====================
+
+    public boolean hasStarted() {
+        LocalDateTime matchStartDateTime = LocalDateTime.of(this.matchDate, this.startTime);
+        return LocalDateTime.now().isAfter(matchStartDateTime);
+    }
+
+    public boolean hasEnded() {
+        LocalDateTime matchEndDateTime = LocalDateTime.of(this.matchDate, this.endTime);
+        return LocalDateTime.now().isAfter(matchEndDateTime);
+    }
+
+    public boolean shouldStartNow() {
+        return hasStarted() && !hasEnded() && canTransitionToInProgress();
+    }
+
+    public boolean shouldEndNow() {
+        return hasEnded() && canTransitionToEnded();
+    }
+
+    public boolean canTransitionToInProgress() {
+        return this.status == MatchStatus.PENDING
+                || this.status == MatchStatus.CONFIRMED
+                || this.status == MatchStatus.FULL;
+    }
+
+    public boolean canTransitionToEnded() {
+        return this.status == MatchStatus.IN_PROGRESS;
+    }
+
+    public boolean canParticipate() {
+        return (this.status == MatchStatus.PENDING || this.status == MatchStatus.CONFIRMED)
+                && this.currentParticipants < this.maxParticipants;
+    }
+
+    public boolean isFull() {
+        return this.currentParticipants >= this.maxParticipants;
+    }
+
+    public boolean isHost(Long userId) {
+        return this.hostId.equals(userId);
+    }
+
+    public boolean canCancel() {
+        return this.status != MatchStatus.IN_PROGRESS
+                && this.status != MatchStatus.ENDED
+                && this.status != MatchStatus.CANCELLED;
+    }
+
+    public boolean canCancelByTime() {
+        LocalDateTime matchStartDateTime = LocalDateTime.of(this.matchDate, this.startTime);
+        LocalDateTime cancelDeadline = matchStartDateTime.minusHours(CANCEL_DEADLINE_HOURS);
+        return LocalDateTime.now().isBefore(cancelDeadline);
+    }
+
+    public boolean canReactivate() {
+        if (this.status != MatchStatus.CANCELLED) {
+            return false;
+        }
+        if (this.cancelledAt == null) {
+            return false;
+        }
+        if (this.matchDate.isBefore(LocalDate.now())) {
+            return false;
+        }
+        LocalDateTime reactivateDeadline = this.cancelledAt.plusHours(REACTIVATE_TIME_LIMIT_HOURS);
+        return LocalDateTime.now().isBefore(reactivateDeadline);
+    }
+
+    public boolean canUpdate() {
+        return this.status == MatchStatus.PENDING
+                || this.status == MatchStatus.CONFIRMED;
+    }
+
+    public LocalDateTime getStartDateTime() {
+        return LocalDateTime.of(this.matchDate, this.startTime);
+    }
+
+    public LocalDateTime getEndDateTime() {
+        return LocalDateTime.of(this.matchDate, this.endTime);
+    }
+
+    public boolean overlapsWithTime(LocalDateTime otherStart, LocalDateTime otherEnd) {
+        LocalDateTime thisStart = getStartDateTime();
+        LocalDateTime thisEnd = getEndDateTime();
+        return thisStart.isBefore(otherEnd) && otherStart.isBefore(thisEnd);
     }
 }

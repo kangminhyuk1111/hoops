@@ -1,9 +1,9 @@
 package com.hoops.match.application.service;
 
-import com.hoops.match.application.exception.InvalidMaxParticipantsUpdateException;
-import com.hoops.match.application.exception.MatchCannotBeUpdatedException;
 import com.hoops.match.application.exception.MatchNotFoundException;
-import com.hoops.match.application.exception.NotMatchHostException;
+import com.hoops.match.domain.exception.InvalidMaxParticipantsUpdateException;
+import com.hoops.match.domain.exception.MatchCannotBeUpdatedException;
+import com.hoops.match.domain.exception.NotMatchHostException;
 import com.hoops.match.application.port.in.UpdateMatchCommand;
 import com.hoops.match.application.port.in.UpdateMatchUseCase;
 import com.hoops.match.domain.repository.MatchRepository;

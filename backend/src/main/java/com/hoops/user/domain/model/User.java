@@ -65,9 +65,7 @@ public class User {
     }
 
     private static void validateEmail(String email) {
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email is required");
-        }
+        // Email is optional (Kakao OAuth may not provide email)
     }
 
     private static void validateNickname(String nickname) {

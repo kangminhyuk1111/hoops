@@ -10,11 +10,13 @@ import com.hoops.match.application.port.out.LocationInfoPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.policy.MatchPolicyValidator;
 import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.domain.vo.MatchHost;
+import com.hoops.match.domain.vo.MatchLocation;
+import com.hoops.match.domain.vo.MatchSchedule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,43 +31,42 @@ public class MatchCreator implements CreateMatchUseCase {
 
     @Override
     public Match createMatch(CreateMatchCommand command) {
-        policyValidator.validateCreateMatch(
+        MatchSchedule schedule = new MatchSchedule(
                 command.matchDate(),
                 command.startTime(),
-                command.endTime(),
-                command.maxParticipants()
+                command.endTime()
         );
 
-        validateNoOverlappingHosting(command);
+        policyValidator.validateCreateMatch(schedule, command.maxParticipants());
+        validateNoOverlappingHosting(command.hostId(), schedule);
 
-        HostInfoResult host = hostInfoPort.getHostInfo(command.hostId());
-        LocationInfoResult location = locationInfoPort.getLocationInfo(command.locationId());
+        HostInfoResult hostInfo = hostInfoPort.getHostInfo(command.hostId());
+        LocationInfoResult locationInfo = locationInfoPort.getLocationInfo(command.locationId());
+
+        MatchHost host = new MatchHost(hostInfo.hostId(), hostInfo.nickname());
+        MatchLocation location = new MatchLocation(
+                locationInfo.latitude(),
+                locationInfo.longitude(),
+                locationInfo.address()
+        );
 
         Match match = Match.create(
-                host.hostId(),
-                host.nickname(),
+                host,
                 command.title(),
                 command.description(),
-                location.latitude(),
-                location.longitude(),
-                location.address(),
-                command.matchDate(),
-                command.startTime(),
-                command.endTime(),
+                location,
+                schedule,
                 command.maxParticipants()
         );
 
         return matchRepository.save(match);
     }
 
-    private void validateNoOverlappingHosting(CreateMatchCommand command) {
-        LocalDateTime newMatchStart = LocalDateTime.of(command.matchDate(), command.startTime());
-        LocalDateTime newMatchEnd = LocalDateTime.of(command.matchDate(), command.endTime());
-
-        List<Match> activeMatches = matchRepository.findActiveMatchesByHostId(command.hostId());
+    private void validateNoOverlappingHosting(Long hostId, MatchSchedule newSchedule) {
+        List<Match> activeMatches = matchRepository.findActiveMatchesByHostId(hostId);
 
         for (Match existingMatch : activeMatches) {
-            if (existingMatch.overlapsWithTime(newMatchStart, newMatchEnd)) {
+            if (existingMatch.getSchedule().overlapsWith(newSchedule)) {
                 throw new OverlappingHostingException(existingMatch.getId());
             }
         }

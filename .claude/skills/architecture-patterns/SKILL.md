@@ -5,7 +5,7 @@ description: Hoops 프로젝트 Hexagonal Architecture 가이드. Java/Spring �
 
 # Hexagonal Architecture Guidelines for Hoops Project
 
-You are an expert Java/Spring backend developer working on the Hoops project. You must follow hexagonal architecture (ports and adapters) with domain-driven design principles. These guidelines are mandatory for all code generation, review, and refactoring tasks.
+You are an expert Java/Spring backend developer working on the Hoops project. You must follow hexagonal architecture (ports and adapters) with domain-driven design principles. These guidelines define WHERE components belong. For HOW to implement them, refer to `/clean-code` skill.
 
 ## Core Principles
 
@@ -92,85 +92,6 @@ Domain and application layer objects must never contain vendor-specific names. U
 Vendor-specific names are permitted only in the adapter layer under the appropriate provider directory.
 Example: `adapter/out/oauth/kakao/KakaoOAuthAdapter`
 
-## Domain Model Design Rules
-
-### Factory Method Pattern
-
-Domain models must use private constructors with static factory methods. Direct constructor calls are prohibited.
-
-- `create()` - For creating new entities without an id. This method must perform validation before construction.
-- `reconstitute()` - For restoring entities from the database with an existing id. This method must not perform validation as data is assumed valid.
-
-```java
-public class Match {
-    private final Long id;
-    private final Long hostId;
-    private MatchStatus status;
-
-    private Match(Long id, Long hostId, MatchStatus status) {
-        this.id = id;
-        this.hostId = hostId;
-        this.status = status;
-    }
-
-    public static Match create(Long hostId, LocalDateTime matchDate) {
-        validateMatchDate(matchDate);
-        return new Match(null, hostId, MatchStatus.RECRUITING);
-    }
-
-    public static Match reconstitute(Long id, Long hostId, MatchStatus status) {
-        return new Match(id, hostId, status);
-    }
-}
-```
-
-### Tell, Don't Ask Principle
-
-Domain objects must perform their own validation and state changes internally. Do not query object state from outside to make decisions. Request behavior instead.
-
-```java
-// Prohibited pattern: asking then deciding externally
-if (match.getStatus() != MatchStatus.CANCELLED) {
-    throw new MatchCannotReactivateException(match.getId());
-}
-if (!match.getHostId().equals(userId)) {
-    throw new NotMatchHostException(match.getId());
-}
-match.setStatus(MatchStatus.RECRUITING);
-
-// Required pattern: telling the object to perform behavior
-match.reactivate(userId);
-
-// Inside Match class
-public void reactivate(Long requestUserId) {
-    validateHost(requestUserId);
-    validateReactivatable();
-    this.status = MatchStatus.RECRUITING;
-}
-```
-
-### Immutability Rules
-
-- Value objects must be completely immutable with all fields declared as `final`. Use Java record types for value objects when possible.
-- Entity identifiers must be immutable. State changes must occur through behavior methods, never through setters.
-- When an immutable object needs modification, provide `with*()` methods that return a new instance.
-
-```java
-public AuthAccount withRefreshToken(String newToken) {
-    return new AuthAccount(this.id, this.userId, this.provider, newToken);
-}
-```
-
-- Collection fields must return defensive copies or unmodifiable views to prevent external modification.
-
-### Validation Location Rules
-
-| Validation Type | Location | Example |
-|-----------------|----------|---------|
-| Single object state | Domain Model internal | `match.reactivate(userId)` |
-| Cross-entity validation | `domain/policy/` | Time range, overlap check |
-| Requires external dependency | `application/service/` | DB lookup required |
-
 ## Exception Design
 
 ### Exception Hierarchy
@@ -215,34 +136,11 @@ Never throw `RuntimeException`, `IllegalArgumentException`, or `IllegalStateExce
 - Never expose domain entities directly from controllers. Always convert to response DTOs.
 - Never accept domain entities as controller parameters. Always use request DTOs and convert to commands.
 
-## Transaction Rules
-
-- Apply `@Transactional` annotation only at the use case implementation level in the service layer.
-- Use `@Transactional(readOnly = true)` for all query operations to optimize performance.
-- Never apply `@Transactional` in domain layer or adapter layer.
-- Declare propagation level explicitly when non-default behavior is required.
-
 ## Dependency Injection Rules
 
 - Use constructor injection exclusively. Never use `@Autowired` field injection or setter injection.
 - Apply `@RequiredArgsConstructor` from Lombok to generate constructors.
 - Declare all injected dependencies as `private final` fields.
-
-## Code Quality Standards
-
-| Metric | Limit |
-|--------|-------|
-| Method nesting depth | Maximum 2 levels |
-| Method length | Maximum 20 lines |
-| Class length | Maximum 200 lines |
-| Method parameters | Maximum 5 |
-
-- Use `Optional` for return types that may be absent. Never return null from methods.
-- Return empty collections instead of null for collection return types.
-- Refactor nested conditionals and loops into separate methods.
-- Extract complex logic into well-named private methods.
-- Split large classes by responsibility.
-- Use command objects for methods requiring more parameters.
 
 ## Adapter Implementation Patterns
 
@@ -298,8 +196,6 @@ public class KakaoOAuthAdapter implements OAuthPort {
 - Never expose JPA entities outside the persistence adapter.
 - Never use vendor-specific names in domain or application layers.
 - Never call external services directly from domain or application layers without going through ports.
-- Never use setters for state changes in domain entities.
-- Never return null from methods when `Optional` or empty collection is appropriate.
 - Never place `@Transactional` in domain layer or adapter layer.
 
 ## Package Structure Reference
@@ -358,3 +254,8 @@ When creating a new domain feature, verify each component exists in the correct 
 
 ### Infrastructure layer checklist
 - [ ] Configuration class in `infrastructure/config/` if needed
+
+## Related Skills
+
+For implementation patterns and code quality guidelines, refer to:
+- `/clean-code` - Self-validating entities, Value Object patterns, Transaction strategies, Tell Don't Ask principle

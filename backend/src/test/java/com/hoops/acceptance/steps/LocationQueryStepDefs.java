@@ -35,26 +35,28 @@ public class LocationQueryStepDefs {
     @먼저("장소가 {int}개 등록되어 있다")
     public void 장소가_N개_등록되어_있다(int count) {
         for (int i = 1; i <= count; i++) {
-            Location location = Location.builder()
-                    .userId(1L)
-                    .alias("테스트 장소 " + i)
-                    .latitude(BigDecimal.valueOf(37.5665 + i * 0.01))
-                    .longitude(BigDecimal.valueOf(126.9780 + i * 0.01))
-                    .address("서울시 테스트구 " + i + "번지")
-                    .build();
+            Location location = Location.reconstitute(
+                    null,
+                    1L,
+                    "테스트 장소 " + i,
+                    BigDecimal.valueOf(37.5665 + i * 0.01),
+                    BigDecimal.valueOf(126.9780 + i * 0.01),
+                    "서울시 테스트구 " + i + "번지"
+            );
             locationRepository.save(location);
         }
     }
 
     @먼저("{string}이라는 장소가 등록되어 있다")
     public void 이름으로_장소가_등록되어_있다(String locationName) {
-        Location location = Location.builder()
-                .userId(1L)
-                .alias(locationName)
-                .latitude(BigDecimal.valueOf(37.5665))
-                .longitude(BigDecimal.valueOf(126.9780))
-                .address("서울시 테스트구")
-                .build();
+        Location location = Location.reconstitute(
+                null,
+                1L,
+                locationName,
+                BigDecimal.valueOf(37.5665),
+                BigDecimal.valueOf(126.9780),
+                "서울시 테스트구"
+        );
         testLocation = locationRepository.save(location);
     }
 

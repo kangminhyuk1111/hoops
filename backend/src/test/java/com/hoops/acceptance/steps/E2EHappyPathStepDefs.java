@@ -57,7 +57,7 @@ public class E2EHappyPathStepDefs {
     public void 호스트가_서울_지역에_경기를_생성했다() {
         User host = sharedContext.getHostUser();
 
-        Location location = new Location(
+        Location location = Location.reconstitute(
                 null,
                 host.getId(),
                 "서울 테스트 농구장",

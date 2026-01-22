@@ -61,12 +61,12 @@ public class MatchReactivateStepDefs {
 
     @먼저("다른 사용자가 생성한 취소된 경기가 있다")
     public void 다른_사용자가_생성한_취소된_경기가_있다() {
-        User otherUser = User.builder()
-                .email("other-reactivate@example.com")
-                .nickname("다른사용자복구")
-                .rating(BigDecimal.valueOf(3.0))
-                .totalMatches(0)
-                .build();
+        User otherUser = User.reconstitute(null,
+                "other-reactivate@example.com",
+                "다른사용자복구",
+                null,
+                BigDecimal.valueOf(3.0),
+                0);
         otherUser = userRepository.save(otherUser);
 
         sharedContext.clearTestMatches();

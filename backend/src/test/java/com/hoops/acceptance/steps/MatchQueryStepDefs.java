@@ -155,12 +155,12 @@ public class MatchQueryStepDefs {
     }
 
     private User createTestUser() {
-        User user = User.builder()
-                .email("querytest@example.com")
-                .nickname("조회테스트유저")
-                .rating(BigDecimal.valueOf(3.0))
-                .totalMatches(0)
-                .build();
+        User user = User.reconstitute(null,
+                "querytest@example.com",
+                "조회테스트유저",
+                null,
+                BigDecimal.valueOf(3.0),
+                0);
         return userRepository.save(user);
     }
 

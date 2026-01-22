@@ -156,12 +156,12 @@ public class P0CancelTimeLimitStepDefs {
     }
 
     private User createOtherUser(String prefix) {
-        User user = User.builder()
-                .email(prefix + System.currentTimeMillis() + "@example.com")
-                .nickname(prefix + "사용자")
-                .rating(BigDecimal.valueOf(3.0))
-                .totalMatches(0)
-                .build();
+        User user = User.reconstitute(null,
+                prefix + System.currentTimeMillis() + "@example.com",
+                prefix + "사용자",
+                null,
+                BigDecimal.valueOf(3.0),
+                0);
         return userRepository.save(user);
     }
 }

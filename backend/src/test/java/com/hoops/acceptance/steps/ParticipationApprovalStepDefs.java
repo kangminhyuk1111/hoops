@@ -70,7 +70,7 @@ public class ParticipationApprovalStepDefs {
         String kakaoId = "host-kakao-" + UUID.randomUUID().toString().substring(0, 8);
         String email = "host" + System.currentTimeMillis() + "@kakao.com";
 
-        User host = new User(
+        User host = User.reconstitute(
                 null,
                 email,
                 "호스트유저",
@@ -143,7 +143,7 @@ public class ParticipationApprovalStepDefs {
     public void 다른_사용자가_해당_경기에_참가_신청했다() {
         String email = "participant" + System.currentTimeMillis() + "@kakao.com";
 
-        participantUser = new User(
+        participantUser = User.reconstitute(
                 null,
                 email,
                 "참가자유저",

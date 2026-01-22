@@ -39,12 +39,12 @@ public class MatchParticipantsStepDefs {
         Match match = sharedContext.getTestMatches().get(0);
 
         for (int i = 0; i < count; i++) {
-            User participant = User.builder()
-                    .email("participant" + (i + 1) + "@example.com")
-                    .nickname("참가자" + (i + 1))
-                    .rating(BigDecimal.valueOf(3.0))
-                    .totalMatches(0)
-                    .build();
+            User participant = User.reconstitute(null,
+                    "participant" + (i + 1) + "@example.com",
+                    "참가자" + (i + 1),
+                    null,
+                    BigDecimal.valueOf(3.0),
+                    0);
             User savedParticipant = userRepository.save(participant);
 
             Participation participation = Participation.builder()
@@ -98,12 +98,12 @@ public class MatchParticipantsStepDefs {
     public void 닉네임의_사용자가_해당_경기에_참가했다(String nickname) {
         Match match = sharedContext.getTestMatches().get(0);
 
-        User participant = User.builder()
-                .email("participant" + System.currentTimeMillis() + "@example.com")
-                .nickname(nickname)
-                .rating(BigDecimal.valueOf(3.5))
-                .totalMatches(2)
-                .build();
+        User participant = User.reconstitute(null,
+                "participant" + System.currentTimeMillis() + "@example.com",
+                nickname,
+                null,
+                BigDecimal.valueOf(3.5),
+                2);
         User savedParticipant = userRepository.save(participant);
 
         Participation participation = Participation.builder()

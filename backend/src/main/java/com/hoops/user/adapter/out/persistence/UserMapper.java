@@ -11,7 +11,7 @@ public class UserMapper {
         if (entity == null) {
             return null;
         }
-        return new User(
+        return User.reconstitute(
                 entity.getId(),
                 entity.getEmail(),
                 entity.getNickname(),

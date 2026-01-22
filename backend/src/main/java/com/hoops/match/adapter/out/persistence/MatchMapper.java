@@ -8,7 +8,7 @@ public class MatchMapper {
         if (entity == null) {
             return null;
         }
-        return new Match(
+        return Match.reconstitute(
                 entity.getId(),
                 entity.getVersion(),
                 entity.getHostId(),

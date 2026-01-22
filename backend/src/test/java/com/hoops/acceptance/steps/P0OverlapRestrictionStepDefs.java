@@ -132,22 +132,24 @@ public class P0OverlapRestrictionStepDefs {
     }
 
     private Match createMatch(User host, LocalDate matchDate, LocalTime startTime, LocalTime endTime, String title) {
-        return Match.builder()
-                .version(0L)
-                .hostId(host.getId())
-                .hostNickname(host.getNickname())
-                .title(title)
-                .description("테스트 경기 설명")
-                .latitude(BigDecimal.valueOf(37.5665))
-                .longitude(BigDecimal.valueOf(126.9780))
-                .address("서울시 중구")
-                .matchDate(matchDate)
-                .startTime(startTime)
-                .endTime(endTime)
-                .maxParticipants(10)
-                .currentParticipants(1)
-                .status(MatchStatus.PENDING)
-                .build();
+        return Match.reconstitute(
+                null,  // id
+                0L,    // version
+                host.getId(),  // hostId
+                host.getNickname(),  // hostNickname
+                title,  // title
+                "테스트 경기 설명",  // description
+                BigDecimal.valueOf(37.5665),  // latitude
+                BigDecimal.valueOf(126.9780),  // longitude
+                "서울시 중구",  // address
+                matchDate,  // matchDate
+                startTime,  // startTime
+                endTime,  // endTime
+                10,  // maxParticipants
+                1,   // currentParticipants
+                MatchStatus.PENDING,  // status
+                null  // cancelledAt
+        );
     }
 
     private User createOtherUser(String prefix) {

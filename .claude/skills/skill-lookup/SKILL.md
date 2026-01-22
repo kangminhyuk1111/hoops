@@ -17,6 +17,7 @@ description: Hoops 프로젝트 스킬 인덱스. 사용 가능한 스킬 목록
 
 | 스킬 | 용도 | 트리거 |
 |------|------|--------|
+| `/clean-code` | Self-validating entity, VO로 파라미터 그룹화, 트랜잭션 전략 | 도메인 모델 설계, 리팩토링 |
 | `/code-review-excellence` | 코드 리뷰 가이드, 피드백 작성법 | PR 리뷰, 코드 검토 |
 | `/debugging-strategies` | 체계적 디버깅, 성능 프로파일링 | 버그 조사, 성능 이슈 |
 

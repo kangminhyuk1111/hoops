@@ -71,23 +71,23 @@ public class E2EHappyPathStepDefs {
         LocalTime startTime = LocalTime.of(18, 0);
         LocalTime endTime = LocalTime.of(20, 0);
 
-        Match match = new Match(
-                null,
-                0L,
-                host.getId(),
-                host.getNickname(),
-                "서울 주말 농구",
-                "함께 농구해요!",
-                SEOUL_LATITUDE,
-                SEOUL_LONGITUDE,
-                location.getAddress(),
-                matchDate,
-                startTime,
-                endTime,
-                10,
-                1,
-                MatchStatus.PENDING,
-                null
+        Match match = Match.reconstitute(
+                null,  // id
+                0L,    // version
+                host.getId(),  // hostId
+                host.getNickname(),  // hostNickname
+                "서울 주말 농구",  // title
+                "함께 농구해요!",  // description
+                SEOUL_LATITUDE,  // latitude
+                SEOUL_LONGITUDE,  // longitude
+                location.getAddress(),  // address
+                matchDate,  // matchDate
+                startTime,  // startTime
+                endTime,  // endTime
+                10,  // maxParticipants
+                1,   // currentParticipants
+                MatchStatus.PENDING,  // status
+                null  // cancelledAt
         );
         Match savedMatch = matchRepository.save(match);
         sharedContext.clearTestMatches();

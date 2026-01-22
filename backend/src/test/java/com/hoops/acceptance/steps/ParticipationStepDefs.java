@@ -72,22 +72,24 @@ public class ParticipationStepDefs {
         User otherUser = createOtherUser("fullmatch");
         sharedContext.clearTestMatches();
 
-        Match match = Match.builder()
-                .version(0L)
-                .hostId(otherUser.getId())
-                .hostNickname(otherUser.getNickname())
-                .title("정원 찬 경기")
-                .description("테스트 경기 설명")
-                .latitude(BigDecimal.valueOf(37.5665))
-                .longitude(BigDecimal.valueOf(126.9780))
-                .address("서울시 중구")
-                .matchDate(LocalDate.now().plusDays(7))
-                .startTime(LocalTime.of(18, 0))
-                .endTime(LocalTime.of(20, 0))
-                .maxParticipants(4)
-                .currentParticipants(4)
-                .status(MatchStatus.PENDING)
-                .build();
+        Match match = Match.reconstitute(
+                null,  // id
+                0L,    // version
+                otherUser.getId(),  // hostId
+                otherUser.getNickname(),  // hostNickname
+                "정원 찬 경기",  // title
+                "테스트 경기 설명",  // description
+                BigDecimal.valueOf(37.5665),  // latitude
+                BigDecimal.valueOf(126.9780),  // longitude
+                "서울시 중구",  // address
+                LocalDate.now().plusDays(7),  // matchDate
+                LocalTime.of(18, 0),  // startTime
+                LocalTime.of(20, 0),  // endTime
+                4,   // maxParticipants
+                4,   // currentParticipants
+                MatchStatus.PENDING,  // status
+                null  // cancelledAt
+        );
         Match savedMatch = matchRepository.save(match);
         sharedContext.addTestMatch(savedMatch);
     }
@@ -97,22 +99,24 @@ public class ParticipationStepDefs {
         User otherUser = createOtherUser("started");
         sharedContext.clearTestMatches();
 
-        Match match = Match.builder()
-                .version(0L)
-                .hostId(otherUser.getId())
-                .hostNickname(otherUser.getNickname())
-                .title("이미 시작된 경기")
-                .description("테스트 경기 설명")
-                .latitude(BigDecimal.valueOf(37.5665))
-                .longitude(BigDecimal.valueOf(126.9780))
-                .address("서울시 중구")
-                .matchDate(LocalDate.now().minusDays(1))
-                .startTime(LocalTime.of(10, 0))
-                .endTime(LocalTime.of(12, 0))
-                .maxParticipants(10)
-                .currentParticipants(2)
-                .status(MatchStatus.IN_PROGRESS)
-                .build();
+        Match match = Match.reconstitute(
+                null,  // id
+                0L,    // version
+                otherUser.getId(),  // hostId
+                otherUser.getNickname(),  // hostNickname
+                "이미 시작된 경기",  // title
+                "테스트 경기 설명",  // description
+                BigDecimal.valueOf(37.5665),  // latitude
+                BigDecimal.valueOf(126.9780),  // longitude
+                "서울시 중구",  // address
+                LocalDate.now().minusDays(1),  // matchDate
+                LocalTime.of(10, 0),  // startTime
+                LocalTime.of(12, 0),  // endTime
+                10,  // maxParticipants
+                2,   // currentParticipants
+                MatchStatus.IN_PROGRESS,  // status
+                null  // cancelledAt
+        );
         Match savedMatch = matchRepository.save(match);
         sharedContext.addTestMatch(savedMatch);
     }

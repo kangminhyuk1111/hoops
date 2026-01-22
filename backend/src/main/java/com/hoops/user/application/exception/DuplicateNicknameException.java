@@ -1,12 +1,12 @@
 package com.hoops.user.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
 /**
  * 닉네임 중복 예외
  * 이미 사용 중인 닉네임으로 회원가입을 시도할 때 발생합니다
  */
-public class DuplicateNicknameException extends DomainException {
+public class DuplicateNicknameException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "DUPLICATE_NICKNAME";
 

@@ -36,12 +36,12 @@ public class UserProfileStepDefs {
 
     @먼저("사용자가 회원가입되어 있다")
     public void 사용자가_회원가입되어_있다() {
-        User testUser = User.builder()
-                .email("test@example.com")
-                .nickname("테스트유저")
-                .rating(BigDecimal.valueOf(3.0))
-                .totalMatches(0)
-                .build();
+        User testUser = User.reconstitute(null,
+                "test@example.com",
+                "테스트유저",
+                null,
+                BigDecimal.valueOf(3.0),
+                0);
         testUser = userRepository.save(testUser);
         sharedContext.setTestUser(testUser);
     }
@@ -81,23 +81,23 @@ public class UserProfileStepDefs {
 
     @먼저("다른 사용자가 존재한다")
     public void 다른_사용자가_존재한다() {
-        User user = User.builder()
-                .email("other" + System.currentTimeMillis() + "@example.com")
-                .nickname("다른사용자")
-                .rating(BigDecimal.valueOf(3.5))
-                .totalMatches(5)
-                .build();
+        User user = User.reconstitute(null,
+                "other" + System.currentTimeMillis() + "@example.com",
+                "다른사용자",
+                null,
+                BigDecimal.valueOf(3.5),
+                5);
         otherUser = userRepository.save(user);
     }
 
     @먼저("{string}을 사용하는 다른 사용자가 있다")
     public void 닉네임을_사용하는_다른_사용자가_있다(String nickname) {
-        User user = User.builder()
-                .email("other" + System.currentTimeMillis() + "@example.com")
-                .nickname(nickname)
-                .rating(BigDecimal.valueOf(3.0))
-                .totalMatches(0)
-                .build();
+        User user = User.reconstitute(null,
+                "other" + System.currentTimeMillis() + "@example.com",
+                nickname,
+                null,
+                BigDecimal.valueOf(3.0),
+                0);
         userRepository.save(user);
     }
 

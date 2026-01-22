@@ -65,12 +65,12 @@ public class CancelMatchStepDefs {
 
     @먼저("다른 사용자가 생성한 경기가 있다")
     public void 다른_사용자가_생성한_경기가_있다() {
-        User otherUser = User.builder()
-                .email("other@example.com")
-                .nickname("다른사용자")
-                .rating(BigDecimal.valueOf(3.0))
-                .totalMatches(0)
-                .build();
+        User otherUser = User.reconstitute(null,
+                "other@example.com",
+                "다른사용자",
+                null,
+                BigDecimal.valueOf(3.0),
+                0);
         otherUser = userRepository.save(otherUser);
 
         sharedContext.clearTestMatches();

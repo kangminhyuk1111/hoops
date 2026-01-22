@@ -55,7 +55,7 @@ public class AuthLoginStepDefs {
         String email = "existing" + System.currentTimeMillis() + "@kakao.com";
         String code = "existing-code-" + UUID.randomUUID().toString().substring(0, 8);
 
-        User user = new User(
+        User user = User.reconstitute(
                 null,
                 email,
                 "기존회원",
@@ -165,7 +165,7 @@ public class AuthLoginStepDefs {
         String kakaoId = "loggedin-kakao-" + UUID.randomUUID().toString().substring(0, 8);
         String email = "loggedin" + System.currentTimeMillis() + "@kakao.com";
 
-        User user = new User(
+        User user = User.reconstitute(
                 null,
                 email,
                 "로그인유저",

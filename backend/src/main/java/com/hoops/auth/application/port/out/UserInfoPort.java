@@ -1,7 +1,7 @@
 package com.hoops.auth.application.port.out;
 
 import com.hoops.auth.domain.vo.AuthUserInfo;
-import com.hoops.auth.application.dto.CreateUserRequest;
+import com.hoops.auth.application.dto.CreateUserCommand;
 
 import java.util.Optional;
 
@@ -18,7 +18,7 @@ public interface UserInfoPort {
     /**
      * 새로운 사용자를 생성합니다.
      */
-    AuthUserInfo createUser(CreateUserRequest request);
+    AuthUserInfo createUser(CreateUserCommand request);
 
     /**
      * 닉네임 중복 여부를 확인합니다.

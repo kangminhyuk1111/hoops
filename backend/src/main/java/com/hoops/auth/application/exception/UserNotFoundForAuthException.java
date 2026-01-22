@@ -1,11 +1,11 @@
 package com.hoops.auth.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
 /**
  * Exception thrown when user is not found for authentication.
  */
-public class UserNotFoundForAuthException extends DomainException {
+public class UserNotFoundForAuthException extends ApplicationException {
 
     private static final String ERROR_CODE = "USER_NOT_FOUND_FOR_AUTH";
 

@@ -2,7 +2,7 @@ package com.hoops.auth.adapter.out.persistence;
 
 import com.hoops.auth.application.port.out.UserInfoPort;
 import com.hoops.auth.domain.vo.AuthUserInfo;
-import com.hoops.auth.application.dto.CreateUserRequest;
+import com.hoops.auth.application.dto.CreateUserCommand;
 import com.hoops.user.application.port.out.UserCommandPort;
 import com.hoops.user.application.port.out.UserQueryPort;
 import com.hoops.user.application.port.out.UserQueryPort.UserDetails;
@@ -25,7 +25,7 @@ public class AuthUserInfoAdapter implements UserInfoPort {
     }
 
     @Override
-    public AuthUserInfo createUser(CreateUserRequest request) {
+    public AuthUserInfo createUser(CreateUserCommand request) {
         UserCommandPort.CreateUserCommand userCommand = UserCommandPort.CreateUserCommand.of(
                 request.email(),
                 request.nickname(),

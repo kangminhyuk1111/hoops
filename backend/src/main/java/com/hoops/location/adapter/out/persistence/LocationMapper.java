@@ -8,7 +8,7 @@ public class LocationMapper {
         if (entity == null) {
             return null;
         }
-        return new Location(
+        return Location.reconstitute(
                 entity.getId(),
                 entity.getUserId(),
                 entity.getAlias(),

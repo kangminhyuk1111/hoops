@@ -104,13 +104,14 @@ public class P0MatchCreationLimitStepDefs {
         }
         if (testLocation == null) {
             User testUser = sharedContext.getTestUser();
-            Location location = Location.builder()
-                    .userId(testUser.getId())
-                    .alias("테스트 농구장")
-                    .latitude(BigDecimal.valueOf(37.5665))
-                    .longitude(BigDecimal.valueOf(126.9780))
-                    .address("서울특별시 중구 세종대로 110")
-                    .build();
+            Location location = Location.reconstitute(
+                    null,
+                    testUser.getId(),
+                    "테스트 농구장",
+                    BigDecimal.valueOf(37.5665),
+                    BigDecimal.valueOf(126.9780),
+                    "서울특별시 중구 세종대로 110"
+            );
             testLocation = locationRepository.save(location);
             sharedContext.setTestLocation(testLocation);
         }

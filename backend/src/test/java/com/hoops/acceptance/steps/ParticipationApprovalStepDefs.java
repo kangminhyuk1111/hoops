@@ -103,7 +103,7 @@ public class ParticipationApprovalStepDefs {
     public void 호스트가_생성한_경기가_있다() {
         User host = sharedContext.getHostUser();
 
-        Location location = new Location(
+        Location location = Location.reconstitute(
                 null,
                 host.getId(),
                 "테스트 농구장",

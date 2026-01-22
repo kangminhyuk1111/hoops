@@ -1,8 +1,8 @@
 package com.hoops.location.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
-public class LocationNotFoundException extends DomainException {
+public class LocationNotFoundException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "LOCATION_NOT_FOUND";
 

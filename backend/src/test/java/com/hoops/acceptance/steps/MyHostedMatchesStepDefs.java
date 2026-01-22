@@ -43,7 +43,7 @@ public class MyHostedMatchesStepDefs {
     public void 내가_생성한_경기가_N개_있다(int count) {
         User user = sharedContext.getTestUser();
 
-        Location location = new Location(
+        Location location = Location.reconstitute(
                 null,
                 user.getId(),
                 "테스트 농구장",

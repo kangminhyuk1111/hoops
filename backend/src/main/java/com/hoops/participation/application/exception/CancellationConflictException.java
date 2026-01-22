@@ -1,12 +1,12 @@
 package com.hoops.participation.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
 /**
  * 취소 동시성 충돌 예외
  * 낙관적 락 재시도 초과 시 발생합니다
  */
-public class CancellationConflictException extends DomainException {
+public class CancellationConflictException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "CANCELLATION_CONFLICT";
 

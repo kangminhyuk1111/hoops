@@ -1,8 +1,8 @@
 package com.hoops.participation.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
-public class OverlappingParticipationException extends DomainException {
+public class OverlappingParticipationException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "OVERLAPPING_PARTICIPATION";
 

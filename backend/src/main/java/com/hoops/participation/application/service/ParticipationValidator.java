@@ -11,7 +11,7 @@ import com.hoops.participation.application.exception.NotHostException;
 import com.hoops.participation.application.exception.NotParticipantException;
 import com.hoops.participation.application.exception.OverlappingParticipationException;
 import com.hoops.participation.application.port.out.MatchInfo;
-import com.hoops.participation.application.port.out.MatchInfoProvider;
+import com.hoops.participation.application.port.out.MatchInfoPort;
 import com.hoops.participation.domain.model.Participation;
 import com.hoops.participation.domain.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.List;
 public class ParticipationValidator {
 
     private final ParticipationRepository participationRepository;
-    private final MatchInfoProvider matchInfoProvider;
+    private final MatchInfoPort matchInfoProvider;
 
     public void validateForParticipation(MatchInfo matchInfo, Long userId) {
         validateNotHost(matchInfo, userId);

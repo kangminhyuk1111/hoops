@@ -14,7 +14,7 @@ import com.hoops.participation.application.port.in.ParticipateInMatchUseCase;
 import com.hoops.participation.application.port.in.RejectParticipationCommand;
 import com.hoops.participation.application.port.in.RejectParticipationUseCase;
 import com.hoops.participation.application.port.out.MatchInfo;
-import com.hoops.participation.application.port.out.MatchInfoProvider;
+import com.hoops.participation.application.port.out.MatchInfoPort;
 import com.hoops.participation.domain.model.Participation;
 import com.hoops.participation.domain.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
         ApproveParticipationUseCase, RejectParticipationUseCase, GetMyParticipationsUseCase, GetMatchParticipantsUseCase {
 
     private final ParticipationRepository participationRepository;
-    private final MatchInfoProvider matchInfoProvider;
+    private final MatchInfoPort matchInfoProvider;
     private final ParticipationValidator validator;
     private final ParticipationFinder finder;
     private final ParticipationCreator creator;

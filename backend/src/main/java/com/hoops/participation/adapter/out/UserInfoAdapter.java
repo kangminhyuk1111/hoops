@@ -1,7 +1,7 @@
 package com.hoops.participation.adapter.out;
 
 import com.hoops.participation.application.port.out.UserInfo;
-import com.hoops.participation.application.port.out.UserInfoProvider;
+import com.hoops.participation.application.port.out.UserInfoPort;
 import com.hoops.user.application.port.out.UserQueryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 /**
  * User Context를 통한 사용자 정보 제공 어댑터
  *
- * Participation Context의 UserInfoProvider 포트를 구현하여
+ * Participation Context의 UserInfoPort 포트를 구현하여
  * User Context가 제공하는 UserQueryPort를 통해 사용자 정보를 조회합니다.
  */
 @Component
 @RequiredArgsConstructor
-public class UserInfoAdapter implements UserInfoProvider {
+public class UserInfoAdapter implements UserInfoPort {
 
     private final UserQueryPort userQueryPort;
 

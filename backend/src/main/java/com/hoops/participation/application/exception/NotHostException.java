@@ -1,11 +1,11 @@
 package com.hoops.participation.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
 /**
  * 호스트가 아닌 사용자가 승인/거절 시도 시 발생하는 예외
  */
-public class NotHostException extends DomainException {
+public class NotHostException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "NOT_HOST";
 

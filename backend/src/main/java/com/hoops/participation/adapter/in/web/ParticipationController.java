@@ -13,7 +13,7 @@ import com.hoops.participation.application.port.in.ParticipateInMatchUseCase;
 import com.hoops.participation.application.port.in.RejectParticipationCommand;
 import com.hoops.participation.application.port.in.RejectParticipationUseCase;
 import com.hoops.participation.application.port.out.UserInfo;
-import com.hoops.participation.application.port.out.UserInfoProvider;
+import com.hoops.participation.application.port.out.UserInfoPort;
 import com.hoops.participation.domain.model.Participation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -48,7 +48,7 @@ public class ParticipationController {
     private final ApproveParticipationUseCase approveParticipationUseCase;
     private final RejectParticipationUseCase rejectParticipationUseCase;
     private final GetMatchParticipantsUseCase getMatchParticipantsUseCase;
-    private final UserInfoProvider userInfoProvider;
+    private final UserInfoPort userInfoProvider;
 
     @Operation(summary = "경기 참가 신청", description = "경기에 참가를 신청합니다.")
     @ApiResponses({

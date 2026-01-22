@@ -1,6 +1,6 @@
 package com.hoops.participation.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
 /**
  * 참가 신청 동시성 충돌 예외
@@ -8,7 +8,7 @@ import com.hoops.common.exception.DomainException;
  * 동시에 여러 사용자가 참가 신청할 때 발생하는 충돌 예외입니다.
  * 낙관적 락(Optimistic Lock)에 의해 감지됩니다.
  */
-public class ParticipationConflictException extends DomainException {
+public class ParticipationConflictException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "PARTICIPATION_CONFLICT";
 

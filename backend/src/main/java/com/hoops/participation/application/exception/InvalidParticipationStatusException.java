@@ -1,12 +1,12 @@
 package com.hoops.participation.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
 /**
  * 취소 불가능한 참가 상태 예외
  * CONFIRMED 상태가 아닌 참가를 취소하려 할 때 발생합니다
  */
-public class InvalidParticipationStatusException extends DomainException {
+public class InvalidParticipationStatusException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "INVALID_PARTICIPATION_STATUS";
 

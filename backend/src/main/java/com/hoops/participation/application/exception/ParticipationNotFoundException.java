@@ -1,12 +1,12 @@
 package com.hoops.participation.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
 /**
  * 참가 정보 미존재 예외
  * 참가 정보를 찾을 수 없을 때 발생합니다
  */
-public class ParticipationNotFoundException extends DomainException {
+public class ParticipationNotFoundException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "PARTICIPATION_NOT_FOUND";
 

@@ -1,12 +1,12 @@
 package com.hoops.participation.application.exception;
 
-import com.hoops.common.exception.DomainException;
+import com.hoops.common.exception.ApplicationException;
 
 /**
  * 중복 참가 예외
  * 이미 참가 중인 경기에 다시 참가 신청할 때 발생합니다
  */
-public class AlreadyParticipatingException extends DomainException {
+public class AlreadyParticipatingException extends ApplicationException {
 
     private static final String DEFAULT_ERROR_CODE = "ALREADY_PARTICIPATING";
 

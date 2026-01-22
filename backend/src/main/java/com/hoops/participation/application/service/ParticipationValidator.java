@@ -4,7 +4,6 @@ import com.hoops.participation.application.exception.AlreadyParticipatingExcepti
 import com.hoops.participation.application.exception.CancelTimeExceededException;
 import com.hoops.participation.application.exception.HostCannotParticipateException;
 import com.hoops.participation.application.exception.InvalidMatchStatusException;
-import com.hoops.participation.application.exception.InvalidParticipationStatusException;
 import com.hoops.participation.application.exception.MatchAlreadyStartedException;
 import com.hoops.participation.application.exception.MatchFullException;
 import com.hoops.participation.application.exception.NotHostException;
@@ -38,7 +37,7 @@ public class ParticipationValidator {
 
     public void validateForCancellation(Participation participation, MatchInfo matchInfo, Long userId) {
         validateIsOwner(participation, userId);
-        validateCanCancel(participation);
+        // Entity validates state in cancel() method - removed duplicate check
         validateMatchNotStarted(matchInfo);
         validateCancelTimeNotExceeded(matchInfo, participation);
     }
@@ -46,14 +45,6 @@ public class ParticipationValidator {
     public void validateHostPermission(MatchInfo matchInfo, Long userId) {
         if (!matchInfo.isHost(userId)) {
             throw new NotHostException(matchInfo.matchId(), userId);
-        }
-    }
-
-    public void validateCanBeApprovedOrRejected(Participation participation) {
-        if (!participation.canBeApprovedOrRejected()) {
-            throw new InvalidParticipationStatusException(
-                    participation.getId(),
-                    participation.getStatus().name());
         }
     }
 
@@ -99,14 +90,6 @@ public class ParticipationValidator {
     private void validateIsOwner(Participation participation, Long userId) {
         if (!participation.isOwner(userId)) {
             throw new NotParticipantException(participation.getId(), userId);
-        }
-    }
-
-    private void validateCanCancel(Participation participation) {
-        if (!participation.canCancel()) {
-            throw new InvalidParticipationStatusException(
-                    participation.getId(),
-                    participation.getStatus().name());
         }
     }
 

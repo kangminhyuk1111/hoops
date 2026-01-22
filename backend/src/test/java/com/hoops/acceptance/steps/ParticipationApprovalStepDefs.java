@@ -155,9 +155,9 @@ public class ParticipationApprovalStepDefs {
 
         Match match = sharedContext.getTestMatches().get(0);
 
-        Participation participation = new Participation(
+        Participation participation = Participation.reconstitute(
                 null,
-                null,  // version - 새 엔티티는 null
+                null,
                 match.getId(),
                 participantUser.getId(),
                 ParticipationStatus.PENDING,

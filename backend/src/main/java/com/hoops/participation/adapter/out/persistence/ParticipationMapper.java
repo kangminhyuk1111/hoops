@@ -11,7 +11,7 @@ public class ParticipationMapper {
         if (entity == null) {
             return null;
         }
-        return new Participation(
+        return Participation.reconstitute(
                 entity.getId(),
                 entity.getVersion(),
                 entity.getMatchId(),

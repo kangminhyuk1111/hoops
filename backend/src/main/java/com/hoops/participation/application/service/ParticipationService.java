@@ -92,7 +92,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
         Participation participation = finder.findById(command.participationId());
 
         validator.validateHostPermission(matchInfo, command.hostUserId());
-        validator.validateCanBeApprovedOrRejected(participation);
+        // Entity validates state in approve() method
 
         Participation approved = participationRepository.save(participation.approve());
         matchInfoProvider.addParticipant(command.matchId());
@@ -111,7 +111,7 @@ public class ParticipationService implements ParticipateInMatchUseCase, CancelPa
         Participation participation = finder.findById(command.participationId());
 
         validator.validateHostPermission(matchInfo, command.hostUserId());
-        validator.validateCanBeApprovedOrRejected(participation);
+        // Entity validates state in reject() method
 
         return participationRepository.save(participation.reject());
     }

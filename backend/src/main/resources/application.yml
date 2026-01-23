@@ -33,6 +33,16 @@ spring:
 server:
   port: 8080
 
+# Actuator & Prometheus
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus,metrics
+  metrics:
+    tags:
+      application: hoops
+
 # Kakao OAuth
 kakao:
   client-id: ${KAKAO_CLIENT_ID:your-kakao-client-id}

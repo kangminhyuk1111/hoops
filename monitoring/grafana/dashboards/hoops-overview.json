@@ -14,7 +14,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfb0bd4mfcydca"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "서버 CPU가 얼마나 바쁜지 표시. 90% 이상이면 위험",
       "fieldConfig": {
@@ -49,7 +49,7 @@
       "id": 2,
       "targets": [
         {
-          "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=idle}[1m])) * 100)",
+          "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100)",
           "legendFormat": "CPU"
         }
       ],
@@ -59,7 +59,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfb0bd4mfcydca"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "서버 RAM 사용량. 90% 이상이면 OOM 위험",
       "fieldConfig": {
@@ -104,7 +104,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfb0bd4mfcydca"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "서버 디스크 저장공간 사용량",
       "fieldConfig": {
@@ -139,7 +139,7 @@
       "id": 4,
       "targets": [
         {
-          "expr": "(1 - (node_filesystem_avail_bytes{mountpoint=/} / node_filesystem_size_bytes{mountpoint=/})) * 100",
+          "expr": "(1 - (node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"})) * 100",
           "legendFormat": "디스크"
         }
       ],
@@ -149,7 +149,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfb0bd4mfcydca"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "서버의 네트워크 트래픽 (초당 전송량)",
       "fieldConfig": {
@@ -166,11 +166,11 @@
       "id": 5,
       "targets": [
         {
-          "expr": "rate(node_network_receive_bytes_total{device!=lo}[1m])",
+          "expr": "rate(node_network_receive_bytes_total{device!=\"lo\"}[1m])",
           "legendFormat": "수신"
         },
         {
-          "expr": "rate(node_network_transmit_bytes_total{device!=lo}[1m])",
+          "expr": "rate(node_network_transmit_bytes_total{device!=\"lo\"}[1m])",
           "legendFormat": "송신"
         }
       ],
@@ -191,7 +191,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfb0bd4mfcydca"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "Java 애플리케이션이 사용 중인 힙 메모리 비율. 높으면 GC 빈번해짐",
       "fieldConfig": {
@@ -226,7 +226,7 @@
       "id": 11,
       "targets": [
         {
-          "expr": "jvm_memory_used_bytes{area=heap} / jvm_memory_max_bytes{area=heap} * 100",
+          "expr": "jvm_memory_used_bytes{area=\"heap\"} / jvm_memory_max_bytes{area=\"heap\"} * 100",
           "legendFormat": "힙"
         }
       ],
@@ -236,7 +236,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfb0bd4mfcydca"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "시간에 따른 힙 메모리 사용량 변화",
       "fieldConfig": {
@@ -253,11 +253,11 @@
       "id": 12,
       "targets": [
         {
-          "expr": "jvm_memory_used_bytes{area=heap}",
+          "expr": "jvm_memory_used_bytes{area=\"heap\"}",
           "legendFormat": "사용 중"
         },
         {
-          "expr": "jvm_memory_max_bytes{area=heap}",
+          "expr": "jvm_memory_max_bytes{area=\"heap\"}",
           "legendFormat": "최대"
         }
       ],
@@ -267,7 +267,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfb0bd4mfcydca"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "가비지 컨렉션으로 인한 애플리케이션 일시정지 시간. 높으면 응답 지연 발생",
       "fieldConfig": {
@@ -305,7 +305,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfb0bd4mfcydca"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "백엔드가 처리하는 초당 API 요청 수 (RPS)",
       "fieldConfig": {
@@ -332,7 +332,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfb0bd4mfcydca"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "전체 요청 중 95%가 이 시간 이내로 응답. 높으면 사용자 체감 느림",
       "fieldConfig": {
@@ -359,7 +359,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfb0bd4mfcydca"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "200=성공, 4xx=클라이언트 오류, 5xx=서버 오류",
       "fieldConfig": {

@@ -8,26 +8,44 @@
 - **VUser**: 0 → 10 → 30 → 50 → 100 (유지 60s) → 0 / 총 3분 30초
 - **Threshold**: p(95) < 2,000ms, 에러율 < 10%
 
-## 결과 비교
+## k6 결과 리포트
 
-| 지표 | 1,000건 | 10,000건 | 변화 |
-|------|---------|----------|------|
-| p95 응답시간 | 1,140ms | 30,180ms | 26x 악화 |
-| 평균 응답시간 | 515ms | 15,600ms | 30x 악화 |
-| RPS | 36.7 | 3.5 | 10x 감소 |
-| 에러율 | 0% | 0.89% | 에러 발생 |
-| Threshold | PASS | **FAIL** | - |
+### 1,000건 데이터 (Threshold PASS)
+
+```
+http_req_duration: avg=515ms  min=51ms  med=490ms  max=2.46s  p(90)=969ms  p(95)=1.14s
+http_req_failed:   0.00%
+http_reqs:         7,740  (36.7/s)
+```
+
+### 10,000건 데이터 (Threshold FAIL)
+
+```
+http_req_duration: avg=15.6s  min=339ms  med=13.2s  max=33.5s  p(90)=28.9s  p(95)=30.1s
+http_req_failed:   0.89%
+http_reqs:         784  (3.5/s)
+```
 
 ## Bottleneck Analysis
 
-**병목**: DB 쿼리 (Haversine 거리 계산)
+### Breaking Point
 
-데이터 10배 증가에 응답시간 30배 악화 = O(n) 이상의 성능 저하 패턴.
+VUser **50명** 시점에서 Latency가 **5,000ms 이상**으로 치솟기 시작하고, VUser **100명** 유지 구간에서는 TPS **3.5**, 평균 Latency **15,600ms**, p95 **30,180ms**까지 악화되었다.
 
-원인: 매치 조회 시 Haversine 공식(`SIN`, `COS`, `ACOS`)을 **전체 row에 대해 계산**하는 Full Table Scan 발생. 인덱스 활용이 불가능한 함수 기반 WHERE 조건이므로 데이터 증가에 비례해 선형 이상으로 느려짐.
+### 병목 원인: DB 쿼리 (CPU/Connection Pool 아님)
 
-CPU/Memory/Connection Pool은 여유 있음. 병목은 순수하게 **쿼리 연산 비용**.
+- **CPU**: Grafana 모니터링 기준 EC2 CPU 사용률은 부하 중에도 70% 미만으로 여유 있음
+- **Memory**: JVM 힙 사용률 안정적, GC pause 미미
+- **DB Connection Pool**: Connection 고갈 현상 없음, 에러율 0.89%는 timeout에 의한 것
+- **DB 쿼리**: 매 요청마다 10,000건 전체에 대해 Haversine 삼각함수(`SIN`, `COS`, `ACOS`) 연산을 수행하는 Full Table Scan이 병목
+
+데이터 10배 증가(1,000→10,000)에 응답시간 30배 악화. 인덱스를 활용할 수 없는 함수 기반 WHERE 조건이므로 O(n) 이상의 성능 저하 패턴.
 
 ## 개선 방향
 
 Spatial Index 적용으로 O(n) Full Scan → O(log n) 인덱스 탐색으로 전환 후 동일 조건 재테스트 예정.
+
+## Grafana 대시보드
+
+> 부하테스트 기간 Grafana 스크린샷: http://54.116.54.99:3001 (admin / hoops2024)
+> 시간 범위를 "Last 1 hour"로 설정하여 테스트 구간 확인

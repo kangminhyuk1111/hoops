@@ -15,6 +15,9 @@ else
     cd app
 fi
 
+# Sync deploy script from source
+cp -f deploy.sh /home/ec2-user/hoops/deploy.sh
+
 # Build backend image
 echo "Building backend image..."
 docker build -t hoops-backend:latest ./backend

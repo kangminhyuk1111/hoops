@@ -16,10 +16,6 @@ else
     cd app
 fi
 
-# Sync deploy script from source (atomic replace to avoid corrupting running script)
-cp -f deploy.sh /home/ec2-user/hoops/deploy.sh.tmp
-mv -f /home/ec2-user/hoops/deploy.sh.tmp /home/ec2-user/hoops/deploy.sh
-
 # Build backend image
 echo "Building backend image..."
 docker build -t hoops-backend:latest ./backend
@@ -46,6 +42,9 @@ docker-compose -f app/monitoring/docker-compose.monitoring.yml up -d
 
 # Cleanup unused images
 docker image prune -f
+
+# Sync deploy script from source (at the very end, after all work is done)
+cp -f app/deploy.sh /home/ec2-user/hoops/deploy.sh
 
 echo "Deployment complete!"
 echo "Backend: http://${PUBLIC_IP}:8080"

@@ -16,8 +16,9 @@ else
     cd app
 fi
 
-# Sync deploy script from source
-cp -f deploy.sh /home/ec2-user/hoops/deploy.sh
+# Sync deploy script from source (atomic replace to avoid corrupting running script)
+cp -f deploy.sh /home/ec2-user/hoops/deploy.sh.tmp
+mv -f /home/ec2-user/hoops/deploy.sh.tmp /home/ec2-user/hoops/deploy.sh
 
 # Build backend image
 echo "Building backend image..."

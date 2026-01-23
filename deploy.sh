@@ -9,6 +9,7 @@ source .env
 # Pull latest code
 if [ -d "app" ]; then
     cd app
+    git stash --include-untracked 2>/dev/null || true
     git pull origin main
 else
     git clone https://github.com/kangminhyuk1111/hoops.git app

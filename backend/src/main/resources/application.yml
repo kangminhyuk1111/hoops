@@ -42,6 +42,9 @@ management:
   metrics:
     tags:
       application: hoops
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
 
 # Kakao OAuth
 kakao:

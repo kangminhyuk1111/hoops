@@ -28,6 +28,7 @@ public interface SpringDataMatchRepository extends JpaRepository<MatchJpaEntity,
      *
      * ST_Within + ST_Buffer 조합으로 R-Tree 인덱스를 직접 활용.
      * ST_Buffer(SRID 4326)는 거리를 미터 단위로 해석하여 원형 폴리곤 생성.
+     * MySQL 8.0.24+ 필요.
      *
      * @param latitude 중심점 위도
      * @param longitude 중심점 경도

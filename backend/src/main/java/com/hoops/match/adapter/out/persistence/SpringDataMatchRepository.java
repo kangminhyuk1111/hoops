@@ -49,6 +49,7 @@ public interface SpringDataMatchRepository extends JpaRepository<MatchJpaEntity,
             AND m.status NOT IN ('CANCELLED', 'ENDED')
             AND ST_Distance_Sphere(POINT(m.longitude, m.latitude), POINT(:longitude, :latitude)) <= :distance
             ORDER BY m.match_date ASC, m.start_time ASC
+            LIMIT :limit OFFSET :offset
             """,
             nativeQuery = true)
     List<MatchJpaEntity> findAllByLocationWithDistance(
@@ -58,7 +59,9 @@ public interface SpringDataMatchRepository extends JpaRepository<MatchJpaEntity,
             @Param("maxLng") BigDecimal maxLng,
             @Param("latitude") BigDecimal latitude,
             @Param("longitude") BigDecimal longitude,
-            @Param("distance") BigDecimal distance);
+            @Param("distance") BigDecimal distance,
+            @Param("limit") int limit,
+            @Param("offset") int offset);
 
 @Query("SELECT m FROM MatchJpaEntity m WHERE m.status IN :statuses " +
             "AND (m.matchDate < :date OR (m.matchDate = :date AND m.startTime <= :time))")

@@ -60,26 +60,7 @@ public interface SpringDataMatchRepository extends JpaRepository<MatchJpaEntity,
             @Param("longitude") BigDecimal longitude,
             @Param("distance") BigDecimal distance);
 
-    /**
-     * H2 호환 위치 기반 경기 검색 (테스트용)
-     * CANCELLED, ENDED 상태 경기 제외
-     * 경기 시작 시간순 정렬
-     */
-    @Query(value = """
-            SELECT * FROM matches m
-            WHERE m.latitude BETWEEN :minLat AND :maxLat
-            AND m.longitude BETWEEN :minLng AND :maxLng
-            AND m.status NOT IN ('CANCELLED', 'ENDED')
-            ORDER BY m.match_date ASC, m.start_time ASC
-            """,
-            nativeQuery = true)
-    List<MatchJpaEntity> findAllByLocationBoundingBoxOnly(
-            @Param("minLat") BigDecimal minLat,
-            @Param("maxLat") BigDecimal maxLat,
-            @Param("minLng") BigDecimal minLng,
-            @Param("maxLng") BigDecimal maxLng);
-
-    @Query("SELECT m FROM MatchJpaEntity m WHERE m.status IN :statuses " +
+@Query("SELECT m FROM MatchJpaEntity m WHERE m.status IN :statuses " +
             "AND (m.matchDate < :date OR (m.matchDate = :date AND m.startTime <= :time))")
     List<MatchJpaEntity> findMatchesToStart(
             @Param("date") LocalDate date,

@@ -8,7 +8,7 @@ public interface MatchQueryUseCase {
 
     Match findMatchById(Long matchId);
 
-    List<Match> loadMatchesByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance);
+    List<Match> loadMatchesByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance, int page, int size);
 
     List<Match> findMyHostedMatches(Long hostId);
 }

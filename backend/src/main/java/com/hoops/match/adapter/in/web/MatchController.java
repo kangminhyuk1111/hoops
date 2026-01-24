@@ -75,13 +75,17 @@ public class MatchController {
     public ResponseEntity<List<MatchResponse>> findMatchesByLocation(
             @Parameter(description = "위도", example = "37.5665") @RequestParam BigDecimal latitude,
             @Parameter(description = "경도", example = "126.9780") @RequestParam BigDecimal longitude,
-            @Parameter(description = "반경 (km)", example = "5") @RequestParam BigDecimal distance) {
+            @Parameter(description = "반경 (km)", example = "5") @RequestParam BigDecimal distance,
+            @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "페이지 크기", example = "20") @RequestParam(defaultValue = "20") int size) {
         BigDecimal distanceInMeters = distance.multiply(BigDecimal.valueOf(1000));
 
         List<Match> matches = matchQueryUseCase.loadMatchesByLocation(
                 latitude,
                 longitude,
-                distanceInMeters
+                distanceInMeters,
+                page,
+                size
         );
 
         List<MatchResponse> response = matches.stream()

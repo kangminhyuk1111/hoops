@@ -25,8 +25,8 @@ public class MatchFinder implements MatchQueryUseCase {
     }
 
     @Override
-    public List<Match> loadMatchesByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance) {
-        return matchRepository.findAllByLocation(latitude, longitude, distance);
+    public List<Match> loadMatchesByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance, int page, int size) {
+        return matchRepository.findAllByLocation(latitude, longitude, distance, page, size);
     }
 
     @Override

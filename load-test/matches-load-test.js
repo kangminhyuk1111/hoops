@@ -19,7 +19,7 @@ export const options = {
 };
 
 export default function () {
-    const res = http.get(`${BASE_URL}/api/matches?latitude=37.5665&longitude=126.9780&distance=50`);
+    const res = http.get(`${BASE_URL}/api/matches?latitude=37.5665&longitude=126.9780&distance=5`);
 
     check(res, {
         'status 200': (r) => r.status === 200,

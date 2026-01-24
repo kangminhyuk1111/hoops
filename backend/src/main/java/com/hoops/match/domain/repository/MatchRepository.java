@@ -25,7 +25,7 @@ public interface MatchRepository {
      */
     Optional<Match> findByIdWithLock(Long id);
 
-    List<Match> findAllByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance);
+    List<Match> findAllByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance, int page, int size);
 
     List<Match> findMatchesToStart(LocalDate date, LocalTime time, List<MatchStatus> statuses);
 

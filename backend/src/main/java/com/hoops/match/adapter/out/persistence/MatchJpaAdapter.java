@@ -37,7 +37,11 @@ public class MatchJpaAdapter implements MatchRepository {
 
     @Override
     public List<Match> findAllByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance) {
-        return springDataMatchRepository.findAllByLocationWithSpatialIndex(latitude, longitude, distance)
+        BoundingBox box = BoundingBox.from(latitude, longitude, distance);
+
+        return springDataMatchRepository.findAllByLocationWithDistance(
+                        box.minLat(), box.maxLat(), box.minLng(), box.maxLng(),
+                        latitude, longitude, distance)
                 .stream()
                 .map(MatchMapper::toDomain)
                 .toList();

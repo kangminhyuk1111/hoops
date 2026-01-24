@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ShedLockIntegrationTest {
 
     @Container
-    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
+    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0.36")
             .withDatabaseName("testdb")
             .withUsername("test")
             .withPassword("test");

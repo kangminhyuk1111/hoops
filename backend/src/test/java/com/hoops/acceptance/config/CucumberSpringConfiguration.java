@@ -27,7 +27,7 @@ public class CucumberSpringConfiguration {
     private static final MySQLContainer<?> mysql;
 
     static {
-        mysql = new MySQLContainer<>("mysql:8.0")
+        mysql = new MySQLContainer<>("mysql:8.0.36")
             .withDatabaseName("testdb")
             .withUsername("test")
             .withPassword("test");

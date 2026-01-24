@@ -21,13 +21,12 @@ Acceptance tests are the primary testing strategy. They validate real user behav
 ### Step 1: Write Cucumber Scenario
 
 ```gherkin
-# language: ko
 @auth @smoke
-시나리오: 기존 회원이 카카오 로그인한다
-  먼저 이미 가입된 회원이 있다
-  만일 해당 회원이 카카오 인증을 완료한다
-  그러면 응답 상태 코드는 200 이다
-  그리고 응답에 액세스 토큰이 포함되어 있다
+Scenario: Existing user logs in with Kakao
+  Given an already registered user exists
+  When the user completes Kakao authentication
+  Then the response status code is 200
+  And the response contains an access token
 ```
 
 ### Step 2: Run Test (Must Fail)
@@ -40,7 +39,7 @@ Acceptance tests are the primary testing strategy. They validate real user behav
 ### Step 3: Implement Step Definitions
 
 ```java
-@먼저("이미 가입된 회원이 있다")
+@Given("an already registered user exists")
 public void existing_user_exists() {
     // Setup test data
 }
@@ -115,7 +114,7 @@ Before creating new steps, check existing ones:
 
 ```bash
 # Search for existing step definitions
-grep -r "@먼저\|@만일\|@그러면\|@그리고" src/test/java/com/hoops/acceptance/steps/
+grep -r "@Given\|@When\|@Then\|@And" src/test/java/com/hoops/acceptance/steps/
 ```
 
 ### Use SharedTestContext
@@ -130,7 +129,7 @@ public class MyStepDefs {
         this.context = context;
     }
 
-    @먼저("사용자가 로그인되어 있다")
+    @Given("user is logged in")
     public void user_is_logged_in() {
         String token = context.getAccessToken();
         // Use token
@@ -178,10 +177,10 @@ Measure scenario coverage, not line coverage:
 
 ```bash
 # Count total scenarios
-grep -c "시나리오:" src/test/resources/features/*.feature
+grep -c "Scenario:" src/test/resources/features/*.feature
 
 # Count scenarios per domain
-grep -l "시나리오:" src/test/resources/features/*.feature | xargs -I {} sh -c 'echo {} && grep -c "시나리오:" {}'
+grep -l "Scenario:" src/test/resources/features/*.feature | xargs -I {} sh -c 'echo {} && grep -c "Scenario:" {}'
 ```
 
 ## Feature File Organization

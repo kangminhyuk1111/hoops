@@ -1,6 +1,6 @@
 ---
 name: architecture-patterns
-description: Hoops 프로젝트 Hexagonal Architecture 가이드. Java/Spring 기반 도메인 설계 및 패키지 구조 정의.
+description: Hoops project Hexagonal Architecture guide. Java/Spring domain design and package structure definition.
 ---
 
 # Hexagonal Architecture Guidelines for Hoops Project

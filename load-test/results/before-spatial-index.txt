@@ -1,0 +1,26 @@
+== k6 Load Test Result: Before Spatial Index ==
+Date: 2026-01-24 19:07 ~ 19:10 (KST)
+Target: GET /api/matches?latitude=37.5665&longitude=126.9780&distance=50
+Data: ~9,668 matches (no spatial index)
+VUser: 0 → 10 → 30 → 50 → 100 (hold 60s) → 0 / Total 3m 30s
+
+== THRESHOLDS ==
+http_req_duration: FAIL (p(95)=28s > 2000ms)
+http_req_failed:   PASS (rate=0.24% < 10%)
+
+== RESULTS ==
+http_req_duration..: avg=14.27s  min=238.71ms  med=12.79s  max=32.13s  p(90)=26.59s  p(95)=28s
+http_req_failed....: 0.24%  (2 out of 826)
+http_reqs..........: 826    3.831244/s (TPS)
+
+checks_total.......: 826
+checks_succeeded...: 99.75% (824 out of 826)
+checks_failed......: 0.24%  (2 out of 826)
+
+iteration_duration.: avg=15.27s  min=1.23s  med=13.79s  max=33.13s  p(90)=27.59s  p(95)=29s
+iterations.........: 826    3.831244/s
+
+data_received......: 4.1 GB  19 MB/s
+data_sent..........: 109 kB  506 B/s
+
+vus_max............: 100

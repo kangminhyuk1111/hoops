@@ -46,15 +46,8 @@ public class MatchJpaAdapter implements MatchRepository {
         BigDecimal minLng = longitude.subtract(lngDelta);
         BigDecimal maxLng = longitude.add(lngDelta);
 
-        String boundingBoxPolygon = String.format("POLYGON((%s %s,%s %s,%s %s,%s %s,%s %s))",
-                minLng, minLat,
-                maxLng, minLat,
-                maxLng, maxLat,
-                minLng, maxLat,
-                minLng, minLat);
-
-        return springDataMatchRepository.findAllByLocationWithSpatialIndex(
-                        boundingBoxPolygon, latitude, longitude, distance)
+        return springDataMatchRepository.findAllByLocationWithDistance(
+                        minLat, maxLat, minLng, maxLng, latitude, longitude, distance)
                 .stream()
                 .map(MatchMapper::toDomain)
                 .toList();

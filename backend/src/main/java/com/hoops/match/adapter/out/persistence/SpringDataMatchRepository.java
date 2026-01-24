@@ -24,30 +24,38 @@ public interface SpringDataMatchRepository extends JpaRepository<MatchJpaEntity,
     Optional<MatchJpaEntity> findByIdWithLock(@Param("matchId") Long matchId);
 
     /**
-     * Spatial Index(R-Tree)를 활용한 위치 기반 경기 검색
+     * Bounding Box + ST_Distance_Sphere를 활용한 위치 기반 경기 검색
      *
      * 최적화 전략:
-     * 1. ST_Within + Bounding Box 폴리곤으로 R-Tree 인덱스 활용 (O(log n) 탐색)
-     * 2. ST_Distance_Sphere로 축소된 후보군에 대해 정확한 원형 거리 필터링
+     * 1. Bounding Box(B-Tree 인덱스)로 대략적인 사각형 범위 필터링
+     * 2. ST_Distance_Sphere로 정확한 원형 거리 필터링 (DB 레벨)
      *
-     * @param boundingBoxPolygon Bounding Box WKT 문자열 (SRID 4326)
+     * 기존 Java Haversine 방식 대비 개선:
+     * - 거리 계산을 DB에서 수행하여 불필요한 데이터 전송 제거
+     * - 필터링된 결과만 반환하여 네트워크/메모리 부하 감소
+     *
+     * @param minLat Bounding Box 최소 위도
+     * @param maxLat Bounding Box 최대 위도
+     * @param minLng Bounding Box 최소 경도
+     * @param maxLng Bounding Box 최대 경도
      * @param latitude 중심점 위도
      * @param longitude 중심점 경도
      * @param distance 검색 반경 (미터)
      */
     @Query(value = """
             SELECT * FROM matches m
-            WHERE ST_Within(
-                m.location,
-                ST_GeomFromText(:boundingBoxPolygon, 4326)
-            )
+            WHERE m.latitude BETWEEN :minLat AND :maxLat
+            AND m.longitude BETWEEN :minLng AND :maxLng
             AND m.status NOT IN ('CANCELLED', 'ENDED')
-            AND ST_Distance_Sphere(m.location, ST_SRID(POINT(:longitude, :latitude), 4326)) <= :distance
+            AND ST_Distance_Sphere(POINT(m.longitude, m.latitude), POINT(:longitude, :latitude)) <= :distance
             ORDER BY m.match_date ASC, m.start_time ASC
             """,
             nativeQuery = true)
-    List<MatchJpaEntity> findAllByLocationWithSpatialIndex(
-            @Param("boundingBoxPolygon") String boundingBoxPolygon,
+    List<MatchJpaEntity> findAllByLocationWithDistance(
+            @Param("minLat") BigDecimal minLat,
+            @Param("maxLat") BigDecimal maxLat,
+            @Param("minLng") BigDecimal minLng,
+            @Param("maxLng") BigDecimal maxLng,
             @Param("latitude") BigDecimal latitude,
             @Param("longitude") BigDecimal longitude,
             @Param("distance") BigDecimal distance);

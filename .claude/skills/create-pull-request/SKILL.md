@@ -41,32 +41,32 @@ If there are uncommitted changes, ask the user whether to:
 - Stash them temporarily
 - Discard them (with caution)
 
-### 4. **[필수] Cucumber Acceptance Test 실행**
+### 4. **[Required] Run Cucumber Acceptance Tests**
 
-> ⚠️ **PR 생성 전 반드시 모든 Cucumber 테스트를 통과해야 합니다.**
+> **All Cucumber tests must pass before creating a PR.**
 >
-> **테스트 실패 시 PR 생성을 절대 진행하지 마세요!**
+> **Do NOT proceed with PR creation if tests fail!**
 
 ```bash
 ./gradlew test
 ```
 
-#### 테스트 우선순위 (ATDD 기반)
-| 우선순위 | 테스트 종류 | 위치 | 필수 여부 |
-|---------|-----------|------|---------|
-| 1 | **Cucumber Acceptance Tests** | `backend/src/test/java/com/hoops/acceptance/` | **필수** |
-| 2 | Integration Tests | `backend/src/test/java/com/hoops/integration/` | 필수 |
-| 3 | Unit Tests | 각 패키지 test 디렉토리 | 필수 |
+#### Test Priority (ATDD-based)
+| Priority | Test Type | Location | Required |
+|----------|-----------|----------|----------|
+| 1 | **Cucumber Acceptance Tests** | `backend/src/test/java/com/hoops/acceptance/` | **Yes** |
+| 2 | Integration Tests | `backend/src/test/java/com/hoops/integration/` | Yes |
+| 3 | Unit Tests | Each package's test directory | Yes |
 
-#### 테스트 실패 시 대응
-1. **실패한 시나리오 확인**: 어떤 기능이 깨졌는지 파악
-2. **코드 수정**: 기존 기능이 깨지지 않도록 수정
-3. **테스트 재실행**: `./gradlew test`
-4. **모든 테스트 통과 확인 후** PR 생성 진행
+#### Handling Test Failures
+1. **Identify failed scenarios**: Determine which features are broken
+2. **Fix the code**: Ensure existing features remain intact
+3. **Re-run tests**: `./gradlew test`
+4. **Proceed with PR creation only after all tests pass**
 
-#### Cucumber 시나리오 커버리지 목표
-- **90% 이상** 시나리오 커버리지 유지
-- 새로운 기능 추가 시 해당 기능의 Cucumber 시나리오 작성 필수
+#### Cucumber Scenario Coverage Target
+- Maintain **90%+** scenario coverage
+- New features must include corresponding Cucumber scenarios
 
 ## Gather Context
 
@@ -214,9 +214,9 @@ After creating the PR:
 
 Before finalizing, ensure:
 - [ ] `gh` CLI is installed and authenticated
-- [ ] **Cucumber Acceptance Tests 통과** ← 최우선 필수!
-- [ ] **Integration Tests 통과**
-- [ ] **Unit Tests 통과**
+- [ ] **Cucumber Acceptance Tests pass** (highest priority!)
+- [ ] **Integration Tests pass**
+- [ ] **Unit Tests pass**
 - [ ] Working directory is clean
 - [ ] All commits are pushed
 - [ ] Branch is up-to-date with base branch
@@ -225,6 +225,6 @@ Before finalizing, ensure:
 - [ ] Appropriate type of change is selected
 - [ ] Pre-flight checklist items are addressed
 
-> ❌ **Cucumber 테스트 미통과 시 PR 생성 절대 금지**
+> **Never create a PR if Cucumber tests fail.**
 >
-> 테스트 실행 명령: `./gradlew test`
+> Test command: `./gradlew test`

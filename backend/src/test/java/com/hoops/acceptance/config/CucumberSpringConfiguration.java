@@ -43,10 +43,7 @@ public class CucumberSpringConfiguration {
                 "spring.datasource.username=" + mysql.getUsername(),
                 "spring.datasource.password=" + mysql.getPassword(),
                 "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver",
-                "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect",
-                "spring.sql.init.schema-locations=classpath:db/spatial-init.sql",
-                "spring.sql.init.mode=always",
-                "spring.jpa.defer-datasource-initialization=true"
+                "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect"
             );
         }
     }

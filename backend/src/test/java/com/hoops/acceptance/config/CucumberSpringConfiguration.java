@@ -30,8 +30,7 @@ public class CucumberSpringConfiguration {
         mysql = new MySQLContainer<>("mysql:8.0.36")
             .withDatabaseName("testdb")
             .withUsername("test")
-            .withPassword("test")
-            .withInitScript("db/schema.sql");
+            .withPassword("test");
         mysql.start();
     }
 
@@ -44,8 +43,10 @@ public class CucumberSpringConfiguration {
                 "spring.datasource.username=" + mysql.getUsername(),
                 "spring.datasource.password=" + mysql.getPassword(),
                 "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver",
-                "spring.jpa.hibernate.ddl-auto=none",
-                "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect"
+                "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect",
+                "spring.sql.init.schema-locations=classpath:db/spatial-init.sql",
+                "spring.sql.init.mode=always",
+                "spring.jpa.defer-datasource-initialization=true"
             );
         }
     }

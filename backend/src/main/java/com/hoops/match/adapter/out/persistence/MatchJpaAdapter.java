@@ -46,37 +46,11 @@ public class MatchJpaAdapter implements MatchRepository {
         BigDecimal minLng = longitude.subtract(lngDelta);
         BigDecimal maxLng = longitude.add(lngDelta);
 
-        double distanceMeters = distance.doubleValue();
-        double centerLat = latitude.doubleValue();
-        double centerLng = longitude.doubleValue();
-
-        return springDataMatchRepository.findAllByLocationBoundingBoxOnly(minLat, maxLat, minLng, maxLng)
+        return springDataMatchRepository.findAllByLocationWithBoundingBox(
+                        latitude, longitude, distance, minLat, maxLat, minLng, maxLng)
                 .stream()
                 .map(MatchMapper::toDomain)
-                .filter(match -> calculateDistanceInMeters(
-                        centerLat, centerLng,
-                        match.getLatitude().doubleValue(),
-                        match.getLongitude().doubleValue()) <= distanceMeters)
                 .toList();
-    }
-
-    /**
-     * Haversine 공식을 사용한 두 지점 간 거리 계산 (미터)
-     */
-    private double calculateDistanceInMeters(double lat1, double lng1, double lat2, double lng2) {
-        final double EARTH_RADIUS = 6371000;
-
-        double lat1Rad = Math.toRadians(lat1);
-        double lat2Rad = Math.toRadians(lat2);
-        double deltaLat = Math.toRadians(lat2 - lat1);
-        double deltaLng = Math.toRadians(lng2 - lng1);
-
-        double a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2)
-                + Math.cos(lat1Rad) * Math.cos(lat2Rad)
-                * Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        return EARTH_RADIUS * c;
     }
 
     @Override

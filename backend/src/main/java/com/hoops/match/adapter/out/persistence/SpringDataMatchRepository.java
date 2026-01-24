@@ -26,10 +26,11 @@ public interface SpringDataMatchRepository extends JpaRepository<MatchJpaEntity,
     /**
      * Spatial Index(R-Tree)를 활용한 위치 기반 경기 검색
      *
-     * ST_Within + ST_Buffer 조합으로 R-Tree 인덱스를 직접 활용.
-     * ST_Buffer(SRID 4326)는 거리를 미터 단위로 해석하여 원형 폴리곤 생성.
-     * MySQL 8.0.24+ 필요.
+     * 최적화 전략:
+     * 1. ST_Within + Bounding Box 폴리곤으로 R-Tree 인덱스 활용 (O(log n) 탐색)
+     * 2. ST_Distance_Sphere로 축소된 후보군에 대해 정확한 원형 거리 필터링
      *
+     * @param boundingBoxPolygon Bounding Box WKT 문자열 (SRID 4326)
      * @param latitude 중심점 위도
      * @param longitude 중심점 경도
      * @param distance 검색 반경 (미터)
@@ -38,13 +39,15 @@ public interface SpringDataMatchRepository extends JpaRepository<MatchJpaEntity,
             SELECT * FROM matches m
             WHERE ST_Within(
                 m.location,
-                ST_Buffer(ST_SRID(POINT(:longitude, :latitude), 4326), :distance)
+                ST_GeomFromText(:boundingBoxPolygon, 4326)
             )
             AND m.status NOT IN ('CANCELLED', 'ENDED')
+            AND ST_Distance_Sphere(m.location, ST_SRID(POINT(:longitude, :latitude), 4326)) <= :distance
             ORDER BY m.match_date ASC, m.start_time ASC
             """,
             nativeQuery = true)
     List<MatchJpaEntity> findAllByLocationWithSpatialIndex(
+            @Param("boundingBoxPolygon") String boundingBoxPolygon,
             @Param("latitude") BigDecimal latitude,
             @Param("longitude") BigDecimal longitude,
             @Param("distance") BigDecimal distance);

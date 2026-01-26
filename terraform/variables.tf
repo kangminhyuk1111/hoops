@@ -88,3 +88,15 @@ variable "domain_name" {
   type        = string
   default     = ""
 }
+
+variable "kakao_js_key" {
+  description = "Kakao JavaScript SDK key"
+  type        = string
+  sensitive   = true
+}
+
+variable "grafana_admin_password" {
+  description = "Grafana admin password"
+  type        = string
+  sensitive   = true
+}

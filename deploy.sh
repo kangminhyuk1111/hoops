@@ -26,7 +26,7 @@ docker build -t hoops-frontend:latest \
     --build-arg NEXT_PUBLIC_API_URL=http://${PUBLIC_IP}:8080 \
     --build-arg NEXT_PUBLIC_KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID} \
     --build-arg NEXT_PUBLIC_KAKAO_REDIRECT_URI=${KAKAO_REDIRECT_URI} \
-    --build-arg NEXT_PUBLIC_KAKAO_JS_KEY=c963cdb39992726ac3b783c8e215f1ae \
+    --build-arg NEXT_PUBLIC_KAKAO_JS_KEY=${KAKAO_JS_KEY} \
     ./frontend
 
 # Return to hoops directory

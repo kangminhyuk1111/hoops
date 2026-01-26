@@ -20,6 +20,52 @@ Basketball match-making platform for finding and joining pickup games near you.
 - Docker Compose
 - Hexagonal Architecture (Ports & Adapters)
 
+## Architecture
+
+### System Context
+
+| External System | Integration | Purpose |
+|-----------------|-------------|---------|
+| Kakao OAuth | REST API | User authentication, social login |
+| Kakao Maps | JavaScript SDK | Location search, map display |
+| MySQL | JDBC | Data persistence |
+| Kafka | Event streaming | Async notification delivery |
+
+### Container Diagram
+
+| Container | Technology | Responsibility |
+|-----------|------------|----------------|
+| Frontend | Next.js | UI, user interaction, map rendering |
+| Backend API | Spring Boot | Business logic, REST API |
+| MySQL | MySQL 8.0 | Match, User, Location, Participation data |
+| Kafka | Apache Kafka | Event bus for notifications |
+| Zookeeper | Zookeeper | Kafka cluster coordination |
+
+### Hexagonal Architecture
+
+**Dependency Flow**: Adapter → Application → Domain (inward only)
+
+| Layer | Location | Responsibility | Allowed Dependencies |
+|-------|----------|----------------|---------------------|
+| Domain | `{domain}/domain/` | Pure business logic, entities, value objects | None (pure Java) |
+| Application | `{domain}/application/` | Use case orchestration, ports definition | Domain only |
+| Adapter | `{domain}/adapter/` | External world integration (Web, DB, APIs) | Application, Domain |
+| Infrastructure | `{domain}/infrastructure/` | Framework configuration | All layers |
+
+**Package Structure per Domain**:
+
+| Package | Contains | Example |
+|---------|----------|---------|
+| `domain/model/` | Entities with identity | `Match`, `User`, `Participation` |
+| `domain/vo/` | Immutable value objects | `MatchStatus`, `ParticipationStatus` |
+| `domain/repository/` | Repository interfaces | `MatchRepository` |
+| `application/port/in/` | Use case interfaces | `CreateMatchUseCase` |
+| `application/port/out/` | Outbound port interfaces | `MatchInfoPort`, `OAuthPort` |
+| `application/service/` | Use case implementations | `MatchCreator`, `ParticipationJoiner` |
+| `adapter/in/web/` | REST controllers | `MatchController` |
+| `adapter/out/persistence/` | JPA adapters, entities | `MatchJpaAdapter` |
+| `adapter/out/{external}/` | External API adapters | `KakaoOAuthAdapter` |
+
 ## Features
 
 - **Kakao OAuth Login** - Social login with Kakao account

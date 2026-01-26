@@ -47,3 +47,6 @@ jwt:
   access-token-expiry: 1800000
   refresh-token-expiry: 1209600000
   temp-token-expiry: 600000
+
+cors:
+  allowed-origins: http://localhost:3000

@@ -43,7 +43,7 @@ KAKAO_REDIRECT_URI=http://${domain_name}/api/auth/kakao/callback
 JWT_SECRET=${jwt_secret}
 
 # Spring
-SPRING_PROFILES_ACTIVE=docker
+SPRING_PROFILES_ACTIVE=prod
 
 # Server
 PUBLIC_IP=${domain_name}
@@ -88,7 +88,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: $${SPRING_PROFILES_ACTIVE:-docker}
+      SPRING_PROFILES_ACTIVE: $${SPRING_PROFILES_ACTIVE:-prod}
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/hoops?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: $${MYSQL_ROOT_PASSWORD}

@@ -21,7 +21,7 @@ public class UserHostInfoAdapter implements HostInfoPort {
 
     @Override
     public HostInfoResult getHostInfo(Long hostId) {
-        String nickname = userQueryPort.findNicknameById(hostId)
+        String nickname = userQueryPort.getNicknameByUserId(hostId)
                 .orElseThrow(() -> new HostNotFoundException(hostId));
 
         return new HostInfoResult(hostId, nickname);

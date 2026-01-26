@@ -53,7 +53,7 @@ public class LocationController {
     })
     @GetMapping
     public ResponseEntity<List<LocationResponse>> getAllLocations() {
-        List<Location> locations = locationQueryUseCase.findAllLocations();
+        List<Location> locations = locationQueryUseCase.getAllLocations();
         List<LocationResponse> responses = locations.stream()
                 .map(LocationResponse::from)
                 .toList();
@@ -80,7 +80,7 @@ public class LocationController {
     })
     @GetMapping("/{locationId}")
     public ResponseEntity<LocationResponse> getLocation(@PathVariable Long locationId) {
-        Location location = locationQueryUseCase.findLocationById(locationId);
+        Location location = locationQueryUseCase.getLocationById(locationId);
         return ResponseEntity.ok(LocationResponse.from(location));
     }
 }

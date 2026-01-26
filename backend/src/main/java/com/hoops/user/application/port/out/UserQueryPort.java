@@ -19,7 +19,7 @@ public interface UserQueryPort {
      * @param userId 사용자 ID
      * @return 닉네임 (사용자가 없으면 empty)
      */
-    Optional<String> findNicknameById(Long userId);
+    Optional<String> getNicknameByUserId(Long userId);
 
     /**
      * 사용자 상세 정보를 조회합니다.
@@ -27,7 +27,7 @@ public interface UserQueryPort {
      * @param userId 사용자 ID
      * @return 사용자 상세 정보 (사용자가 없으면 empty)
      */
-    Optional<UserDetails> findUserDetailsById(Long userId);
+    Optional<UserDetails> getUserDetails(Long userId);
 
     /**
      * 여러 사용자의 상세 정보를 일괄 조회합니다.
@@ -35,7 +35,7 @@ public interface UserQueryPort {
      * @param userIds 사용자 ID 목록
      * @return 사용자 ID를 키로, 상세 정보를 값으로 하는 맵
      */
-    Map<Long, UserDetails> findUserDetailsByIds(List<Long> userIds);
+    Map<Long, UserDetails> getBulkUserDetails(List<Long> userIds);
 
     /**
      * 외부 Context에 제공되는 사용자 상세 정보

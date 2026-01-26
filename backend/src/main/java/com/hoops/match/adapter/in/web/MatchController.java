@@ -61,9 +61,9 @@ public class MatchController {
             @ApiResponse(responseCode = "404", description = "경기를 찾을 수 없음")
     })
     @GetMapping("/{matchId}")
-    public ResponseEntity<MatchResponse> findMatchById(
+    public ResponseEntity<MatchResponse> getMatch(
             @Parameter(description = "경기 ID") @PathVariable("matchId") Long matchId) {
-        Match match = matchQueryUseCase.findMatchById(matchId);
+        Match match = matchQueryUseCase.getMatchById(matchId);
         return ResponseEntity.ok(MatchResponse.of(match));
     }
 
@@ -72,7 +72,7 @@ public class MatchController {
             @ApiResponse(responseCode = "200", description = "조회 성공")
     })
     @GetMapping
-    public ResponseEntity<List<MatchResponse>> findMatchesByLocation(
+    public ResponseEntity<List<MatchResponse>> getMatchesByLocation(
             @Parameter(description = "위도", example = "37.5665") @RequestParam BigDecimal latitude,
             @Parameter(description = "경도", example = "126.9780") @RequestParam BigDecimal longitude,
             @Parameter(description = "반경 (km)", example = "5") @RequestParam BigDecimal distance,
@@ -80,7 +80,7 @@ public class MatchController {
             @Parameter(description = "페이지 크기", example = "20") @RequestParam(defaultValue = "20") int size) {
         BigDecimal distanceInMeters = distance.multiply(BigDecimal.valueOf(1000));
 
-        List<Match> matches = matchQueryUseCase.loadMatchesByLocation(
+        List<Match> matches = matchQueryUseCase.getMatchesByLocation(
                 latitude,
                 longitude,
                 distanceInMeters,
@@ -134,9 +134,9 @@ public class MatchController {
             @ApiResponse(responseCode = "401", description = "인증 필요")
     })
     @GetMapping("/hosted")
-    public ResponseEntity<List<MatchResponse>> findMyHostedMatches(
+    public ResponseEntity<List<MatchResponse>> getMyHostedMatches(
             @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
-        List<Match> matches = matchQueryUseCase.findMyHostedMatches(userId);
+        List<Match> matches = matchQueryUseCase.getMyHostedMatches(userId);
         List<MatchResponse> response = matches.stream()
                 .map(MatchResponse::of)
                 .toList();
@@ -156,7 +156,7 @@ public class MatchController {
             @Parameter(hidden = true) @AuthenticationPrincipal Long userId) {
         ReactivateMatchCommand command = new ReactivateMatchCommand(matchId, userId);
         reactivateMatchUseCase.reactivateMatch(command);
-        Match match = matchQueryUseCase.findMatchById(matchId);
+        Match match = matchQueryUseCase.getMatchById(matchId);
         return ResponseEntity.ok(MatchResponse.of(match));
     }
 }

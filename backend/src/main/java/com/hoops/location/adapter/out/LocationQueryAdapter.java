@@ -19,7 +19,7 @@ public class LocationQueryAdapter implements LocationQueryPort {
     private final LocationRepository locationRepository;
 
     @Override
-    public Optional<LocationData> findById(Long locationId) {
+    public Optional<LocationData> getLocationData(Long locationId) {
         return locationRepository.findById(locationId)
                 .map(location -> new LocationData(
                         location.getId(),

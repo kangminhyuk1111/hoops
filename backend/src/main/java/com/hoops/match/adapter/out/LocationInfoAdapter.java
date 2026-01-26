@@ -21,7 +21,7 @@ public class LocationInfoAdapter implements LocationInfoPort {
 
     @Override
     public LocationInfoResult getLocationInfo(Long locationId) {
-        LocationQueryPort.LocationData data = locationQueryPort.findById(locationId)
+        LocationQueryPort.LocationData data = locationQueryPort.getLocationData(locationId)
                 .orElseThrow(() -> new MatchLocationNotFoundException(locationId));
 
         return new LocationInfoResult(

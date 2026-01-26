@@ -23,7 +23,7 @@ public class LocationFinder implements LocationQueryUseCase {
     }
 
     @Override
-    public List<Location> findAllLocations() {
+    public List<Location> getAllLocations() {
         return locationRepository.findAll();
     }
 
@@ -33,7 +33,7 @@ public class LocationFinder implements LocationQueryUseCase {
     }
 
     @Override
-    public Location findLocationById(Long locationId) {
+    public Location getLocationById(Long locationId) {
         return locationRepository.findById(locationId)
                 .orElseThrow(() -> new LocationNotFoundException(locationId));
     }

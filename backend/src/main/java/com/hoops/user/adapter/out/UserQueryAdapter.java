@@ -25,19 +25,19 @@ public class UserQueryAdapter implements UserQueryPort {
     private final UserRepository userRepository;
 
     @Override
-    public Optional<String> findNicknameById(Long userId) {
+    public Optional<String> getNicknameByUserId(Long userId) {
         return userRepository.findById(userId)
                 .map(User::getNickname);
     }
 
     @Override
-    public Optional<UserDetails> findUserDetailsById(Long userId) {
+    public Optional<UserDetails> getUserDetails(Long userId) {
         return userRepository.findById(userId)
                 .map(this::toUserDetails);
     }
 
     @Override
-    public Map<Long, UserDetails> findUserDetailsByIds(List<Long> userIds) {
+    public Map<Long, UserDetails> getBulkUserDetails(List<Long> userIds) {
         return userRepository.findAllByIds(new HashSet<>(userIds)).stream()
                 .map(this::toUserDetails)
                 .collect(Collectors.toMap(UserDetails::userId, Function.identity()));

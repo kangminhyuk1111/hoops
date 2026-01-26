@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface MatchQueryUseCase {
 
-    Match findMatchById(Long matchId);
+    Match getMatchById(Long matchId);
 
-    List<Match> loadMatchesByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance, int page, int size);
+    List<Match> getMatchesByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance, int page, int size);
 
-    List<Match> findMyHostedMatches(Long hostId);
+    List<Match> getMyHostedMatches(Long hostId);
 }

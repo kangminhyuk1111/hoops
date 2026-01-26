@@ -13,7 +13,7 @@ public interface UserInfoPort {
     /**
      * 사용자 정보를 조회합니다.
      */
-    Optional<AuthUserInfo> findById(Long userId);
+    Optional<AuthUserInfo> getUserInfo(Long userId);
 
     /**
      * 새로운 사용자를 생성합니다.

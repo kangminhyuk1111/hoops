@@ -19,8 +19,8 @@ public class AuthUserInfoAdapter implements UserInfoPort {
     private final UserCommandPort userCommandPort;
 
     @Override
-    public Optional<AuthUserInfo> findById(Long userId) {
-        return userQueryPort.findUserDetailsById(userId)
+    public Optional<AuthUserInfo> getUserInfo(Long userId) {
+        return userQueryPort.getUserDetails(userId)
                 .map(this::toAuthUserInfo);
     }
 

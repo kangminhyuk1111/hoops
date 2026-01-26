@@ -19,18 +19,18 @@ public class MatchFinder implements MatchQueryUseCase {
     private final MatchRepository matchRepository;
 
     @Override
-    public Match findMatchById(Long matchId) {
+    public Match getMatchById(Long matchId) {
         return matchRepository.findById(matchId)
                 .orElseThrow(() -> new MatchNotFoundException(matchId));
     }
 
     @Override
-    public List<Match> loadMatchesByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance, int page, int size) {
+    public List<Match> getMatchesByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance, int page, int size) {
         return matchRepository.findAllByLocation(latitude, longitude, distance, page, size);
     }
 
     @Override
-    public List<Match> findMyHostedMatches(Long hostId) {
+    public List<Match> getMyHostedMatches(Long hostId) {
         return matchRepository.findByHostId(hostId);
     }
 }

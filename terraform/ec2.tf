@@ -30,11 +30,13 @@ resource "aws_instance" "app" {
   }
 
   user_data = base64encode(templatefile("${path.module}/scripts/user-data.sh", {
-    mysql_root_password = var.mysql_root_password
-    kakao_client_id     = var.kakao_client_id
-    kakao_client_secret = var.kakao_client_secret
-    jwt_secret          = var.jwt_secret
-    domain_name         = var.domain_name
+    mysql_root_password    = var.mysql_root_password
+    kakao_client_id        = var.kakao_client_id
+    kakao_client_secret    = var.kakao_client_secret
+    kakao_js_key           = var.kakao_js_key
+    jwt_secret             = var.jwt_secret
+    domain_name            = var.domain_name
+    grafana_admin_password = var.grafana_admin_password
   }))
 
   tags = {

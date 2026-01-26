@@ -36,6 +36,7 @@ MYSQL_ROOT_PASSWORD=${mysql_root_password}
 # Kakao OAuth
 KAKAO_CLIENT_ID=${kakao_client_id}
 KAKAO_CLIENT_SECRET=${kakao_client_secret}
+KAKAO_JS_KEY=${kakao_js_key}
 KAKAO_REDIRECT_URI=http://${domain_name}/api/auth/kakao/callback
 
 # JWT
@@ -43,6 +44,12 @@ JWT_SECRET=${jwt_secret}
 
 # Spring
 SPRING_PROFILES_ACTIVE=docker
+
+# Server
+PUBLIC_IP=${domain_name}
+
+# Grafana
+GF_SECURITY_ADMIN_PASSWORD=${grafana_admin_password}
 ENVEOF
 
 chown ec2-user:ec2-user /home/ec2-user/hoops/.env

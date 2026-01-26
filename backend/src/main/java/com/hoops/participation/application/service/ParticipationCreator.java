@@ -9,6 +9,8 @@ import com.hoops.participation.domain.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class ParticipationCreator {
@@ -35,7 +37,8 @@ public class ParticipationCreator {
                 participation.getId(),
                 participation.getMatchId(),
                 participation.getUserId(),
-                matchInfo.title()
+                matchInfo.title(),
+                LocalDateTime.now()
         ));
     }
 }

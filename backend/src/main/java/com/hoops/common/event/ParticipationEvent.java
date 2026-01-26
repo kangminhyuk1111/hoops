@@ -21,12 +21,13 @@ public abstract class ParticipationEvent {
         this.occurredAt = null;
     }
 
-    protected ParticipationEvent(Long participationId, Long matchId, Long userId, String matchTitle) {
+    protected ParticipationEvent(Long participationId, Long matchId, Long userId,
+                                  String matchTitle, LocalDateTime occurredAt) {
         this.participationId = participationId;
         this.matchId = matchId;
         this.userId = userId;
         this.matchTitle = matchTitle;
-        this.occurredAt = LocalDateTime.now();
+        this.occurredAt = occurredAt;
     }
 
     public Long getParticipationId() {

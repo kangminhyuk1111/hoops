@@ -40,7 +40,7 @@
 
 ### 1단계: 파일 구조 재설계
 
-```
+```text
 backend/src/main/resources/
 ├── application.yml           # 공통 설정 (환경 무관)
 ├── application-local.yml     # 로컬 개발 (localhost)

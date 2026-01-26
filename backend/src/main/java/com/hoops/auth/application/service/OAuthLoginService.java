@@ -73,7 +73,7 @@ public class OAuthLoginService implements OAuthLoginUseCase {
     }
 
     private AuthUserInfo findUserByAuthAccount(AuthAccount authAccount) {
-        return userInfoPort.findById(authAccount.getUserId())
+        return userInfoPort.getUserInfo(authAccount.getUserId())
                 .orElseThrow(() -> new UserNotFoundForAuthException(
                         authAccount.getId(), authAccount.getUserId()));
     }

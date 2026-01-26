@@ -25,13 +25,13 @@ public class UserInfoAdapter implements UserInfoPort {
 
     @Override
     public Optional<UserInfo> getUserInfo(Long userId) {
-        return userQueryPort.findUserDetailsById(userId)
+        return userQueryPort.getUserDetails(userId)
                 .map(this::toUserInfo);
     }
 
     @Override
     public Map<Long, UserInfo> getUserInfoByIds(List<Long> userIds) {
-        return userQueryPort.findUserDetailsByIds(userIds).entrySet().stream()
+        return userQueryPort.getBulkUserDetails(userIds).entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         entry -> toUserInfo(entry.getValue())

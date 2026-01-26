@@ -17,7 +17,7 @@ public interface LocationQueryPort {
      * @param locationId 장소 ID
      * @return 장소 정보 (장소가 없으면 empty)
      */
-    Optional<LocationData> findById(Long locationId);
+    Optional<LocationData> getLocationData(Long locationId);
 
     /**
      * 외부에 제공하는 장소 정보

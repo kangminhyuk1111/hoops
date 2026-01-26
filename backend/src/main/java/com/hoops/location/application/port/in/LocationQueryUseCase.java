@@ -14,7 +14,7 @@ public interface LocationQueryUseCase {
      *
      * @return 장소 목록
      */
-    List<Location> findAllLocations();
+    List<Location> getAllLocations();
 
     /**
      * 키워드로 장소를 검색합니다.
@@ -31,5 +31,5 @@ public interface LocationQueryUseCase {
      * @return 장소 정보
      * @throws com.hoops.location.application.exception.LocationNotFoundException 장소가 존재하지 않을 경우
      */
-    Location findLocationById(Long locationId);
+    Location getLocationById(Long locationId);
 }

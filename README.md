@@ -1,6 +1,12 @@
+<div align="center">
+
+<img src="imgs/hoops-banner.png" alt="Hoops Banner" width="100%"/>
+
 # Hoops
 
 Basketball match-making platform for finding and joining pickup games near you.
+
+</div>
 
 ## Tech Stack
 

@@ -32,9 +32,9 @@ docker build -t hoops-frontend:latest \
 # Return to hoops directory
 cd /home/ec2-user/hoops
 
-# Restart only backend and frontend (keep MySQL running)
-echo "Restarting backend and frontend..."
-docker-compose up -d --no-deps backend frontend
+# Restart redis, backend and frontend (keep MySQL running)
+echo "Restarting redis, backend and frontend..."
+docker-compose up -d --no-deps redis backend frontend
 
 # Restart monitoring containers
 echo "Restarting monitoring..."

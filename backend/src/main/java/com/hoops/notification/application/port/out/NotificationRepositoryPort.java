@@ -1,11 +1,14 @@
-package com.hoops.notification.domain.repository;
+package com.hoops.notification.application.port.out;
 
 import com.hoops.notification.domain.model.Notification;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface NotificationRepository {
+/**
+ * Notification 영속성 포트 인터페이스
+ */
+public interface NotificationRepositoryPort {
 
     Notification save(Notification notification);
 

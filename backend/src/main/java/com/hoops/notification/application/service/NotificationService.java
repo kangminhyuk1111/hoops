@@ -8,7 +8,7 @@ import com.hoops.notification.application.port.in.GetUnreadCountUseCase;
 import com.hoops.notification.application.port.in.MarkNotificationAsReadUseCase;
 import com.hoops.notification.domain.model.Notification;
 import com.hoops.notification.domain.vo.NotificationType;
-import com.hoops.notification.domain.repository.NotificationRepository;
+import com.hoops.notification.application.port.out.NotificationRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class NotificationService implements
 
     private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
-    private final NotificationRepository notificationRepository;
+    private final NotificationRepositoryPort notificationRepository;
 
     @Override
     public List<Notification> getNotifications(Long userId) {

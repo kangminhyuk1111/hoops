@@ -83,4 +83,7 @@ public interface SpringDataMatchRepository extends JpaRepository<MatchJpaEntity,
     @Query("SELECT m FROM MatchJpaEntity m WHERE m.hostId = :hostId " +
             "AND m.status NOT IN ('CANCELLED', 'ENDED')")
     List<MatchJpaEntity> findActiveMatchesByHostId(@Param("hostId") Long hostId);
+
+    @Query("SELECT m FROM MatchJpaEntity m WHERE m.status IN ('PENDING', 'CONFIRMED')")
+    List<MatchJpaEntity> findAllSearchableMatches();
 }

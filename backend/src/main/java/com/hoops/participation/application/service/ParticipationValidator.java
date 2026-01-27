@@ -12,7 +12,7 @@ import com.hoops.participation.application.exception.OverlappingParticipationExc
 import com.hoops.participation.application.port.out.MatchInfo;
 import com.hoops.participation.application.port.out.MatchInfoPort;
 import com.hoops.participation.domain.model.Participation;
-import com.hoops.participation.domain.repository.ParticipationRepository;
+import com.hoops.participation.application.port.out.ParticipationRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ParticipationValidator {
 
-    private final ParticipationRepository participationRepository;
+    private final ParticipationRepositoryPort participationRepository;
     private final MatchInfoPort matchInfoProvider;
 
     public void validateForParticipation(MatchInfo matchInfo, Long userId) {

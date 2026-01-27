@@ -7,9 +7,10 @@ import com.hoops.match.application.port.in.CreateMatchCommand;
 import com.hoops.match.application.port.in.CreateMatchUseCase;
 import com.hoops.match.application.port.out.HostInfoPort;
 import com.hoops.match.application.port.out.LocationInfoPort;
+import com.hoops.match.application.port.out.MatchGeoIndexPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.policy.MatchPolicyValidator;
-import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.vo.MatchHost;
 import com.hoops.match.domain.vo.MatchLocation;
 import com.hoops.match.domain.vo.MatchSchedule;
@@ -24,7 +25,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MatchCreator implements CreateMatchUseCase {
 
-    private final MatchRepository matchRepository;
+    private final MatchRepositoryPort matchRepository;
+    private final MatchGeoIndexPort matchGeoIndex;
     private final HostInfoPort hostInfoPort;
     private final LocationInfoPort locationInfoPort;
     private final MatchPolicyValidator policyValidator;
@@ -59,7 +61,10 @@ public class MatchCreator implements CreateMatchUseCase {
                 command.maxParticipants()
         );
 
-        return matchRepository.save(match);
+        Match savedMatch = matchRepository.save(match);
+        matchGeoIndex.addMatch(savedMatch.getId(), savedMatch.getLongitude(), savedMatch.getLatitude());
+
+        return savedMatch;
     }
 
     private void validateNoOverlappingHosting(Long hostId, MatchSchedule newSchedule) {

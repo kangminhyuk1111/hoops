@@ -1,7 +1,8 @@
 package com.hoops.match.application.service;
 
 import com.hoops.match.application.port.in.UpdateMatchStatusUseCase;
-import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.application.port.out.MatchGeoIndexPort;
+import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.vo.MatchStatus;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,8 @@ public class MatchStatusUpdater implements UpdateMatchStatusUseCase {
             MatchStatus.FULL
     );
 
-    private final MatchRepository matchRepository;
+    private final MatchRepositoryPort matchRepository;
+    private final MatchGeoIndexPort matchGeoIndex;
 
     @Override
     public int startMatches() {
@@ -38,6 +40,7 @@ public class MatchStatusUpdater implements UpdateMatchStatusUseCase {
         for (Match match : matchesToStart) {
             match.startMatch();
             matchRepository.save(match);
+            matchGeoIndex.removeMatch(match.getId());
             count++;
             log.info("경기 시작 상태로 변경: matchId={}, title={}", match.getId(), match.getTitle());
         }

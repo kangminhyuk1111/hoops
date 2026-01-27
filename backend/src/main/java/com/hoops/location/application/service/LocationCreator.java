@@ -4,7 +4,7 @@ import com.hoops.location.application.exception.DuplicateLocationNameException;
 import com.hoops.location.application.port.in.CreateLocationCommand;
 import com.hoops.location.application.port.in.CreateLocationUseCase;
 import com.hoops.location.domain.model.Location;
-import com.hoops.location.domain.repository.LocationRepository;
+import com.hoops.location.application.port.out.LocationRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class LocationCreator implements CreateLocationUseCase {
 
-    private final LocationRepository locationRepository;
+    private final LocationRepositoryPort locationRepository;
 
     @Override
     public Location createLocation(CreateLocationCommand command) {

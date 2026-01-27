@@ -9,7 +9,7 @@ import com.hoops.participation.application.port.in.RejectParticipationUseCase;
 import com.hoops.participation.application.port.out.MatchInfo;
 import com.hoops.participation.application.port.out.MatchInfoPort;
 import com.hoops.participation.domain.model.Participation;
-import com.hoops.participation.domain.repository.ParticipationRepository;
+import com.hoops.participation.application.port.out.ParticipationRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ParticipationApprover implements ApproveParticipationUseCase, RejectParticipationUseCase {
 
-    private final ParticipationRepository participationRepository;
+    private final ParticipationRepositoryPort participationRepository;
     private final MatchInfoPort matchInfoPort;
     private final ParticipationValidator validator;
     private final ParticipationFinder finder;

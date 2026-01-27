@@ -1,4 +1,4 @@
-package com.hoops.match.domain.repository;
+package com.hoops.match.application.port.out;
 
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.vo.MatchStatus;
@@ -10,11 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Match 도메인 Repository 인터페이스 (DDD)
- *
- * 도메인 계층에 위치하여 영속성 추상화를 제공합니다.
+ * Match 영속성 포트 인터페이스
  */
-public interface MatchRepository {
+public interface MatchRepositoryPort {
     Match save(Match match);
 
     Optional<Match> findById(Long id);
@@ -36,4 +34,9 @@ public interface MatchRepository {
     List<Match> findActiveMatchesByHostId(Long hostId);
 
     List<Match> findAllByIds(List<Long> ids);
+
+    /**
+     * 검색 대상 매치 조회 (PENDING, CONFIRMED 상태)
+     */
+    List<Match> findAllSearchableMatches();
 }

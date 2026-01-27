@@ -3,7 +3,7 @@ package com.hoops.user.adapter.out;
 import com.hoops.user.application.port.out.UserCommandPort;
 import com.hoops.user.application.port.out.UserQueryPort.UserDetails;
 import com.hoops.user.domain.model.User;
-import com.hoops.user.domain.repository.UserRepository;
+import com.hoops.user.application.port.out.UserRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserCommandAdapter implements UserCommandPort {
 
-    private final UserRepository userRepository;
+    private final UserRepositoryPort userRepository;
 
     @Override
     public UserDetails createUser(CreateUserCommand command) {

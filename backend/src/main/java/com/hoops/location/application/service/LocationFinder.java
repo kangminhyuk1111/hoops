@@ -3,7 +3,7 @@ package com.hoops.location.application.service;
 import com.hoops.location.application.exception.LocationNotFoundException;
 import com.hoops.location.application.port.in.LocationQueryUseCase;
 import com.hoops.location.domain.model.Location;
-import com.hoops.location.domain.repository.LocationRepository;
+import com.hoops.location.application.port.out.LocationRepositoryPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +16,9 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class LocationFinder implements LocationQueryUseCase {
 
-    private final LocationRepository locationRepository;
+    private final LocationRepositoryPort locationRepository;
 
-    public LocationFinder(LocationRepository locationRepository) {
+    public LocationFinder(LocationRepositoryPort locationRepository) {
         this.locationRepository = locationRepository;
     }
 

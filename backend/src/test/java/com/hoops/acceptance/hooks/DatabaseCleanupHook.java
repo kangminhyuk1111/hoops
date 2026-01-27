@@ -1,26 +1,31 @@
 package com.hoops.acceptance.hooks;
 
+import com.hoops.match.application.port.out.MatchGeoIndexPort;
 import io.cucumber.java.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * Cucumber 시나리오 간 데이터베이스 정리
+ * Cucumber 시나리오 간 데이터베이스 및 Redis 정리
  *
- * 각 시나리오 시작 전에 데이터베이스를 초기화하여
+ * 각 시나리오 시작 전에 데이터베이스와 Redis를 초기화하여
  * 시나리오 간 데이터 격리를 보장합니다.
  */
 public class DatabaseCleanupHook {
 
     private final JdbcTemplate jdbcTemplate;
+    private final MatchGeoIndexPort matchGeoIndex;
 
     @Autowired
-    public DatabaseCleanupHook(JdbcTemplate jdbcTemplate) {
+    public DatabaseCleanupHook(JdbcTemplate jdbcTemplate, MatchGeoIndexPort matchGeoIndex) {
         this.jdbcTemplate = jdbcTemplate;
+        this.matchGeoIndex = matchGeoIndex;
     }
 
     @Before(order = 0)
     public void cleanupDatabase() {
+        // Redis Geo Index 정리
+        matchGeoIndex.clearAll();
         // ShedLock 테이블 생성 (존재하지 않는 경우)
         createShedLockTableIfNotExists();
 

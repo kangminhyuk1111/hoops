@@ -5,7 +5,7 @@ import com.hoops.participation.application.port.in.ParticipateInMatchCommand;
 import com.hoops.participation.application.port.out.MatchInfo;
 import com.hoops.participation.application.port.out.ParticipationEventPublisher;
 import com.hoops.participation.domain.model.Participation;
-import com.hoops.participation.domain.repository.ParticipationRepository;
+import com.hoops.participation.application.port.out.ParticipationRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ParticipationCreator {
 
-    private final ParticipationRepository participationRepository;
+    private final ParticipationRepositoryPort participationRepository;
     private final ParticipationEventPublisher eventPublisher;
 
     public Participation create(ParticipateInMatchCommand command, MatchInfo matchInfo) {

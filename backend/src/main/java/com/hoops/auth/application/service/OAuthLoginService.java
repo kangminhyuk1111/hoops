@@ -8,7 +8,7 @@ import com.hoops.auth.application.port.out.JwtTokenPort;
 import com.hoops.auth.application.port.out.UserInfoPort;
 import com.hoops.auth.application.exception.UserNotFoundForAuthException;
 import com.hoops.auth.domain.model.AuthAccount;
-import com.hoops.auth.domain.repository.AuthAccountRepository;
+import com.hoops.auth.application.port.out.AuthAccountRepositoryPort;
 import com.hoops.auth.domain.vo.AuthProvider;
 import com.hoops.auth.domain.vo.AuthUserInfo;
 import com.hoops.auth.domain.vo.OAuthTokenInfo;
@@ -28,7 +28,7 @@ public class OAuthLoginService implements OAuthLoginUseCase {
 
     private final OAuthPort oauthPort;
     private final JwtTokenPort jwtTokenPort;
-    private final AuthAccountRepository authAccountRepository;
+    private final AuthAccountRepositoryPort authAccountRepository;
     private final UserInfoPort userInfoPort;
 
     @Override

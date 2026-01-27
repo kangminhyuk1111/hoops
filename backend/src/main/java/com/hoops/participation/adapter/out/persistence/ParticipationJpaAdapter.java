@@ -2,7 +2,7 @@ package com.hoops.participation.adapter.out.persistence;
 
 import com.hoops.participation.domain.model.Participation;
 import com.hoops.participation.domain.vo.ParticipationStatus;
-import com.hoops.participation.domain.repository.ParticipationRepository;
+import com.hoops.participation.application.port.out.ParticipationRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +14,7 @@ import static com.hoops.participation.domain.vo.ParticipationStatus.PENDING;
 
 @Repository
 @RequiredArgsConstructor
-public class ParticipationJpaAdapter implements ParticipationRepository {
+public class ParticipationJpaAdapter implements ParticipationRepositoryPort {
 
     private final SpringDataParticipationRepository springDataParticipationRepository;
 

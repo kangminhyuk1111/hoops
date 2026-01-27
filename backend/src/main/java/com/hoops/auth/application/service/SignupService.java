@@ -10,7 +10,7 @@ import com.hoops.auth.application.port.in.SignupUseCase;
 import com.hoops.auth.application.port.out.JwtTokenPort;
 import com.hoops.auth.application.port.out.UserInfoPort;
 import com.hoops.auth.domain.model.AuthAccount;
-import com.hoops.auth.domain.repository.AuthAccountRepository;
+import com.hoops.auth.application.port.out.AuthAccountRepositoryPort;
 import com.hoops.auth.domain.vo.AuthUserInfo;
 import com.hoops.auth.domain.vo.Nickname;
 import com.hoops.auth.domain.vo.TempTokenClaims;
@@ -26,7 +26,7 @@ public class SignupService implements SignupUseCase {
 
     private final JwtTokenPort jwtTokenPort;
     private final UserInfoPort userInfoPort;
-    private final AuthAccountRepository authAccountRepository;
+    private final AuthAccountRepositoryPort authAccountRepository;
 
     @Override
     public AuthResult signup(SignupCommand command) {

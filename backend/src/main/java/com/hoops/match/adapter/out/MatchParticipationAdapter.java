@@ -3,7 +3,7 @@ package com.hoops.match.adapter.out;
 import com.hoops.match.application.exception.MatchFullException;
 import com.hoops.match.application.exception.MatchNotFoundException;
 import com.hoops.match.application.port.out.MatchParticipationPort;
-import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MatchParticipationAdapter implements MatchParticipationPort {
 
-    private final MatchRepository matchRepository;
+    private final MatchRepositoryPort matchRepository;
 
     @Override
     public Optional<MatchParticipationData> findMatchForParticipation(Long matchId) {

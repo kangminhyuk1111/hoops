@@ -1,7 +1,7 @@
 package com.hoops.location.adapter.out.persistence;
 
 import com.hoops.location.domain.model.Location;
-import com.hoops.location.domain.repository.LocationRepository;
+import com.hoops.location.application.port.out.LocationRepositoryPort;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class LocationJpaAdapter implements LocationRepository {
+public class LocationJpaAdapter implements LocationRepositoryPort {
 
     private final SpringDataLocationRepository springDataLocationRepository;
 

@@ -3,7 +3,7 @@ package com.hoops.acceptance.steps;
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.location.domain.model.Location;
-import com.hoops.location.domain.repository.LocationRepository;
+import com.hoops.location.application.port.out.LocationRepositoryPort;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.만일;
 import io.cucumber.java.ko.먼저;
@@ -18,14 +18,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LocationQueryStepDefs {
 
     private final TestAdapter testAdapter;
-    private final LocationRepository locationRepository;
+    private final LocationRepositoryPort locationRepository;
     private final SharedTestContext sharedContext;
 
     private Location testLocation;
 
     public LocationQueryStepDefs(
             TestAdapter testAdapter,
-            LocationRepository locationRepository,
+            LocationRepositoryPort locationRepository,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;
         this.locationRepository = locationRepository;

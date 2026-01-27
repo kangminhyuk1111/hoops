@@ -4,7 +4,7 @@ import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.notification.domain.model.Notification;
 import com.hoops.notification.domain.vo.NotificationType;
-import com.hoops.notification.domain.repository.NotificationRepository;
+import com.hoops.notification.application.port.out.NotificationRepositoryPort;
 import com.hoops.user.domain.model.User;
 import io.cucumber.java.ko.그러면;
 import io.cucumber.java.ko.그리고;
@@ -18,13 +18,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class NotificationStepDefs {
 
     private final TestAdapter testAdapter;
-    private final NotificationRepository notificationRepository;
+    private final NotificationRepositoryPort notificationRepository;
     private final SharedTestContext sharedContext;
     private Notification testNotification;
 
     public NotificationStepDefs(
             TestAdapter testAdapter,
-            NotificationRepository notificationRepository,
+            NotificationRepositoryPort notificationRepository,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;
         this.notificationRepository = notificationRepository;

@@ -2,7 +2,7 @@ package com.hoops.participation.application.service;
 
 import com.hoops.participation.application.exception.ParticipationNotFoundException;
 import com.hoops.participation.domain.model.Participation;
-import com.hoops.participation.domain.repository.ParticipationRepository;
+import com.hoops.participation.application.port.out.ParticipationRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ParticipationFinder {
 
-    private final ParticipationRepository participationRepository;
+    private final ParticipationRepositoryPort participationRepository;
 
     public Participation findById(Long participationId) {
         return participationRepository.findById(participationId)

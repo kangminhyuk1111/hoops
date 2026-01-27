@@ -1,6 +1,6 @@
 package com.hoops.match.adapter.out.persistence;
 
-import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.vo.MatchStatus;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class MatchJpaAdapter implements MatchRepository {
+public class MatchJpaAdapter implements MatchRepositoryPort {
 
     private final SpringDataMatchRepository springDataMatchRepository;
 
@@ -82,6 +82,13 @@ public class MatchJpaAdapter implements MatchRepository {
             return List.of();
         }
         return springDataMatchRepository.findAllById(ids).stream()
+                .map(MatchMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Match> findAllSearchableMatches() {
+        return springDataMatchRepository.findAllSearchableMatches().stream()
                 .map(MatchMapper::toDomain)
                 .toList();
     }

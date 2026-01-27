@@ -1,10 +1,14 @@
-package com.hoops.location.domain.repository;
+package com.hoops.location.application.port.out;
 
 import com.hoops.location.domain.model.Location;
+
 import java.util.List;
 import java.util.Optional;
 
-public interface LocationRepository {
+/**
+ * Location 영속성 포트 인터페이스
+ */
+public interface LocationRepositoryPort {
     Location save(Location location);
 
     Optional<Location> findById(Long id);

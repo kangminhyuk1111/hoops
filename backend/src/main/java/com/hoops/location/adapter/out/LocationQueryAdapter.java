@@ -1,7 +1,7 @@
 package com.hoops.location.adapter.out;
 
 import com.hoops.location.application.port.out.LocationQueryPort;
-import com.hoops.location.domain.repository.LocationRepository;
+import com.hoops.location.application.port.out.LocationRepositoryPort;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LocationQueryAdapter implements LocationQueryPort {
 
-    private final LocationRepository locationRepository;
+    private final LocationRepositoryPort locationRepository;
 
     @Override
     public Optional<LocationData> getLocationData(Long locationId) {

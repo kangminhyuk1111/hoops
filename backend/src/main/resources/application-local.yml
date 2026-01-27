@@ -17,6 +17,11 @@ spring:
     enabled: false
     bootstrap-servers: localhost:9092
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 kakao:
   client-id: ${KAKAO_CLIENT_ID:your-kakao-client-id}
   client-secret: ${KAKAO_CLIENT_SECRET}

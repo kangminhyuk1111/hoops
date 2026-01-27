@@ -1,382 +1,436 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" version="29.3.0">
-  <diagram name="Hoops Architecture" id="hoops-arch">
-    <mxGraphModel dx="2037" dy="1301" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1600" math="0" shadow="0">
+<mxfile host="app.diagrams.net" agent="Claude Code" version="29.3.0">
+  <diagram name="Hoops Architecture" id="hoops-arch-v2">
+    <mxGraphModel dx="2000" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1400" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="client-group" parent="1" style="swimlane;horizontal=1;startSize=35;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=2;rounded=1;fontStyle=1;fontSize=16;" value="👤 Client" vertex="1">
-          <mxGeometry height="200" width="150" x="140" y="420" as="geometry" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Hoops - 농구 매칭 서비스 아키텍처" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1a1a1a;" vertex="1" parent="1">
+          <mxGeometry x="800" y="20" width="400" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="user" parent="client-group" style="ellipse;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;strokeWidth=2;fontSize=13;fontStyle=1;" value="사용자&#xa;모바일/웹" vertex="1">
-          <mxGeometry height="90" width="90" x="30" y="60" as="geometry" />
+
+        <!-- AWS Cloud -->
+        <mxCell id="aws-cloud" value="" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=0;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_aws_cloud;strokeColor=#232F3E;fillColor=#F8F8F8;verticalAlign=top;align=left;spacingLeft=30;fontColor=#232F3E;dashed=0;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="120" y="80" width="1960" height="1280" as="geometry" />
         </mxCell>
-        <mxCell id="lb-group" parent="1" style="swimlane;horizontal=1;startSize=35;fillColor=#E0F2F1;strokeColor=#00897B;strokeWidth=2;rounded=1;fontStyle=1;fontSize=14;" value="⚖️ Load Balancer" vertex="1">
-          <mxGeometry height="120" width="140" x="400" y="460" as="geometry">
-            <mxRectangle height="35" width="150" x="400" y="460" as="alternateBounds" />
-          </mxGeometry>
+
+        <!-- AWS Label -->
+        <mxCell id="aws-label" value="☁️ AWS Cloud (ap-northeast-2)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#FF9900;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="40" y="10" width="300" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="nginx" parent="lb-group" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4DB6AC;strokeColor=#00897B;strokeWidth=2;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" value="Nginx&#xa;/ ALB" vertex="1">
-          <mxGeometry height="55" width="100" x="20" y="50" as="geometry" />
+
+        <!-- VPC -->
+        <mxCell id="vpc" value="" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=0;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=#F5F1FF;verticalAlign=top;align=left;spacingLeft=30;fontColor=#AAB7B8;dashed=0;strokeWidth=2;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="40" y="60" width="1880" height="1180" as="geometry" />
         </mxCell>
-        <mxCell id="gateway-group" parent="1" style="swimlane;horizontal=1;startSize=35;fillColor=#E8EAF6;strokeColor=#3F51B5;strokeWidth=2;rounded=1;fontStyle=1;fontSize=16;" value="🚪 API Gateway" vertex="1">
-          <mxGeometry height="260" width="160" x="620" y="560" as="geometry" />
+
+        <!-- VPC Label -->
+        <mxCell id="vpc-label" value="🔒 VPC (10.0.0.0/16)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#8C4FFF;" vertex="1" parent="vpc">
+          <mxGeometry x="40" y="10" width="200" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="jwt-filter" parent="gateway-group" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7986CB;strokeColor=#3F51B5;strokeWidth=2;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" value="JWT&#xa;Filter" vertex="1">
-          <mxGeometry height="50" width="120" x="20" y="50" as="geometry" />
+
+        <!-- Public Subnet -->
+        <mxCell id="public-subnet" value="" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=0;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_subnet;strokeColor=#248814;fillColor=#E9F3E6;verticalAlign=top;align=left;spacingLeft=30;fontColor=#248814;dashed=0;strokeWidth=2;" vertex="1" parent="vpc">
+          <mxGeometry x="40" y="50" width="1800" height="1100" as="geometry" />
         </mxCell>
-        <mxCell id="router" parent="gateway-group" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7986CB;strokeColor=#3F51B5;strokeWidth=2;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" value="Router" vertex="1">
-          <mxGeometry height="50" width="120" x="20" y="120" as="geometry" />
+
+        <!-- Subnet Label -->
+        <mxCell id="subnet-label" value="🌐 Public Subnet (10.0.1.0/24)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#248814;" vertex="1" parent="public-subnet">
+          <mxGeometry x="40" y="8" width="250" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="rate-limiter" parent="gateway-group" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7986CB;strokeColor=#3F51B5;strokeWidth=2;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" value="Rate&#xa;Limiter" vertex="1">
-          <mxGeometry height="50" width="120" x="20" y="190" as="geometry" />
+
+        <!-- Internet Gateway -->
+        <mxCell id="igw" value="Internet&#xa;Gateway" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=1;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.internet_gateway;" vertex="1" parent="public-subnet">
+          <mxGeometry x="40" y="60" width="60" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="gw-flow1" edge="1" parent="gateway-group" source="jwt-filter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#3F51B5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="router">
+
+        <!-- Elastic IP -->
+        <mxCell id="eip" value="Elastic IP&#xa;(고정 IP)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=1;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_ip_address;" vertex="1" parent="public-subnet">
+          <mxGeometry x="140" y="65" width="50" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- EC2 Instance -->
+        <mxCell id="ec2-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FF9800;strokeWidth=3;dashed=0;" vertex="1" parent="public-subnet">
+          <mxGeometry x="240" y="50" width="1520" height="1020" as="geometry" />
+        </mxCell>
+
+        <!-- EC2 Label -->
+        <mxCell id="ec2-label" value="🖥️ EC2 Instance (t3.medium / Amazon Linux 2023)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#FF6D00;" vertex="1" parent="public-subnet">
+          <mxGeometry x="260" y="58" width="400" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Docker Environment -->
+        <mxCell id="docker-env" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#2196F3;strokeWidth=2;dashed=1;dashPattern=8 8;" vertex="1" parent="public-subnet">
+          <mxGeometry x="260" y="95" width="1480" height="955" as="geometry" />
+        </mxCell>
+
+        <!-- Docker Label -->
+        <mxCell id="docker-label" value="🐳 Docker Compose Environment" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#1976D2;" vertex="1" parent="public-subnet">
+          <mxGeometry x="280" y="103" width="280" height="22" as="geometry" />
+        </mxCell>
+
+        <!-- ========== CLIENT SECTION ========== -->
+        <mxCell id="client-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECEFF1;strokeColor=#607D8B;strokeWidth=2;" vertex="1" parent="public-subnet">
+          <mxGeometry x="280" y="140" width="160" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="client-title" value="👤 Client" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#37474F;" vertex="1" parent="public-subnet">
+          <mxGeometry x="280" y="148" width="160" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="mobile" value="📱 Mobile App" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#90A4AE;strokeWidth=1;fontSize=12;fontStyle=0;" vertex="1" parent="public-subnet">
+          <mxGeometry x="300" y="185" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="web" value="🌐 Web Browser" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#90A4AE;strokeWidth=1;fontSize=12;fontStyle=0;" vertex="1" parent="public-subnet">
+          <mxGeometry x="300" y="235" width="120" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ========== FRONTEND ========== -->
+        <mxCell id="frontend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;strokeWidth=2;" vertex="1" parent="public-subnet">
+          <mxGeometry x="500" y="140" width="160" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="frontend-title" value="🎨 Frontend" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#2E7D32;" vertex="1" parent="public-subnet">
+          <mxGeometry x="500" y="148" width="160" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="nextjs" value="Next.js 14&#xa;:3000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#81C784;strokeColor=#388E3C;strokeWidth=2;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="520" y="185" width="120" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="react" value="React + TailwindCSS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#66BB6A;strokeWidth=1;fontSize=11;fontStyle=0;" vertex="1" parent="public-subnet">
+          <mxGeometry x="520" y="250" width="120" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- ========== BACKEND (Spring Boot) ========== -->
+        <mxCell id="backend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;strokeWidth=2;" vertex="1" parent="public-subnet">
+          <mxGeometry x="720" y="140" width="700" height="500" as="geometry" />
+        </mxCell>
+        <mxCell id="backend-title" value="⚙️ Backend - Spring Boot 3.x (:8080)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#E65100;" vertex="1" parent="public-subnet">
+          <mxGeometry x="740" y="148" width="300" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- API Gateway Layer -->
+        <mxCell id="api-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EAF6;strokeColor=#5C6BC0;strokeWidth=1;dashed=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="740" y="180" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="api-title" value="🚪 API Layer" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#3F51B5;" vertex="1" parent="public-subnet">
+          <mxGeometry x="740" y="185" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="jwt-filter" value="JWT Filter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7986CB;strokeColor=#3F51B5;strokeWidth=1;fontColor=#FFFFFF;fontSize=11;fontStyle=0;" vertex="1" parent="public-subnet">
+          <mxGeometry x="755" y="210" width="75" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="rate-limiter" value="Rate Limiter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7986CB;strokeColor=#3F51B5;strokeWidth=1;fontColor=#FFFFFF;fontSize=11;fontStyle=0;" vertex="1" parent="public-subnet">
+          <mxGeometry x="755" y="255" width="75" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="controller" value="Controllers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7986CB;strokeColor=#3F51B5;strokeWidth=1;fontColor=#FFFFFF;fontSize=11;fontStyle=0;" vertex="1" parent="public-subnet">
+          <mxGeometry x="850" y="210" width="75" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Domain Services -->
+        <mxCell id="domain-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFDE7;strokeColor=#FBC02D;strokeWidth=1;dashed=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="960" y="180" width="440" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="domain-title" value="📦 Domain Services (Hexagonal Architecture)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#F57F17;" vertex="1" parent="public-subnet">
+          <mxGeometry x="960" y="185" width="440" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Domain boxes -->
+        <mxCell id="auth-svc" value="Auth&#xa;회원관리" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9E9E9E;strokeColor=#616161;strokeWidth=2;fontColor=#FFFFFF;fontSize=11;fontStyle=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="980" y="215" width="90" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="match-svc" value="Match&#xa;경기관리" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EF5350;strokeColor=#C62828;strokeWidth=2;fontColor=#FFFFFF;fontSize=11;fontStyle=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1085" y="215" width="90" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="part-svc" value="Participation&#xa;참가관리" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#42A5F5;strokeColor=#1565C0;strokeWidth=2;fontColor=#FFFFFF;fontSize=11;fontStyle=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1190" y="215" width="90" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="location-svc" value="Location&#xa;장소관리" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#66BB6A;strokeColor=#2E7D32;strokeWidth=2;fontColor=#FFFFFF;fontSize=11;fontStyle=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1295" y="215" width="90" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="user-svc" value="User&#xa;프로필" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#AB47BC;strokeColor=#6A1B9A;strokeWidth=2;fontColor=#FFFFFF;fontSize=11;fontStyle=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="980" y="280" width="90" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="noti-svc" value="Notification&#xa;알림" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCA28;strokeColor=#F9A825;strokeWidth=2;fontSize=11;fontStyle=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1085" y="280" width="90" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Scheduler -->
+        <mxCell id="scheduler-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#E91E63;strokeWidth=1;dashed=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1190" y="280" width="195" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="scheduler" value="⏰ Scheduler (ShedLock)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#C2185B;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1195" y="290" width="185" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Redis GeoHash Flow Box -->
+        <mxCell id="geo-flow-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#F44336;strokeWidth=2;dashed=0;" vertex="1" parent="public-subnet">
+          <mxGeometry x="980" y="345" width="405" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="geo-flow-title" value="📍 Redis GeoHash 위치 기반 검색 흐름" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#C62828;" vertex="1" parent="public-subnet">
+          <mxGeometry x="990" y="350" width="250" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="geo-step1" value="1. 경기생성&#xa;이벤트 발행" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E57373;strokeWidth=1;fontSize=10;fontStyle=0;" vertex="1" parent="public-subnet">
+          <mxGeometry x="995" y="375" width="80" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="geo-step2" value="2. Commit 후&#xa;Listener 실행" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E57373;strokeWidth=1;fontSize=10;fontStyle=0;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1090" y="375" width="80" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="geo-step3" value="3. GEOADD&#xa;Redis 저장" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E57373;strokeWidth=1;fontSize=10;fontStyle=0;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1185" y="375" width="80" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="geo-step4" value="4. GEORADIUS&#xa;반경 검색" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E57373;strokeWidth=1;fontSize=10;fontStyle=0;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1280" y="375" width="90" height="55" as="geometry" />
+        </mxCell>
+        <!-- Geo flow arrows -->
+        <mxCell id="geo-arr1" edge="1" parent="public-subnet" source="geo-step1" target="geo-step2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E57373;endArrow=classic;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="gw-flow2" edge="1" parent="gateway-group" source="router" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#3F51B5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="rate-limiter">
+        <mxCell id="geo-arr2" edge="1" parent="public-subnet" source="geo-step2" target="geo-step3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E57373;endArrow=classic;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="stateless-group" parent="1" style="swimlane;horizontal=1;startSize=40;fillColor=#FFFDE7;strokeColor=#FBC02D;strokeWidth=2;rounded=1;fontStyle=1;fontSize=16;" value="⚙️ Stateless Server" vertex="1">
-          <mxGeometry height="480" width="710" x="840" y="480" as="geometry" />
-        </mxCell>
-        <mxCell id="auth" parent="stateless-group" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9E9E9E;strokeColor=#616161;strokeWidth=2;fontColor=#FFFFFF;fontSize=14;fontStyle=1;" value="Auth&#xa;회원 관리" vertex="1">
-          <mxGeometry height="70" width="140" x="50" y="80" as="geometry" />
-        </mxCell>
-        <mxCell id="match" parent="stateless-group" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EF5350;strokeColor=#C62828;strokeWidth=2;fontColor=#FFFFFF;fontSize=14;fontStyle=1;" value="Match&#xa;경기 관리" vertex="1">
-          <mxGeometry height="70" width="140" x="280" y="80" as="geometry" />
-        </mxCell>
-        <mxCell id="participation" parent="stateless-group" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#42A5F5;strokeColor=#1565C0;strokeWidth=2;fontColor=#FFFFFF;fontSize=14;fontStyle=1;" value="Participation&#xa;참가 관리" vertex="1">
-          <mxGeometry height="70" width="140" x="510" y="80" as="geometry" />
-        </mxCell>
-        <mxCell id="usr" parent="stateless-group" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#AB47BC;strokeColor=#6A1B9A;strokeWidth=2;fontColor=#FFFFFF;fontSize=14;fontStyle=1;" value="User&#xa;프로필 관리" vertex="1">
-          <mxGeometry height="70" width="140" x="50" y="320" as="geometry" />
-        </mxCell>
-        <mxCell id="location" parent="stateless-group" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#66BB6A;strokeColor=#2E7D32;strokeWidth=2;fontColor=#FFFFFF;fontSize=14;fontStyle=1;" value="Location&#xa;장소 관리" vertex="1">
-          <mxGeometry height="70" width="140" x="280" y="320" as="geometry" />
-        </mxCell>
-        <mxCell id="notification" parent="stateless-group" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCA28;strokeColor=#F9A825;strokeWidth=2;fontSize=14;fontStyle=1;" value="Notification&#xa;알림 관리" vertex="1">
-          <mxGeometry height="70" width="140" x="510" y="320" as="geometry" />
-        </mxCell>
-        <mxCell id="internal-match-part" edge="1" parent="stateless-group" source="match" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#7B1FA2;fontSize=11;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="participation" value="정원 확인">
+        <mxCell id="geo-arr3" edge="1" parent="public-subnet" source="geo-step3" target="geo-step4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E57373;endArrow=classic;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="internal-auth-user" edge="1" parent="stateless-group" source="auth" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#9E9E9E;fontSize=10;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="usr" value="토큰 검증">
+
+        <!-- Port/Adapter note -->
+        <mxCell id="hex-note" value="Port/Adapter Pattern&#xa;@TransactionalEventListener" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2;fontColor=#757575;" vertex="1" parent="public-subnet">
+          <mxGeometry x="740" y="310" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ========== INFRASTRUCTURE ========== -->
+        <mxCell id="infra-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECEFF1;strokeColor=#607D8B;strokeWidth=2;" vertex="1" parent="public-subnet">
+          <mxGeometry x="280" y="660" width="1140" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="infra-title" value="🗄️ Infrastructure Layer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#455A64;" vertex="1" parent="public-subnet">
+          <mxGeometry x="300" y="668" width="200" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- MySQL -->
+        <mxCell id="mysql-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=2;" vertex="1" parent="public-subnet">
+          <mxGeometry x="300" y="705" width="240" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="mysql-icon" value="MySQL 8.0&#xa;:3306" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#2196F3;strokeColor=#1565C0;strokeWidth=2;fontColor=#FFFFFF;fontSize=13;fontStyle=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="355" y="720" width="130" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="mysql-tables" value="Tables:&#xa;• users&#xa;• matches&#xa;• participations&#xa;• locations&#xa;• notifications&#xa;• auth_accounts&#xa;• shedlock" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#37474F;" vertex="1" parent="public-subnet">
+          <mxGeometry x="320" y="810" width="140" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- Redis -->
+        <mxCell id="redis-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#E53935;strokeWidth=2;" vertex="1" parent="public-subnet">
+          <mxGeometry x="560" y="705" width="240" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="redis-icon" value="Redis 7&#xa;:6379" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#F44336;strokeColor=#C62828;strokeWidth=2;fontColor=#FFFFFF;fontSize=13;fontStyle=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="615" y="720" width="130" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="redis-features" value="Features:&#xa;• GeoHash (matches:geo)&#xa;  - GEOADD&#xa;  - GEORADIUS&#xa;  - Pipeline bulk ops&#xa;• Session Cache&#xa;• Rate Limiting" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#37474F;" vertex="1" parent="public-subnet">
+          <mxGeometry x="580" y="810" width="160" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- Kafka -->
+        <mxCell id="kafka-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;strokeWidth=2;" vertex="1" parent="public-subnet">
+          <mxGeometry x="820" y="705" width="280" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="kafka-icon" value="Kafka&#xa;:9092" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;strokeWidth=2;fontColor=#FFFFFF;fontSize=13;fontStyle=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="905" y="720" width="110" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="kafka-topics" value="Topics:&#xa;• participation-events&#xa;  - CREATED&#xa;  - CANCELLED&#xa;&#xa;Consumers:&#xa;• NotificationEventListener" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#37474F;" vertex="1" parent="public-subnet">
+          <mxGeometry x="840" y="810" width="180" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="zk-note" value="+ Zookeeper" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2;fontColor=#757575;" vertex="1" parent="public-subnet">
+          <mxGeometry x="905" y="950" width="110" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- External APIs -->
+        <mxCell id="external-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFC107;strokeWidth=2;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1120" y="705" width="280" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="external-title" value="🔗 External Services" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#FF8F00;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1120" y="713" width="280" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="kakao-oauth" value="Kakao OAuth&#xa;(카카오 로그인)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEB3B;strokeColor=#FBC02D;strokeWidth=2;fontSize=11;fontStyle=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1145" y="745" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="kakao-map" value="Kakao Map API&#xa;(장소 검색)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEB3B;strokeColor=#FBC02D;strokeWidth=2;fontSize=11;fontStyle=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1270" y="745" width="110" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ========== FLOW ARROWS ========== -->
+        <!-- Client to Frontend -->
+        <mxCell id="arr-client-fe" edge="1" parent="public-subnet" source="client-box" target="frontend-box" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#4CAF50;endArrow=classic;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="OfNWZfnlfHGJ32FREjRM-2" edge="1" parent="stateless-group" source="match" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#C62828;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="notification" value="경기 임박 알림">
+        <mxCell id="arr-client-fe-label" value="HTTPS" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#2E7D32;fontStyle=1;" vertex="1" connectable="0" parent="arr-client-fe">
+          <mxGeometry x="-0.1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Frontend to Backend -->
+        <mxCell id="arr-fe-be" edge="1" parent="public-subnet" source="frontend-box" target="api-layer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#FF9800;endArrow=classic;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-fe-be-label" value="REST API" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E65100;fontStyle=1;" vertex="1" connectable="0" parent="arr-fe-be">
+          <mxGeometry x="-0.1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Backend to MySQL -->
+        <mxCell id="arr-be-mysql" edge="1" parent="public-subnet" source="domain-layer" target="mysql-box" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;endArrow=classic;entryX=0.5;entryY=0;exitX=0.2;exitY=1;">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="350" y="215" />
-              <mxPoint x="580" y="215" />
+              <mxPoint x="1048" y="480" />
+              <mxPoint x="420" y="480" />
             </Array>
-            <mxPoint x="260" y="163" as="sourcePoint" />
-            <mxPoint x="650" y="160" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="OfNWZfnlfHGJ32FREjRM-4" edge="1" parent="stateless-group" source="location" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#2E7D32;exitX=0.5;exitY=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="match" value="경기 장소 조회">
-          <mxGeometry relative="1" x="-0.4118" as="geometry">
-            <mxPoint as="offset" />
-            <Array as="points">
-              <mxPoint x="350" y="210" />
-              <mxPoint x="350" y="210" />
-            </Array>
-            <mxPoint x="220" y="420" as="sourcePoint" />
-            <mxPoint x="610" y="514" as="targetPoint" />
-          </mxGeometry>
+        <mxCell id="arr-be-mysql-label" value="JPA" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#1565C0;fontStyle=1;" vertex="1" connectable="0" parent="arr-be-mysql">
+          <mxGeometry x="0.3" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="OfNWZfnlfHGJ32FREjRM-3" edge="1" parent="stateless-group" source="usr" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#C62828;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="notification" value="알림 대상자 조회">
-          <mxGeometry relative="1" x="-0.0026" as="geometry">
-            <mxPoint as="offset" />
-            <Array as="points">
-              <mxPoint x="190" y="395" />
-              <mxPoint x="280" y="395" />
-              <mxPoint x="280" y="430" />
-              <mxPoint x="580" y="430" />
-            </Array>
-            <mxPoint x="600" y="280" as="sourcePoint" />
-            <mxPoint x="560" y="395" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="infra-group" parent="1" style="swimlane;horizontal=1;startSize=40;fillColor=#ECEFF1;strokeColor=#607D8B;strokeWidth=2;rounded=1;fontStyle=1;fontSize=16;" value="🗄️ Infrastructure" vertex="1">
-          <mxGeometry height="500" width="200" x="1650" y="460" as="geometry" />
-        </mxCell>
-        <mxCell id="kafka-broker" parent="infra-group" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FF7043;strokeColor=#D84315;strokeWidth=2;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" value="Kafka&#xa;Event Broker" vertex="1">
-          <mxGeometry height="100" width="120" x="40" y="70" as="geometry" />
-        </mxCell>
-        <mxCell id="mysql" parent="infra-group" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#BBDEFB;strokeColor=#1976D2;strokeWidth=2;fontSize=13;fontStyle=1;" value="MySQL&#xa;Main DB" vertex="1">
-          <mxGeometry height="90" width="100" x="50" y="220" as="geometry" />
-        </mxCell>
-        <mxCell id="redis" parent="infra-group" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#FFCDD2;strokeColor=#C62828;strokeWidth=2;fontSize=13;fontStyle=1;" value="Redis&#xa;Cache" vertex="1">
-          <mxGeometry height="90" width="100" x="50" y="370" as="geometry" />
-        </mxCell>
-        <mxCell id="services-logstash" edge="1" parent="1" source="stateless-group" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#7B1FA2;fontSize=10;dashed=1;exitX=0.5;exitY=0;entryX=0;entryY=0.5;" target="logstash" value="Application Logs">
+
+        <!-- Backend to Redis -->
+        <mxCell id="arr-be-redis" edge="1" parent="public-subnet" source="geo-flow-box" target="redis-box" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E53935;endArrow=classic;dashed=0;entryX=0.5;entryY=0;">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1220" y="390" />
-              <mxPoint x="1340" y="390" />
-              <mxPoint x="1340" y="282" />
+              <mxPoint x="1183" y="500" />
+              <mxPoint x="680" y="500" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="gateway-logstash" edge="1" parent="1" source="gateway-group" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#7B1FA2;fontSize=10;dashed=1;exitX=0.5;exitY=0;entryX=0;entryY=0.5;" target="logstash" value="Access Logs">
+        <mxCell id="arr-be-redis-label" value="GeoHash" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#C62828;fontStyle=1;" vertex="1" connectable="0" parent="arr-be-redis">
+          <mxGeometry x="0.3" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Backend to Kafka (publish) -->
+        <mxCell id="arr-be-kafka" edge="1" parent="public-subnet" source="part-svc" target="kafka-box" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FF9800;endArrow=classic;dashed=1;entryX=0.5;entryY=0;">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="700" y="390" />
-              <mxPoint x="1280" y="390" />
-              <mxPoint x="1280" y="288" />
-              <mxPoint x="1380" y="288" />
+              <mxPoint x="1235" y="520" />
+              <mxPoint x="960" y="520" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="client-lb" edge="1" parent="1" source="client-group" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#00897B;fontSize=11;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="lb-group" value="HTTPS">
+        <mxCell id="arr-be-kafka-label" value="Publish" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E65100;fontStyle=1;" vertex="1" connectable="0" parent="arr-be-kafka">
+          <mxGeometry x="0.3" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Kafka to Notification (consume) -->
+        <mxCell id="arr-kafka-noti" edge="1" parent="public-subnet" source="kafka-box" target="noti-svc" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FF9800;endArrow=classic;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="350" y="530" />
-              <mxPoint x="350" y="520" />
+              <mxPoint x="960" y="540" />
+              <mxPoint x="1130" y="540" />
             </Array>
-            <mxPoint x="330" y="600" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="lb-gateway" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#3F51B5;fontSize=11;exitX=1;exitY=0.5;entryX=0;entryY=0.2;" target="gateway-group" value="분산">
+        <mxCell id="arr-kafka-noti-label" value="Consume" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E65100;fontStyle=1;" vertex="1" connectable="0" parent="arr-kafka-noti">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Auth to Kakao -->
+        <mxCell id="arr-auth-kakao" edge="1" parent="public-subnet" source="auth-svc" target="kakao-oauth" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FBC02D;endArrow=classic;startArrow=classic;entryX=0.5;entryY=0;">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="580" y="520" />
-              <mxPoint x="580" y="612" />
-            </Array>
-            <mxPoint x="540" y="519.9999999999998" as="sourcePoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="scheduler-match" edge="1" parent="1" source="scheduler" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#C2185B;fontSize=10;exitX=1;exitY=0.5;entryX=0.5;entryY=0;dashed=1;" target="match" value="상태 변경&#xa;(Cron)">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1140" y="383" />
-              <mxPoint x="1200" y="383" />
-              <mxPoint x="1200" y="600" />
+              <mxPoint x="1025" y="560" />
+              <mxPoint x="1200" y="560" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="scheduler-db" edge="1" parent="1" source="scheduler-group" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;fontSize=10;exitX=0.5;exitY=1;entryX=0;entryY=0;dashed=1;exitDx=0;exitDy=0;" target="mysql" value="">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1080" y="415" />
-              <mxPoint x="1620" y="415" />
-              <mxPoint x="1620" y="680" />
-            </Array>
+        <mxCell id="arr-auth-kakao-label" value="OAuth 2.0" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#F57F17;fontStyle=1;" vertex="1" connectable="0" parent="arr-auth-kakao">
+          <mxGeometry x="-0.2" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- IGW to EIP -->
+        <mxCell id="arr-igw-eip" edge="1" parent="public-subnet" source="igw" target="eip" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#8C4FFF;endArrow=classic;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- EIP to EC2 -->
+        <mxCell id="arr-eip-ec2" edge="1" parent="public-subnet" source="eip" target="ec2-group" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FF9800;endArrow=classic;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ========== LEGEND ========== -->
+        <mxCell id="legend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#BDBDBD;strokeWidth=1;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1440" y="140" width="300" height="500" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="📋 Legend" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#424242;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1440" y="148" width="300" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Legend items -->
+        <mxCell id="leg-line1" edge="1" parent="public-subnet" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#4CAF50;rounded=0;">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1460" y="200" as="sourcePoint" />
+            <mxPoint x="1520" y="200" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="gw-auth" edge="1" parent="1" source="gateway-group" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#616161;exitX=1;exitY=0.15;entryX=0;entryY=0.5;" target="auth" value="회원가입/로그인">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="810" y="599" />
-              <mxPoint x="810" y="575" />
-            </Array>
+        <mxCell id="leg-text1" value="Client → Frontend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1535" y="190" width="150" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leg-line2" edge="1" parent="public-subnet" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#FF9800;rounded=0;">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1460" y="235" as="sourcePoint" />
+            <mxPoint x="1520" y="235" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="gw-match" edge="1" parent="1" source="gateway-group" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#C62828;exitX=1;exitY=0.3;entryX=0;entryY=0.5;" target="match" value="경기 생성/조회">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="820" y="638" />
-              <mxPoint x="820" y="690" />
-              <mxPoint x="1080" y="690" />
-              <mxPoint x="1080" y="595" />
-            </Array>
+        <mxCell id="leg-text2" value="REST API 호출" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1535" y="225" width="150" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leg-line3" edge="1" parent="public-subnet" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#1976D2;rounded=0;">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1460" y="270" as="sourcePoint" />
+            <mxPoint x="1520" y="270" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="gw-part" edge="1" parent="1" source="gateway-group" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1565C0;exitX=1;exitY=0.45;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="participation" value="참가 신청/취소">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="830" y="677" />
-              <mxPoint x="830" y="720" />
-              <mxPoint x="1420" y="720" />
-            </Array>
+        <mxCell id="leg-text3" value="DB 연결 (JPA)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1535" y="260" width="150" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leg-line4" edge="1" parent="public-subnet" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#E53935;rounded=0;">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1460" y="305" as="sourcePoint" />
+            <mxPoint x="1520" y="305" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="gw-user" edge="1" parent="1" source="gateway-group" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6A1B9A;exitX=1;exitY=0.7;entryX=0;entryY=0.5;" target="usr" value="프로필 조회">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="820" y="742" />
-              <mxPoint x="820" y="815" />
-            </Array>
+        <mxCell id="leg-text4" value="Redis GeoHash" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1535" y="295" width="150" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leg-line5" edge="1" parent="public-subnet" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#FF9800;rounded=0;dashed=1;">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1460" y="340" as="sourcePoint" />
+            <mxPoint x="1520" y="340" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="gw-loc" edge="1" parent="1" source="gateway-group" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#2E7D32;exitX=1;exitY=0.85;entryX=0;entryY=0.5;" target="location" value="장소 추가">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="810" y="781" />
-              <mxPoint x="810" y="940" />
-              <mxPoint x="1070" y="940" />
-              <mxPoint x="1070" y="835" />
-            </Array>
+        <mxCell id="leg-text5" value="Kafka 이벤트" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1535" y="330" width="150" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leg-line6" edge="1" parent="public-subnet" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;strokeColor=#FBC02D;rounded=0;">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1460" y="375" as="sourcePoint" />
+            <mxPoint x="1520" y="375" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="auth-kakao" edge="1" parent="1" source="auth" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#F57C00;fontSize=11;startArrow=classic;endArrow=classic;exitX=0.5;exitY=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="external-group" value="OAuth 인증">
-          <mxGeometry relative="1" x="-0.1064" as="geometry">
-            <mxPoint as="offset" />
-            <Array as="points">
-              <mxPoint x="960" y="457" />
-              <mxPoint x="880" y="457" />
-              <mxPoint x="880" y="270" />
-            </Array>
-          </mxGeometry>
+        <mxCell id="leg-text6" value="OAuth 연동" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1535" y="365" width="150" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="auth-db" edge="1" parent="1" source="auth" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;exitX=1;exitY=0.5;entryX=0;entryY=0.3;" target="mysql" value="">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1030" y="540" />
-              <mxPoint x="1610" y="540" />
-              <mxPoint x="1610" y="707" />
-            </Array>
-          </mxGeometry>
+
+        <!-- Tech Stack section in legend -->
+        <mxCell id="leg-divider" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=#BDBDBD;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1455" y="400" width="270" height="10" as="geometry" />
         </mxCell>
-        <mxCell id="match-db" edge="1" parent="1" source="match" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="mysql" value="">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1260" y="540" />
-              <mxPoint x="1600" y="540" />
-              <mxPoint x="1600" y="725" />
-            </Array>
-          </mxGeometry>
+
+        <mxCell id="leg-stack-title" value="Tech Stack" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#424242;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1440" y="415" width="300" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="part-db" edge="1" parent="1" source="participation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;fontSize=11;exitX=1;exitY=0.5;entryX=0;entryY=0.7;" target="mysql" value="저장/조회">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1590" y="575" />
-              <mxPoint x="1590" y="743" />
-            </Array>
-          </mxGeometry>
+
+        <mxCell id="leg-stack" value="• Backend: Java 17, Spring Boot 3.x&#xa;• Frontend: Next.js 14, React, TailwindCSS&#xa;• Database: MySQL 8.0&#xa;• Cache: Redis 7 (GeoHash)&#xa;• Message: Kafka (Confluent)&#xa;• Infra: AWS EC2, Terraform&#xa;• Container: Docker Compose&#xa;• Test: JUnit 5, Cucumber, Testcontainers" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#616161;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1460" y="440" width="260" height="150" as="geometry" />
         </mxCell>
-        <mxCell id="user-db" edge="1" parent="1" source="usr" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="mysql" value="">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1610" y="815" />
-              <mxPoint x="1610" y="725" />
-            </Array>
-          </mxGeometry>
+
+        <!-- Security Group info -->
+        <mxCell id="sg-note" value="🔐 Security Group&#xa;Inbound: 22, 80, 443, 3000, 8080" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=0;fontColor=#607D8B;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1120" y="870" width="200" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="loc-db" edge="1" parent="1" source="location" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="mysql" value="">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1600" y="815" />
-              <mxPoint x="1600" y="725" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="noti-db" edge="1" parent="1" source="notification" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1976D2;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="mysql" value="">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1590" y="815" />
-              <mxPoint x="1590" y="725" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="match-kafka" edge="1" parent="1" source="match" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FF7043;fontSize=11;dashed=1;exitX=0.5;exitY=0;entryX=0;entryY=0.5;" target="kafka-broker" value="경기 이벤트">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1200" y="500" />
-              <mxPoint x="1630" y="500" />
-              <mxPoint x="1630" y="580" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="part-kafka" edge="1" parent="1" source="participation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FF7043;fontSize=11;dashed=1;exitX=0.5;exitY=0;entryX=0;entryY=0.5;" target="kafka-broker" value="이벤트 발행">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1430" y="510" />
-              <mxPoint x="1625" y="510" />
-              <mxPoint x="1625" y="580" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="kafka-noti" edge="1" parent="1" source="kafka-broker" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FF7043;fontSize=11;exitX=0;exitY=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="notification" value="알림 트리거">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1720" y="640" />
-              <mxPoint x="1630" y="640" />
-              <mxPoint x="1630" y="760" />
-              <mxPoint x="1510" y="760" />
-              <mxPoint x="1510" y="835" />
-            </Array>
-            <mxPoint x="1510" y="840" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="legend" parent="1" style="swimlane;horizontal=1;startSize=30;fillColor=#FAFAFA;strokeColor=#BDBDBD;strokeWidth=1;rounded=1;fontSize=14;fontStyle=1;" value="범례 (Legend)" vertex="1">
-          <mxGeometry height="230" width="240" x="1340" y="1070" as="geometry" />
-        </mxCell>
-        <mxCell id="leg0" edge="1" parent="legend" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#00897B;" value="">
-          <mxGeometry height="50" relative="1" width="50" as="geometry">
-            <mxPoint x="20" y="50" as="sourcePoint" />
-            <mxPoint x="70" y="50" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="leg0-text" parent="legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" value="Client → LB → Gateway" vertex="1">
-          <mxGeometry height="20" width="150" x="80" y="40" as="geometry" />
-        </mxCell>
-        <mxCell id="leg1" edge="1" parent="legend" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#1976D2;" value="">
-          <mxGeometry height="50" relative="1" width="50" as="geometry">
-            <mxPoint x="20" y="80" as="sourcePoint" />
-            <mxPoint x="70" y="80" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="leg1-text" parent="legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" value="데이터 흐름 (DB)" vertex="1">
-          <mxGeometry height="20" width="150" x="80" y="70" as="geometry" />
-        </mxCell>
-        <mxCell id="leg2" edge="1" parent="legend" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#FF7043;dashed=1;" value="">
-          <mxGeometry height="50" relative="1" width="50" as="geometry">
-            <mxPoint x="20" y="110" as="sourcePoint" />
-            <mxPoint x="70" y="110" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="leg2-text" parent="legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" value="이벤트 흐름 (Kafka)" vertex="1">
-          <mxGeometry height="20" width="150" x="80" y="100" as="geometry" />
-        </mxCell>
-        <mxCell id="leg3" edge="1" parent="legend" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#C2185B;dashed=1;" value="">
-          <mxGeometry height="50" relative="1" width="50" as="geometry">
-            <mxPoint x="20" y="140" as="sourcePoint" />
-            <mxPoint x="70" y="140" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="leg3-text" parent="legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" value="스케줄러 (Cron)" vertex="1">
-          <mxGeometry height="20" width="150" x="80" y="130" as="geometry" />
-        </mxCell>
-        <mxCell id="leg4" edge="1" parent="legend" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#9E9E9E;dashed=1;" value="">
-          <mxGeometry height="50" relative="1" width="50" as="geometry">
-            <mxPoint x="20" y="170" as="sourcePoint" />
-            <mxPoint x="70" y="170" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="leg4-text" parent="legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" value="내부 통신" vertex="1">
-          <mxGeometry height="20" width="150" x="80" y="160" as="geometry" />
-        </mxCell>
-        <mxCell id="leg5" edge="1" parent="legend" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#7B1FA2;dashed=1;" value="">
-          <mxGeometry height="50" relative="1" width="50" as="geometry">
-            <mxPoint x="20" y="200" as="sourcePoint" />
-            <mxPoint x="70" y="200" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="leg5-text" parent="legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" value="로그 흐름 (Logstash)" vertex="1">
-          <mxGeometry height="20" width="150" x="80" y="190" as="geometry" />
-        </mxCell>
-        <mxCell id="OfNWZfnlfHGJ32FREjRM-1" parent="1" style="swimlane;horizontal=1;startSize=40;fillColor=#E1F5FE;strokeColor=#0288D1;strokeWidth=3;rounded=1;fontStyle=1;fontSize=16;dashed=1;dashPattern=8 8;" value="🐳 Docker Container Environment" vertex="1">
-          <mxGeometry height="850" width="980" x="590" y="140" as="geometry" />
-        </mxCell>
-        <mxCell id="external-group" parent="OfNWZfnlfHGJ32FREjRM-1" style="swimlane;horizontal=1;startSize=35;fillColor=#FFF3E0;strokeColor=#F57C00;strokeWidth=2;rounded=1;fontStyle=1;fontSize=16;arcSize=0;" value="🔗 External API" vertex="1">
-          <mxGeometry height="120" width="150" x="40" y="70" as="geometry" />
-        </mxCell>
-        <mxCell id="kakao" parent="external-group" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#F57C00;strokeWidth=2;fontSize=13;fontStyle=1;" value="OAuth Provider" vertex="1">
-          <mxGeometry height="55" width="110" x="20" y="50" as="geometry" />
-        </mxCell>
-        <mxCell id="scheduler-group" parent="OfNWZfnlfHGJ32FREjRM-1" style="swimlane;horizontal=1;startSize=35;fillColor=#FCE4EC;strokeColor=#C2185B;strokeWidth=2;rounded=1;fontStyle=1;fontSize=14;" value="⏰ Batch Jobs" vertex="1">
-          <mxGeometry height="140" width="160" x="410" y="60" as="geometry" />
-        </mxCell>
-        <mxCell id="scheduler" parent="scheduler-group" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F48FB1;strokeColor=#C2185B;strokeWidth=2;fontColor=#FFFFFF;fontSize=11;fontStyle=1;" value="Match Status&#xa;Scheduler" vertex="1">
-          <mxGeometry height="55" width="120" x="20" y="50" as="geometry" />
-        </mxCell>
-        <mxCell id="logging-group" parent="OfNWZfnlfHGJ32FREjRM-1" style="swimlane;horizontal=1;startSize=35;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=2;rounded=1;fontStyle=1;fontSize=14;" value="📊 Logging" vertex="1">
-          <mxGeometry height="140" width="160" x="770" y="60" as="geometry" />
-        </mxCell>
-        <mxCell id="logstash" parent="logging-group" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#7B1FA2;strokeWidth=2;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" value="Logstash&#xa;Log Collector" vertex="1">
-          <mxGeometry height="55" width="120" x="20" y="55" as="geometry" />
-        </mxCell>
+
       </root>
     </mxGraphModel>
   </diagram>

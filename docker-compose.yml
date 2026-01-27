@@ -68,6 +68,7 @@ services:
       retries: 5
 
   backend:
+    image: hoops-backend:latest
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -81,8 +82,6 @@ services:
         condition: service_healthy
     ports:
       - "8080:8080"
-    env_file:
-      - ./backend/.env
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/hoops?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
@@ -96,6 +95,7 @@ services:
     restart: unless-stopped
 
   frontend:
+    image: hoops-frontend:latest
     build:
       context: ./frontend
       dockerfile: Dockerfile

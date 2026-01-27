@@ -32,6 +32,9 @@ docker build -t hoops-frontend:latest \
 # Return to hoops directory
 cd /home/ec2-user/hoops
 
+# Sync docker-compose.yml before running (must be done before docker-compose up)
+cp -f app/docker-compose.yml /home/ec2-user/hoops/docker-compose.yml
+
 # Restart redis, backend and frontend (keep MySQL running)
 echo "Restarting redis, backend and frontend..."
 docker-compose up -d --no-deps redis backend frontend
@@ -43,9 +46,8 @@ docker-compose -f app/monitoring/docker-compose.monitoring.yml up -d
 # Cleanup unused images
 docker image prune -f
 
-# Sync deploy script and docker-compose from source
+# Sync deploy script from source (at the very end)
 cp -f app/deploy.sh /home/ec2-user/hoops/deploy.sh
-cp -f app/docker-compose.yml /home/ec2-user/hoops/docker-compose.yml
 
 echo "Deployment complete!"
 echo "Backend: http://${PUBLIC_IP}:8080"

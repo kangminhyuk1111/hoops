@@ -2,9 +2,10 @@
 
 <img src="imgs/hoops-banner.png" alt="Hoops Banner" width="100%"/>
 
-# Hoops
+# Hoops (농구 매칭 플랫폼)
 
-Basketball match-making platform for finding and joining pickup games near you.
+- 내 주변 농구 경기를 찾고 참가할 수 있는 위치 기반 매칭 서비스
+- Redis GeoHash를 활용한 반경 검색 및 Hexagonal Architecture 적용
 
 </div>
 

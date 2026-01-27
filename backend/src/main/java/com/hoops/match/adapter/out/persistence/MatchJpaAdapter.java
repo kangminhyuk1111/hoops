@@ -92,4 +92,9 @@ public class MatchJpaAdapter implements MatchRepositoryPort {
                 .map(MatchMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<Long> findSearchableMatchIds() {
+        return springDataMatchRepository.findSearchableMatchIds();
+    }
 }

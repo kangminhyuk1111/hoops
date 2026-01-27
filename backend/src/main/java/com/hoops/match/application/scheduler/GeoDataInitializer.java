@@ -1,6 +1,7 @@
 package com.hoops.match.application.scheduler;
 
 import com.hoops.match.application.port.out.MatchGeoIndexPort;
+import com.hoops.match.application.port.out.MatchGeoIndexPort.GeoIndexEntry;
 import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import lombok.RequiredArgsConstructor;
@@ -30,12 +31,16 @@ public class GeoDataInitializer {
 
         List<Match> searchableMatches = matchRepository.findAllSearchableMatches();
 
-        int count = 0;
-        for (Match match : searchableMatches) {
-            matchGeoIndex.addMatch(match.getId(), match.getLongitude(), match.getLatitude());
-            count++;
-        }
+        List<GeoIndexEntry> entries = searchableMatches.stream()
+                .map(match -> new GeoIndexEntry(
+                        match.getId(),
+                        match.getLongitude(),
+                        match.getLatitude()
+                ))
+                .toList();
 
-        log.info("Geo Index initialization completed. Loaded {} matches.", count);
+        matchGeoIndex.addMatchesBulk(entries);
+
+        log.info("Geo Index initialization completed. Loaded {} matches.", entries.size());
     }
 }

@@ -1,6 +1,7 @@
 package com.hoops.match.application.scheduler;
 
 import com.hoops.match.application.port.out.MatchGeoIndexPort;
+import com.hoops.match.application.port.out.MatchGeoIndexPort.GeoIndexEntry;
 import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import lombok.RequiredArgsConstructor;
@@ -29,22 +30,30 @@ public class GeoDataSyncScheduler {
     public void syncGeoData() {
         log.info("Starting Geo Index sync check...");
 
-        List<Match> mysqlMatches = matchRepository.findAllSearchableMatches();
-        List<Long> redisMatchIds = matchGeoIndex.findAllMatchIds();
-
-        Set<Long> mysqlIds = new HashSet<>();
-        for (Match match : mysqlMatches) {
-            mysqlIds.add(match.getId());
-        }
-        Set<Long> redisIds = new HashSet<>(redisMatchIds);
+        // 메모리 효율: ID만 조회
+        Set<Long> mysqlIds = new HashSet<>(matchRepository.findSearchableMatchIds());
+        Set<Long> redisIds = new HashSet<>(matchGeoIndex.findAllMatchIds());
 
         // MySQL에는 있지만 Redis에는 없는 매치 추가
-        int addedCount = 0;
-        for (Match match : mysqlMatches) {
-            if (!redisIds.contains(match.getId())) {
-                matchGeoIndex.addMatch(match.getId(), match.getLongitude(), match.getLatitude());
-                addedCount++;
-                log.warn("Added missing match to Redis: matchId={}", match.getId());
+        List<Long> missingIds = mysqlIds.stream()
+                .filter(id -> !redisIds.contains(id))
+                .toList();
+
+        if (!missingIds.isEmpty()) {
+            // 누락된 매치만 DB에서 조회하여 추가
+            List<Match> missingMatches = matchRepository.findAllByIds(missingIds);
+            List<GeoIndexEntry> entries = missingMatches.stream()
+                    .map(match -> new GeoIndexEntry(
+                            match.getId(),
+                            match.getLongitude(),
+                            match.getLatitude()
+                    ))
+                    .toList();
+
+            matchGeoIndex.addMatchesBulk(entries);
+
+            for (Long matchId : missingIds) {
+                log.warn("Added missing match to Redis: matchId={}", matchId);
             }
         }
 
@@ -58,6 +67,6 @@ public class GeoDataSyncScheduler {
             }
         }
 
-        log.info("Geo Index sync completed. Added: {}, Removed: {}", addedCount, removedCount);
+        log.info("Geo Index sync completed. Added: {}, Removed: {}", missingIds.size(), removedCount);
     }
 }

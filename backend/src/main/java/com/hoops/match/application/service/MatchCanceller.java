@@ -1,13 +1,14 @@
 package com.hoops.match.application.service;
 
+import com.hoops.match.application.event.MatchRemovedFromGeoIndexEvent;
 import com.hoops.match.application.exception.CancelReasonRequiredException;
 import com.hoops.match.application.exception.MatchNotFoundException;
 import com.hoops.match.application.port.in.CancelMatchCommand;
 import com.hoops.match.application.port.in.CancelMatchUseCase;
-import com.hoops.match.application.port.out.MatchGeoIndexPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.application.port.out.MatchRepositoryPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatchCanceller implements CancelMatchUseCase {
 
     private final MatchRepositoryPort matchRepository;
-    private final MatchGeoIndexPort matchGeoIndex;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public void cancelMatch(CancelMatchCommand command) {
@@ -28,7 +29,8 @@ public class MatchCanceller implements CancelMatchUseCase {
 
         match.cancel(command.userId());
         matchRepository.save(match);
-        matchGeoIndex.removeMatch(match.getId());
+
+        eventPublisher.publishEvent(new MatchRemovedFromGeoIndexEvent(match.getId()));
     }
 
     private void validateReason(CancelMatchCommand command) {

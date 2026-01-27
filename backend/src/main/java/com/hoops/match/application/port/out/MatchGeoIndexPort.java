@@ -10,9 +10,19 @@ import java.util.List;
 public interface MatchGeoIndexPort {
 
     /**
+     * Geo Index에 저장할 매치 정보
+     */
+    record GeoIndexEntry(Long matchId, BigDecimal longitude, BigDecimal latitude) {}
+
+    /**
      * 매치를 Geo Index에 추가
      */
     void addMatch(Long matchId, BigDecimal longitude, BigDecimal latitude);
+
+    /**
+     * 여러 매치를 Geo Index에 벌크 추가 (Pipeline 사용)
+     */
+    void addMatchesBulk(List<GeoIndexEntry> entries);
 
     /**
      * 매치를 Geo Index에서 제거
@@ -20,9 +30,16 @@ public interface MatchGeoIndexPort {
     void removeMatch(Long matchId);
 
     /**
-     * 반경 내 매치 ID 목록 조회
+     * 반경 내 매치 ID 목록 조회 (페이지네이션 지원)
+     *
+     * @param longitude 중심점 경도
+     * @param latitude 중심점 위도
+     * @param radiusKm 반경 (km)
+     * @param offset 시작 위치 (skip할 개수)
+     * @param limit 조회할 최대 개수
+     * @return 거리순으로 정렬된 매치 ID 목록
      */
-    List<Long> findMatchIdsWithinRadius(BigDecimal longitude, BigDecimal latitude, double radiusKm, int limit);
+    List<Long> findMatchIdsWithinRadius(BigDecimal longitude, BigDecimal latitude, double radiusKm, int offset, int limit);
 
     /**
      * 모든 매치 ID 조회 (정합성 체크용)

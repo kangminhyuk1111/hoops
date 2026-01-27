@@ -32,6 +32,10 @@ Basketball match-making platform for finding and joining pickup games near you.
 
 ## Architecture
 
+<img src="imgs/hoops-architect.png" alt="Hoops Architecture" width="100%"/>
+
+> AWS EC2 단일 인스턴스에서 Docker Compose로 Frontend, Backend, MySQL, Redis를 운영하며, Redis GeoHash를 활용한 위치 기반 경기 검색과 Hexagonal Architecture 기반의 도메인 설계를 적용했습니다.
+
 ### System Context
 
 | External System | Integration | Purpose |

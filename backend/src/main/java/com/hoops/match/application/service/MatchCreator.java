@@ -2,12 +2,12 @@ package com.hoops.match.application.service;
 
 import com.hoops.match.application.dto.HostInfoResult;
 import com.hoops.match.application.dto.LocationInfoResult;
+import com.hoops.match.application.event.MatchCreatedEvent;
 import com.hoops.match.application.exception.OverlappingHostingException;
 import com.hoops.match.application.port.in.CreateMatchCommand;
 import com.hoops.match.application.port.in.CreateMatchUseCase;
 import com.hoops.match.application.port.out.HostInfoPort;
 import com.hoops.match.application.port.out.LocationInfoPort;
-import com.hoops.match.application.port.out.MatchGeoIndexPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.policy.MatchPolicyValidator;
 import com.hoops.match.application.port.out.MatchRepositoryPort;
@@ -15,6 +15,7 @@ import com.hoops.match.domain.vo.MatchHost;
 import com.hoops.match.domain.vo.MatchLocation;
 import com.hoops.match.domain.vo.MatchSchedule;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +27,10 @@ import java.util.List;
 public class MatchCreator implements CreateMatchUseCase {
 
     private final MatchRepositoryPort matchRepository;
-    private final MatchGeoIndexPort matchGeoIndex;
     private final HostInfoPort hostInfoPort;
     private final LocationInfoPort locationInfoPort;
     private final MatchPolicyValidator policyValidator;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public Match createMatch(CreateMatchCommand command) {
@@ -62,7 +63,12 @@ public class MatchCreator implements CreateMatchUseCase {
         );
 
         Match savedMatch = matchRepository.save(match);
-        matchGeoIndex.addMatch(savedMatch.getId(), savedMatch.getLongitude(), savedMatch.getLatitude());
+
+        eventPublisher.publishEvent(new MatchCreatedEvent(
+                savedMatch.getId(),
+                savedMatch.getLongitude(),
+                savedMatch.getLatitude()
+        ));
 
         return savedMatch;
     }

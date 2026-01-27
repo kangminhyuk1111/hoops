@@ -1,12 +1,13 @@
 package com.hoops.match.application.service;
 
+import com.hoops.match.application.event.MatchRemovedFromGeoIndexEvent;
 import com.hoops.match.application.port.in.UpdateMatchStatusUseCase;
-import com.hoops.match.application.port.out.MatchGeoIndexPort;
 import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.vo.MatchStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +28,7 @@ public class MatchStatusUpdater implements UpdateMatchStatusUseCase {
     );
 
     private final MatchRepositoryPort matchRepository;
-    private final MatchGeoIndexPort matchGeoIndex;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public int startMatches() {
@@ -40,7 +41,7 @@ public class MatchStatusUpdater implements UpdateMatchStatusUseCase {
         for (Match match : matchesToStart) {
             match.startMatch();
             matchRepository.save(match);
-            matchGeoIndex.removeMatch(match.getId());
+            eventPublisher.publishEvent(new MatchRemovedFromGeoIndexEvent(match.getId()));
             count++;
             log.info("경기 시작 상태로 변경: matchId={}, title={}", match.getId(), match.getTitle());
         }

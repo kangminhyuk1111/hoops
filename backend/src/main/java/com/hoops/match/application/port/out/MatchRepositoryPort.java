@@ -39,4 +39,10 @@ public interface MatchRepositoryPort {
      * 검색 대상 매치 조회 (PENDING, CONFIRMED 상태)
      */
     List<Match> findAllSearchableMatches();
+
+    /**
+     * 검색 대상 매치 ID만 조회 (메모리 효율적)
+     * Geo Sync 스케줄러에서 사용
+     */
+    List<Long> findSearchableMatchIds();
 }

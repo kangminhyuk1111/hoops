@@ -86,4 +86,7 @@ public interface SpringDataMatchRepository extends JpaRepository<MatchJpaEntity,
 
     @Query("SELECT m FROM MatchJpaEntity m WHERE m.status IN ('PENDING', 'CONFIRMED')")
     List<MatchJpaEntity> findAllSearchableMatches();
+
+    @Query("SELECT m.id FROM MatchJpaEntity m WHERE m.status IN ('PENDING', 'CONFIRMED')")
+    List<Long> findSearchableMatchIds();
 }

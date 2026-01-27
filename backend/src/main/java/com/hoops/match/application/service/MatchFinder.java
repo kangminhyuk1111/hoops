@@ -11,6 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,15 +33,24 @@ public class MatchFinder implements MatchQueryUseCase {
     @Override
     public List<Match> getMatchesByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance, int page, int size) {
         double radiusKm = distance.doubleValue() / 1000.0;
-        int limit = size;
+        int offset = page * size;
 
-        List<Long> matchIds = matchGeoIndex.findMatchIdsWithinRadius(longitude, latitude, radiusKm, limit);
+        List<Long> matchIds = matchGeoIndex.findMatchIdsWithinRadius(longitude, latitude, radiusKm, offset, size);
 
         if (matchIds.isEmpty()) {
             return List.of();
         }
 
-        return matchRepository.findAllByIds(matchIds);
+        List<Match> matches = matchRepository.findAllByIds(matchIds);
+
+        // Redis 순서(거리순)대로 재정렬
+        Map<Long, Match> matchMap = matches.stream()
+                .collect(Collectors.toMap(Match::getId, Function.identity()));
+
+        return matchIds.stream()
+                .map(matchMap::get)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     @Override

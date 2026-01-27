@@ -43,8 +43,9 @@ docker-compose -f app/monitoring/docker-compose.monitoring.yml up -d
 # Cleanup unused images
 docker image prune -f
 
-# Sync deploy script from source (at the very end, after all work is done)
+# Sync deploy script and docker-compose from source
 cp -f app/deploy.sh /home/ec2-user/hoops/deploy.sh
+cp -f app/docker-compose.yml /home/ec2-user/hoops/docker-compose.yml
 
 echo "Deployment complete!"
 echo "Backend: http://${PUBLIC_IP}:8080"

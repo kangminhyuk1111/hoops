@@ -2,7 +2,8 @@ package com.hoops.match.application.service;
 
 import com.hoops.match.application.exception.MatchNotFoundException;
 import com.hoops.match.application.port.in.MatchQueryUseCase;
-import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.application.port.out.MatchGeoIndexPort;
+import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MatchFinder implements MatchQueryUseCase {
 
-    private final MatchRepository matchRepository;
+    private final MatchRepositoryPort matchRepository;
+    private final MatchGeoIndexPort matchGeoIndex;
 
     @Override
     public Match getMatchById(Long matchId) {
@@ -26,7 +28,16 @@ public class MatchFinder implements MatchQueryUseCase {
 
     @Override
     public List<Match> getMatchesByLocation(BigDecimal latitude, BigDecimal longitude, BigDecimal distance, int page, int size) {
-        return matchRepository.findAllByLocation(latitude, longitude, distance, page, size);
+        double radiusKm = distance.doubleValue() / 1000.0;
+        int limit = size;
+
+        List<Long> matchIds = matchGeoIndex.findMatchIdsWithinRadius(longitude, latitude, radiusKm, limit);
+
+        if (matchIds.isEmpty()) {
+            return List.of();
+        }
+
+        return matchRepository.findAllByIds(matchIds);
     }
 
     @Override

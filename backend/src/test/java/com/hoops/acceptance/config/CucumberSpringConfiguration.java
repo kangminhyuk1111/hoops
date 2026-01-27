@@ -1,5 +1,6 @@
 package com.hoops.acceptance.config;
 
+import com.redis.testcontainers.RedisContainer;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -16,7 +17,7 @@ import org.testcontainers.containers.MySQLContainer;
  * @CucumberContextConfiguration: Cucumber가 Spring 컨텍스트를 사용하도록 설정
  * @SpringBootTest: Spring Boot 애플리케이션 전체를 테스트 환경에서 실행
  * WebEnvironment.RANDOM_PORT: 랜덤 포트로 실제 서버를 시작
- * MySQL Testcontainers 사용
+ * MySQL, Redis Testcontainers 사용
  */
 @CucumberContextConfiguration
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -25,6 +26,7 @@ import org.testcontainers.containers.MySQLContainer;
 public class CucumberSpringConfiguration {
 
     private static final MySQLContainer<?> mysql;
+    private static final RedisContainer redis;
 
     static {
         mysql = new MySQLContainer<>("mysql:8.0.36")
@@ -32,6 +34,9 @@ public class CucumberSpringConfiguration {
             .withUsername("test")
             .withPassword("test");
         mysql.start();
+
+        redis = new RedisContainer("redis:7-alpine");
+        redis.start();
     }
 
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -43,7 +48,9 @@ public class CucumberSpringConfiguration {
                 "spring.datasource.username=" + mysql.getUsername(),
                 "spring.datasource.password=" + mysql.getPassword(),
                 "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver",
-                "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect"
+                "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect",
+                "spring.data.redis.host=" + redis.getHost(),
+                "spring.data.redis.port=" + redis.getFirstMappedPort()
             );
         }
     }

@@ -4,12 +4,13 @@ import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.auth.application.port.out.JwtTokenPort;
 import com.hoops.location.domain.model.Location;
-import com.hoops.location.domain.repository.LocationRepository;
-import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.location.application.port.out.LocationRepositoryPort;
+import com.hoops.match.application.port.out.MatchGeoIndexPort;
+import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.vo.MatchStatus;
 import com.hoops.user.domain.model.User;
-import com.hoops.user.domain.repository.UserRepository;
+import com.hoops.user.application.port.out.UserRepositoryPort;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;
 import io.cucumber.java.ko.만일;
@@ -29,9 +30,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class E2EHappyPathStepDefs {
 
     private final TestAdapter testAdapter;
-    private final UserRepository userRepository;
-    private final MatchRepository matchRepository;
-    private final LocationRepository locationRepository;
+    private final UserRepositoryPort userRepository;
+    private final MatchRepositoryPort matchRepository;
+    private final MatchGeoIndexPort matchGeoIndex;
+    private final LocationRepositoryPort locationRepository;
     private final JwtTokenPort jwtTokenProvider;
     private final SharedTestContext sharedContext;
 
@@ -40,14 +42,16 @@ public class E2EHappyPathStepDefs {
 
     public E2EHappyPathStepDefs(
             TestAdapter testAdapter,
-            UserRepository userRepository,
-            MatchRepository matchRepository,
-            LocationRepository locationRepository,
+            UserRepositoryPort userRepository,
+            MatchRepositoryPort matchRepository,
+            MatchGeoIndexPort matchGeoIndex,
+            LocationRepositoryPort locationRepository,
             JwtTokenPort jwtTokenProvider,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;
         this.userRepository = userRepository;
         this.matchRepository = matchRepository;
+        this.matchGeoIndex = matchGeoIndex;
         this.locationRepository = locationRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.sharedContext = sharedContext;
@@ -90,6 +94,7 @@ public class E2EHappyPathStepDefs {
                 null  // cancelledAt
         );
         Match savedMatch = matchRepository.save(match);
+        matchGeoIndex.addMatch(savedMatch.getId(), savedMatch.getLongitude(), savedMatch.getLatitude());
         sharedContext.clearTestMatches();
         sharedContext.addTestMatch(savedMatch);
 

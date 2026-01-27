@@ -2,11 +2,12 @@ package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
-import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.application.port.out.MatchGeoIndexPort;
+import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.vo.MatchStatus;
 import com.hoops.user.domain.model.User;
-import com.hoops.user.domain.repository.UserRepository;
+import com.hoops.user.application.port.out.UserRepositoryPort;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;
 import io.cucumber.java.ko.만일;
@@ -20,8 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MatchQueryStepDefs {
 
     private final TestAdapter testAdapter;
-    private final MatchRepository matchRepository;
-    private final UserRepository userRepository;
+    private final MatchRepositoryPort matchRepository;
+    private final MatchGeoIndexPort matchGeoIndex;
+    private final UserRepositoryPort userRepository;
     private final SharedTestContext sharedContext;
 
     // 서울 좌표
@@ -34,11 +36,13 @@ public class MatchQueryStepDefs {
 
     public MatchQueryStepDefs(
             TestAdapter testAdapter,
-            MatchRepository matchRepository,
-            UserRepository userRepository,
+            MatchRepositoryPort matchRepository,
+            MatchGeoIndexPort matchGeoIndex,
+            UserRepositoryPort userRepository,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;
         this.matchRepository = matchRepository;
+        this.matchGeoIndex = matchGeoIndex;
         this.userRepository = userRepository;
         this.sharedContext = sharedContext;
     }
@@ -56,6 +60,7 @@ public class MatchQueryStepDefs {
         for (int i = 0; i < count; i++) {
             Match match = createMatch(testUser, SEOUL_LATITUDE, SEOUL_LONGITUDE, "서울 경기 " + (i + 1));
             Match savedMatch = matchRepository.save(match);
+            matchGeoIndex.addMatch(savedMatch.getId(), savedMatch.getLongitude(), savedMatch.getLatitude());
             sharedContext.addTestMatch(savedMatch);
         }
     }
@@ -73,6 +78,7 @@ public class MatchQueryStepDefs {
         for (int i = 0; i < count; i++) {
             Match match = createMatch(testUser, BUSAN_LATITUDE, BUSAN_LONGITUDE, "부산 경기 " + (i + 1));
             Match savedMatch = matchRepository.save(match);
+            matchGeoIndex.addMatch(savedMatch.getId(), savedMatch.getLongitude(), savedMatch.getLatitude());
             sharedContext.addTestMatch(savedMatch);
         }
     }

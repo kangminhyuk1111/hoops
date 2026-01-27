@@ -46,6 +46,9 @@ dependencies {
     // Kafka
     implementation("org.springframework.kafka:spring-kafka")
 
+    // Redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
     // Swagger/OpenAPI
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 
@@ -70,6 +73,7 @@ dependencies {
     testImplementation("org.testcontainers:mysql:1.19.3")
     testImplementation("org.testcontainers:kafka:1.19.3")
     testImplementation("org.testcontainers:junit-jupiter:1.19.3")
+    testImplementation("com.redis:testcontainers-redis:2.0.1")
 }
 
 tasks.withType<Test> {

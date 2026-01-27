@@ -2,7 +2,7 @@ package com.hoops.user.adapter.out;
 
 import com.hoops.user.application.port.out.UserQueryPort;
 import com.hoops.user.domain.model.User;
-import com.hoops.user.domain.repository.UserRepository;
+import com.hoops.user.application.port.out.UserRepositoryPort;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserQueryAdapter implements UserQueryPort {
 
-    private final UserRepository userRepository;
+    private final UserRepositoryPort userRepository;
 
     @Override
     public Optional<String> getNicknameByUserId(Long userId) {

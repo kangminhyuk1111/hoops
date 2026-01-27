@@ -2,12 +2,12 @@ package com.hoops.acceptance.steps;
 
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
-import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.vo.MatchStatus;
 import com.hoops.participation.domain.model.Participation;
 import com.hoops.participation.domain.vo.ParticipationStatus;
-import com.hoops.participation.domain.repository.ParticipationRepository;
+import com.hoops.participation.application.port.out.ParticipationRepositoryPort;
 import com.hoops.user.domain.model.User;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;
@@ -23,14 +23,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MyParticipationsStepDefs {
 
     private final TestAdapter testAdapter;
-    private final MatchRepository matchRepository;
-    private final ParticipationRepository participationRepository;
+    private final MatchRepositoryPort matchRepository;
+    private final ParticipationRepositoryPort participationRepository;
     private final SharedTestContext sharedContext;
 
     public MyParticipationsStepDefs(
             TestAdapter testAdapter,
-            MatchRepository matchRepository,
-            ParticipationRepository participationRepository,
+            MatchRepositoryPort matchRepository,
+            ParticipationRepositoryPort participationRepository,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;
         this.matchRepository = matchRepository;

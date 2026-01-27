@@ -3,8 +3,8 @@ package com.hoops.acceptance.steps;
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.location.domain.model.Location;
-import com.hoops.location.domain.repository.LocationRepository;
-import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.location.application.port.out.LocationRepositoryPort;
+import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.vo.MatchStatus;
 import com.hoops.user.domain.model.User;
@@ -24,14 +24,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MyHostedMatchesStepDefs {
 
     private final TestAdapter testAdapter;
-    private final MatchRepository matchRepository;
-    private final LocationRepository locationRepository;
+    private final MatchRepositoryPort matchRepository;
+    private final LocationRepositoryPort locationRepository;
     private final SharedTestContext sharedContext;
 
     public MyHostedMatchesStepDefs(
             TestAdapter testAdapter,
-            MatchRepository matchRepository,
-            LocationRepository locationRepository,
+            MatchRepositoryPort matchRepository,
+            LocationRepositoryPort locationRepository,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;
         this.matchRepository = matchRepository;

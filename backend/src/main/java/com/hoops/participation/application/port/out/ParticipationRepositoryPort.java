@@ -1,11 +1,14 @@
-package com.hoops.participation.domain.repository;
+package com.hoops.participation.application.port.out;
 
 import com.hoops.participation.domain.model.Participation;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ParticipationRepository {
+/**
+ * Participation 영속성 포트 인터페이스
+ */
+public interface ParticipationRepositoryPort {
     Participation save(Participation participation);
 
     Optional<Participation> findById(Long id);

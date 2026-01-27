@@ -4,7 +4,7 @@ import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.auth.application.port.out.JwtTokenPort;
 import com.hoops.user.domain.model.User;
-import com.hoops.user.domain.repository.UserRepository;
+import com.hoops.user.application.port.out.UserRepositoryPort;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;
 import io.cucumber.java.ko.만일;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserProfileStepDefs {
 
     private final TestAdapter testAdapter;
-    private final UserRepository userRepository;
+    private final UserRepositoryPort userRepository;
     private final JwtTokenPort jwtTokenProvider;
     private final SharedTestContext sharedContext;
 
@@ -25,7 +25,7 @@ public class UserProfileStepDefs {
 
     public UserProfileStepDefs(
             TestAdapter testAdapter,
-            UserRepository userRepository,
+            UserRepositoryPort userRepository,
             JwtTokenPort jwtTokenProvider,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;

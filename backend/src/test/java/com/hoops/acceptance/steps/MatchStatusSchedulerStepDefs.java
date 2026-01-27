@@ -1,7 +1,7 @@
 package com.hoops.acceptance.steps;
 
 import com.hoops.match.application.port.in.UpdateMatchStatusUseCase;
-import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.vo.MatchStatus;
 import com.hoops.user.domain.model.User;
@@ -17,14 +17,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MatchStatusSchedulerStepDefs {
 
-    private final MatchRepository matchRepository;
+    private final MatchRepositoryPort matchRepository;
     private final UpdateMatchStatusUseCase updateMatchStatusUseCase;
     private final SharedTestContext sharedContext;
 
     private int totalStatusChangeCount = 0;
 
     public MatchStatusSchedulerStepDefs(
-            MatchRepository matchRepository,
+            MatchRepositoryPort matchRepository,
             UpdateMatchStatusUseCase updateMatchStatusUseCase,
             SharedTestContext sharedContext) {
         this.matchRepository = matchRepository;

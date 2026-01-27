@@ -1,7 +1,7 @@
 package com.hoops.notification.adapter.out.persistence;
 
 import com.hoops.notification.domain.model.Notification;
-import com.hoops.notification.domain.repository.NotificationRepository;
+import com.hoops.notification.application.port.out.NotificationRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class NotificationJpaAdapter implements NotificationRepository {
+public class NotificationJpaAdapter implements NotificationRepositoryPort {
 
     private final SpringDataNotificationRepository springDataNotificationRepository;
 

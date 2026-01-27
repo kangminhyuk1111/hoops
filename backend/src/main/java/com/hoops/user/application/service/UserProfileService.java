@@ -7,7 +7,7 @@ import com.hoops.user.application.port.in.GetUserProfileUseCase;
 import com.hoops.user.application.port.in.UpdateUserProfileCommand;
 import com.hoops.user.application.port.in.UpdateUserProfileUseCase;
 import com.hoops.user.domain.model.User;
-import com.hoops.user.domain.repository.UserRepository;
+import com.hoops.user.application.port.out.UserRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserProfileService implements GetMyProfileUseCase, GetUserProfileUseCase, UpdateUserProfileUseCase {
 
-    private final UserRepository userRepository;
+    private final UserRepositoryPort userRepository;
 
     @Override
     public User getMyProfile(Long userId) {

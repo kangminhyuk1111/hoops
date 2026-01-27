@@ -6,7 +6,7 @@ import com.hoops.participation.application.port.out.MatchInfoPort;
 import com.hoops.participation.application.port.out.ParticipationEventPublisher;
 import com.hoops.participation.domain.model.Participation;
 import com.hoops.participation.domain.vo.ParticipationStatus;
-import com.hoops.participation.domain.repository.ParticipationRepository;
+import com.hoops.participation.application.port.out.ParticipationRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ParticipationCanceller {
 
-    private final ParticipationRepository participationRepository;
+    private final ParticipationRepositoryPort participationRepository;
     private final MatchInfoPort matchInfoProvider;
     private final ParticipationEventPublisher eventPublisher;
 

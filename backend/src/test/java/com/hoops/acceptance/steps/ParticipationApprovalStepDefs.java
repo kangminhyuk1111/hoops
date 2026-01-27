@@ -4,20 +4,20 @@ import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.auth.application.port.out.JwtTokenPort;
 import com.hoops.auth.domain.model.AuthAccount;
-import com.hoops.auth.domain.repository.AuthAccountRepository;
+import com.hoops.auth.application.port.out.AuthAccountRepositoryPort;
 import com.hoops.auth.domain.vo.AuthProvider;
 import com.hoops.location.domain.model.Location;
-import com.hoops.location.domain.repository.LocationRepository;
+import com.hoops.location.application.port.out.LocationRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.vo.MatchStatus;
-import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.match.application.port.out.MatchRepositoryPort;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import com.hoops.participation.domain.model.Participation;
 import com.hoops.participation.domain.vo.ParticipationStatus;
-import com.hoops.participation.domain.repository.ParticipationRepository;
+import com.hoops.participation.application.port.out.ParticipationRepositoryPort;
 import com.hoops.user.domain.model.User;
-import com.hoops.user.domain.repository.UserRepository;
+import com.hoops.user.application.port.out.UserRepositoryPort;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;
 import io.cucumber.java.ko.만일;
@@ -35,11 +35,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ParticipationApprovalStepDefs {
 
     private final TestAdapter testAdapter;
-    private final UserRepository userRepository;
-    private final AuthAccountRepository authAccountRepository;
-    private final MatchRepository matchRepository;
-    private final LocationRepository locationRepository;
-    private final ParticipationRepository participationRepository;
+    private final UserRepositoryPort userRepository;
+    private final AuthAccountRepositoryPort authAccountRepository;
+    private final MatchRepositoryPort matchRepository;
+    private final LocationRepositoryPort locationRepository;
+    private final ParticipationRepositoryPort participationRepository;
     private final JwtTokenPort jwtTokenProvider;
     private final SharedTestContext sharedContext;
 
@@ -48,11 +48,11 @@ public class ParticipationApprovalStepDefs {
 
     public ParticipationApprovalStepDefs(
             TestAdapter testAdapter,
-            UserRepository userRepository,
-            AuthAccountRepository authAccountRepository,
-            MatchRepository matchRepository,
-            LocationRepository locationRepository,
-            ParticipationRepository participationRepository,
+            UserRepositoryPort userRepository,
+            AuthAccountRepositoryPort authAccountRepository,
+            MatchRepositoryPort matchRepository,
+            LocationRepositoryPort locationRepository,
+            ParticipationRepositoryPort participationRepository,
             JwtTokenPort jwtTokenProvider,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;

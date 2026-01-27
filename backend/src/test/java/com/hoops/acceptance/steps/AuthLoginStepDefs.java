@@ -5,12 +5,12 @@ import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.acceptance.mock.MockKakaoOAuthClient;
 import com.hoops.auth.application.port.out.JwtTokenPort;
 import com.hoops.auth.domain.model.AuthAccount;
-import com.hoops.auth.domain.repository.AuthAccountRepository;
+import com.hoops.auth.application.port.out.AuthAccountRepositoryPort;
 import com.hoops.auth.domain.vo.AuthProvider;
 import com.hoops.auth.domain.vo.OAuthUserInfo;
 import com.hoops.auth.domain.vo.TokenPair;
 import com.hoops.user.domain.model.User;
-import com.hoops.user.domain.repository.UserRepository;
+import com.hoops.user.application.port.out.UserRepositoryPort;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;
 import io.cucumber.java.ko.만일;
@@ -28,16 +28,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AuthLoginStepDefs {
 
     private final TestAdapter testAdapter;
-    private final UserRepository userRepository;
-    private final AuthAccountRepository authAccountRepository;
+    private final UserRepositoryPort userRepository;
+    private final AuthAccountRepositoryPort authAccountRepository;
     private final JwtTokenPort jwtTokenProvider;
     private final MockKakaoOAuthClient mockKakaoOAuthClient;
     private final SharedTestContext sharedContext;
 
     public AuthLoginStepDefs(
             TestAdapter testAdapter,
-            UserRepository userRepository,
-            AuthAccountRepository authAccountRepository,
+            UserRepositoryPort userRepository,
+            AuthAccountRepositoryPort authAccountRepository,
             JwtTokenPort jwtTokenProvider,
             MockKakaoOAuthClient mockKakaoOAuthClient,
             SharedTestContext sharedContext) {

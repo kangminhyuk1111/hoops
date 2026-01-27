@@ -1,7 +1,7 @@
 package com.hoops.user.adapter.out.persistence;
 
 import com.hoops.user.domain.model.User;
-import com.hoops.user.domain.repository.UserRepository;
+import com.hoops.user.application.port.out.UserRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
-public class UserJpaAdapter implements UserRepository {
+public class UserJpaAdapter implements UserRepositoryPort {
 
     private final SpringDataUserRepository springDataUserRepository;
 

@@ -3,15 +3,15 @@ package com.hoops.acceptance.steps;
 import com.hoops.acceptance.adapter.TestAdapter;
 import com.hoops.acceptance.adapter.TestResponse;
 import com.hoops.location.domain.model.Location;
-import com.hoops.location.domain.repository.LocationRepository;
-import com.hoops.match.domain.repository.MatchRepository;
+import com.hoops.location.application.port.out.LocationRepositoryPort;
+import com.hoops.match.application.port.out.MatchRepositoryPort;
 import com.hoops.match.domain.model.Match;
 import com.hoops.match.domain.vo.MatchStatus;
 import com.hoops.participation.domain.model.Participation;
 import com.hoops.participation.domain.vo.ParticipationStatus;
-import com.hoops.participation.domain.repository.ParticipationRepository;
+import com.hoops.participation.application.port.out.ParticipationRepositoryPort;
 import com.hoops.user.domain.model.User;
-import com.hoops.user.domain.repository.UserRepository;
+import com.hoops.user.application.port.out.UserRepositoryPort;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.먼저;
 import io.cucumber.java.ko.만일;
@@ -29,10 +29,10 @@ import java.util.Map;
 public class P0OverlapRestrictionStepDefs {
 
     private final TestAdapter testAdapter;
-    private final MatchRepository matchRepository;
-    private final UserRepository userRepository;
-    private final ParticipationRepository participationRepository;
-    private final LocationRepository locationRepository;
+    private final MatchRepositoryPort matchRepository;
+    private final UserRepositoryPort userRepository;
+    private final ParticipationRepositoryPort participationRepository;
+    private final LocationRepositoryPort locationRepository;
     private final SharedTestContext sharedContext;
 
     private Match secondMatch;
@@ -40,10 +40,10 @@ public class P0OverlapRestrictionStepDefs {
 
     public P0OverlapRestrictionStepDefs(
             TestAdapter testAdapter,
-            MatchRepository matchRepository,
-            UserRepository userRepository,
-            ParticipationRepository participationRepository,
-            LocationRepository locationRepository,
+            MatchRepositoryPort matchRepository,
+            UserRepositoryPort userRepository,
+            ParticipationRepositoryPort participationRepository,
+            LocationRepositoryPort locationRepository,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;
         this.matchRepository = matchRepository;

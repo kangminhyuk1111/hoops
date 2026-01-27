@@ -6,7 +6,7 @@ import com.hoops.match.adapter.out.persistence.MatchJpaEntity;
 import com.hoops.match.adapter.out.persistence.SpringDataMatchRepository;
 import com.hoops.match.domain.vo.MatchStatus;
 import com.hoops.user.domain.model.User;
-import com.hoops.user.domain.repository.UserRepository;
+import com.hoops.user.application.port.out.UserRepositoryPort;
 import io.cucumber.java.ko.먼저;
 import io.cucumber.java.ko.만일;
 
@@ -19,13 +19,13 @@ public class MatchReactivateStepDefs {
 
     private final TestAdapter testAdapter;
     private final SpringDataMatchRepository jpaMatchRepository;
-    private final UserRepository userRepository;
+    private final UserRepositoryPort userRepository;
     private final SharedTestContext sharedContext;
 
     public MatchReactivateStepDefs(
             TestAdapter testAdapter,
             SpringDataMatchRepository jpaMatchRepository,
-            UserRepository userRepository,
+            UserRepositoryPort userRepository,
             SharedTestContext sharedContext) {
         this.testAdapter = testAdapter;
         this.jpaMatchRepository = jpaMatchRepository;

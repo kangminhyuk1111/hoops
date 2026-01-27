@@ -21,7 +21,7 @@
 
 ## Tech Stack
 - Java 17, Spring Boot 3.x, JPA, MySQL
-- Kafka, JUnit 5, Cucumber, Testcontainers
+- Redis (GeoHash), JUnit 5, Cucumber, Testcontainers
 
 ## Package Structure
 

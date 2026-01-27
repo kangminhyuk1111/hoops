@@ -10,9 +10,6 @@ spring:
       ddl-auto: validate
     show-sql: false
 
-  kafka:
-    enabled: false
-
   data:
     redis:
       host: ${SPRING_DATA_REDIS_HOST}

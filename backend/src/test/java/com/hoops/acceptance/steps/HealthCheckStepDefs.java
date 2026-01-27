@@ -78,7 +78,7 @@ public class HealthCheckStepDefs {
      * Then: 응답에 데이터베이스 연결 정보가 포함되어 있다
      *
      * Spring Boot Actuator의 헬스 체크 응답에는
-     * components 필드에 각 컴포넌트(DB, Kafka 등)의 상태가 포함됩니다.
+     * components 필드에 각 컴포넌트(DB, Redis 등)의 상태가 포함됩니다.
      *
      * 예시 응답 구조:
      * {

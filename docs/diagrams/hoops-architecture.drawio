@@ -224,20 +224,6 @@
           <mxGeometry x="580" y="810" width="160" height="130" as="geometry" />
         </mxCell>
 
-        <!-- Kafka -->
-        <mxCell id="kafka-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;strokeWidth=2;" vertex="1" parent="public-subnet">
-          <mxGeometry x="820" y="705" width="280" height="290" as="geometry" />
-        </mxCell>
-        <mxCell id="kafka-icon" value="Kafka&#xa;:9092" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;strokeWidth=2;fontColor=#FFFFFF;fontSize=13;fontStyle=1;" vertex="1" parent="public-subnet">
-          <mxGeometry x="905" y="720" width="110" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="kafka-topics" value="Topics:&#xa;• participation-events&#xa;  - CREATED&#xa;  - CANCELLED&#xa;&#xa;Consumers:&#xa;• NotificationEventListener" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#37474F;" vertex="1" parent="public-subnet">
-          <mxGeometry x="840" y="810" width="180" height="130" as="geometry" />
-        </mxCell>
-        <mxCell id="zk-note" value="+ Zookeeper" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2;fontColor=#757575;" vertex="1" parent="public-subnet">
-          <mxGeometry x="905" y="950" width="110" height="20" as="geometry" />
-        </mxCell>
-
         <!-- External APIs -->
         <mxCell id="external-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFC107;strokeWidth=2;" vertex="1" parent="public-subnet">
           <mxGeometry x="1120" y="705" width="280" height="150" as="geometry" />
@@ -293,32 +279,6 @@
         </mxCell>
         <mxCell id="arr-be-redis-label" value="GeoHash" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#C62828;fontStyle=1;" vertex="1" connectable="0" parent="arr-be-redis">
           <mxGeometry x="0.3" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
-        </mxCell>
-
-        <!-- Backend to Kafka (publish) -->
-        <mxCell id="arr-be-kafka" edge="1" parent="public-subnet" source="part-svc" target="kafka-box" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FF9800;endArrow=classic;dashed=1;entryX=0.5;entryY=0;">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1235" y="520" />
-              <mxPoint x="960" y="520" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="arr-be-kafka-label" value="Publish" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E65100;fontStyle=1;" vertex="1" connectable="0" parent="arr-be-kafka">
-          <mxGeometry x="0.3" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
-        </mxCell>
-
-        <!-- Kafka to Notification (consume) -->
-        <mxCell id="arr-kafka-noti" edge="1" parent="public-subnet" source="kafka-box" target="noti-svc" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#FF9800;endArrow=classic;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="960" y="540" />
-              <mxPoint x="1130" y="540" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="arr-kafka-noti-label" value="Consume" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#E65100;fontStyle=1;" vertex="1" connectable="0" parent="arr-kafka-noti">
-          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
         </mxCell>
 
         <!-- Auth to Kakao -->
@@ -393,24 +353,14 @@
           <mxGeometry x="1535" y="295" width="150" height="20" as="geometry" />
         </mxCell>
 
-        <mxCell id="leg-line5" edge="1" parent="public-subnet" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#FF9800;rounded=0;dashed=1;">
+        <mxCell id="leg-line5" edge="1" parent="public-subnet" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;strokeColor=#FBC02D;rounded=0;">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="1460" y="340" as="sourcePoint" />
             <mxPoint x="1520" y="340" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="leg-text5" value="Kafka 이벤트" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="public-subnet">
+        <mxCell id="leg-text5" value="OAuth 연동" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="public-subnet">
           <mxGeometry x="1535" y="330" width="150" height="20" as="geometry" />
-        </mxCell>
-
-        <mxCell id="leg-line6" edge="1" parent="public-subnet" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;strokeColor=#FBC02D;rounded=0;">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="1460" y="375" as="sourcePoint" />
-            <mxPoint x="1520" y="375" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="leg-text6" value="OAuth 연동" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="public-subnet">
-          <mxGeometry x="1535" y="365" width="150" height="20" as="geometry" />
         </mxCell>
 
         <!-- Tech Stack section in legend -->
@@ -422,8 +372,8 @@
           <mxGeometry x="1440" y="415" width="300" height="20" as="geometry" />
         </mxCell>
 
-        <mxCell id="leg-stack" value="• Backend: Java 17, Spring Boot 3.x&#xa;• Frontend: Next.js 14, React, TailwindCSS&#xa;• Database: MySQL 8.0&#xa;• Cache: Redis 7 (GeoHash)&#xa;• Message: Kafka (Confluent)&#xa;• Infra: AWS EC2, Terraform&#xa;• Container: Docker Compose&#xa;• Test: JUnit 5, Cucumber, Testcontainers" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#616161;" vertex="1" parent="public-subnet">
-          <mxGeometry x="1460" y="440" width="260" height="150" as="geometry" />
+        <mxCell id="leg-stack" value="• Backend: Java 17, Spring Boot 3.x&#xa;• Frontend: Next.js 14, React, TailwindCSS&#xa;• Database: MySQL 8.0&#xa;• Cache: Redis 7 (GeoHash)&#xa;• Infra: AWS EC2, Terraform&#xa;• Container: Docker Compose&#xa;• Test: JUnit 5, Cucumber, Testcontainers" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#616161;" vertex="1" parent="public-subnet">
+          <mxGeometry x="1460" y="440" width="260" height="130" as="geometry" />
         </mxCell>
 
         <!-- Security Group info -->

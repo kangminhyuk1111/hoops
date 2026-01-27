@@ -10,10 +10,6 @@ spring:
       ddl-auto: update
     show-sql: false
 
-  kafka:
-    enabled: false
-    bootstrap-servers: kafka:29092
-
   data:
     redis:
       host: ${SPRING_DATA_REDIS_HOST:redis}

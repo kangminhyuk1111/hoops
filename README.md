@@ -7,7 +7,7 @@ Basketball match-making platform for finding and joining pickup games near you.
 ### Backend
 - Java 17, Spring Boot 3.x
 - JPA, MySQL 8.0
-- Kafka (event-driven notifications)
+- Redis (GeoHash for location-based search)
 - JWT Authentication with Kakao OAuth
 
 ### Frontend
@@ -29,7 +29,7 @@ Basketball match-making platform for finding and joining pickup games near you.
 | Kakao OAuth | REST API | User authentication, social login |
 | Kakao Maps | JavaScript SDK | Location search, map display |
 | MySQL | JDBC | Data persistence |
-| Kafka | Event streaming | Async notification delivery |
+| Redis | Spring Data Redis | GeoHash-based location search |
 
 ### Container Diagram
 
@@ -38,8 +38,7 @@ Basketball match-making platform for finding and joining pickup games near you.
 | Frontend | Next.js | UI, user interaction, map rendering |
 | Backend API | Spring Boot | Business logic, REST API |
 | MySQL | MySQL 8.0 | Match, User, Location, Participation data |
-| Kafka | Apache Kafka | Event bus for notifications |
-| Zookeeper | Zookeeper | Kafka cluster coordination |
+| Redis | Redis 7 | GeoHash spatial index, caching |
 
 ### Hexagonal Architecture
 
@@ -72,7 +71,7 @@ Basketball match-making platform for finding and joining pickup games near you.
 - **Location-based Match Search** - Find matches within specified distance
 - **Match Creation** - Create matches with location, date, time, max participants
 - **Participation Management** - Join/cancel matches, host approval/rejection
-- **Real-time Notifications** - Kafka-based event notifications
+- **Notifications** - In-app notification system
 - **My Page** - View participated and hosted matches
 
 ## Getting Started
@@ -117,7 +116,7 @@ docker-compose up -d
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8080
 - **MySQL**: localhost:3306
-- **Kafka**: localhost:9092
+- **Redis**: localhost:6379
 
 ## Frontend Pages
 
@@ -191,7 +190,7 @@ hoops/
 │       ├── match/          # Match CRUD
 │       ├── participation/  # Join/cancel logic
 │       ├── location/       # Location management
-│       ├── notification/   # Kafka notifications
+│       ├── notification/   # In-app notifications
 │       └── common/         # Shared utilities
 ├── frontend/               # Next.js App
 │   └── app/

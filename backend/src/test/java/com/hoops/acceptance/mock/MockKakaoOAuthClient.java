@@ -1,6 +1,7 @@
 package com.hoops.acceptance.mock;
 
 import com.hoops.auth.application.port.out.OAuthPort;
+import com.hoops.auth.domain.vo.AuthProvider;
 import com.hoops.auth.domain.vo.OAuthTokenInfo;
 import com.hoops.auth.domain.vo.OAuthUserInfo;
 import org.slf4j.Logger;
@@ -24,6 +25,11 @@ public class MockKakaoOAuthClient implements OAuthPort {
     private static final Logger log = LoggerFactory.getLogger(MockKakaoOAuthClient.class);
 
     private final Map<String, OAuthUserInfo> codeToUserInfo = new ConcurrentHashMap<>();
+
+    @Override
+    public AuthProvider getProvider() {
+        return AuthProvider.KAKAO;
+    }
 
     @Override
     public String getAuthorizationUrl() {

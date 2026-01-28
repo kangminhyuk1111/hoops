@@ -4,6 +4,7 @@ import com.hoops.auth.application.dto.OAuthCallbackResult;
 import com.hoops.auth.application.dto.UserInfo;
 import com.hoops.auth.application.port.in.OAuthLoginUseCase;
 import com.hoops.auth.application.port.out.OAuthPort;
+import com.hoops.auth.application.port.out.OAuthPortFactory;
 import com.hoops.auth.application.port.out.JwtTokenPort;
 import com.hoops.auth.application.port.out.UserInfoPort;
 import com.hoops.auth.application.exception.UserNotFoundForAuthException;
@@ -26,19 +27,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OAuthLoginService implements OAuthLoginUseCase {
 
-    private final OAuthPort oauthPort;
+    private final OAuthPortFactory oauthPortFactory;
     private final JwtTokenPort jwtTokenPort;
     private final AuthAccountRepositoryPort authAccountRepository;
     private final UserInfoPort userInfoPort;
 
     @Override
     public String getAuthorizationUrl(AuthProvider provider) {
-        return oauthPort.getAuthorizationUrl();
+        return getOAuthPort(provider).getAuthorizationUrl();
     }
 
     @Override
     public OAuthCallbackResult processCallback(AuthProvider provider, String code) {
-        OAuthUserInfo oauthUserInfo = fetchOAuthUserInfo(code);
+        OAuthUserInfo oauthUserInfo = fetchOAuthUserInfo(provider, code);
 
         Optional<AuthAccount> existingAccount = authAccountRepository
                 .findByProviderAndProviderId(provider, oauthUserInfo.providerId());
@@ -48,7 +49,12 @@ public class OAuthLoginService implements OAuthLoginUseCase {
                 .orElseGet(() -> handleNewUser(provider, oauthUserInfo));
     }
 
-    private OAuthUserInfo fetchOAuthUserInfo(String code) {
+    private OAuthPort getOAuthPort(AuthProvider provider) {
+        return oauthPortFactory.getPort(provider);
+    }
+
+    private OAuthUserInfo fetchOAuthUserInfo(AuthProvider provider, String code) {
+        OAuthPort oauthPort = getOAuthPort(provider);
         OAuthTokenInfo tokenInfo = oauthPort.getToken(code);
         return oauthPort.getUserInfo(tokenInfo.accessToken());
     }

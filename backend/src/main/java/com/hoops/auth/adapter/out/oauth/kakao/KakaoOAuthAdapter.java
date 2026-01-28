@@ -5,10 +5,12 @@ import com.hoops.auth.adapter.out.oauth.kakao.dto.KakaoUserResponse;
 import com.hoops.auth.adapter.out.oauth.kakao.exception.InvalidAuthCodeException;
 import com.hoops.auth.adapter.out.oauth.kakao.exception.KakaoApiException;
 import com.hoops.auth.application.port.out.OAuthPort;
+import com.hoops.auth.domain.vo.AuthProvider;
 import com.hoops.auth.domain.vo.OAuthTokenInfo;
 import com.hoops.auth.domain.vo.OAuthUserInfo;
 import com.hoops.auth.infrastructure.config.KakaoOAuthProperties;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -20,11 +22,17 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Optional;
 
 @Component
+@Profile("!test")
 @RequiredArgsConstructor
 public class KakaoOAuthAdapter implements OAuthPort {
 
     private final KakaoOAuthProperties properties;
     private final RestTemplate restTemplate;
+
+    @Override
+    public AuthProvider getProvider() {
+        return AuthProvider.KAKAO;
+    }
 
     @Override
     public String getAuthorizationUrl() {

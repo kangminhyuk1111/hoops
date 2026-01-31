@@ -3,12 +3,6 @@ package com.hoops.match.adapter.in.web.dto;
 import com.hoops.match.domain.model.Match;
 import java.math.BigDecimal;
 
-/**
- * 경기 조회 응답 DTO
- *
- * Domain Model인 Match를 HTTP 응답으로 변환합니다.
- * Java 17의 record를 사용하여 불변 객체로 구현합니다.
- */
 public record MatchResponse(
         Long id,
         Long hostId,
@@ -23,15 +17,12 @@ public record MatchResponse(
         String endTime,
         Integer maxParticipants,
         Integer currentParticipants,
-        String status
+        String status,
+        Integer remainingSlots,
+        String recruitmentStatus,
+        Double distanceKm
 ) {
 
-    /**
-     * Domain Match 객체를 MatchResponse DTO로 변환합니다.
-     *
-     * @param match 도메인 Match 객체
-     * @return MatchResponse DTO
-     */
     public static MatchResponse of(Match match) {
         return new MatchResponse(
                 match.getId(),
@@ -47,7 +38,32 @@ public record MatchResponse(
                 match.getEndTime().toString(),
                 match.getMaxParticipants(),
                 match.getCurrentParticipants(),
-                match.getStatus().name()
+                match.getStatus().name(),
+                match.getRemainingSlots(),
+                match.getRecruitmentStatus().name(),
+                null
+        );
+    }
+
+    public static MatchResponse of(Match match, Double distanceKm) {
+        return new MatchResponse(
+                match.getId(),
+                match.getHostId(),
+                match.getHostNickname(),
+                match.getTitle(),
+                match.getDescription(),
+                match.getLatitude(),
+                match.getLongitude(),
+                match.getAddress(),
+                match.getMatchDate().toString(),
+                match.getStartTime().toString(),
+                match.getEndTime().toString(),
+                match.getMaxParticipants(),
+                match.getCurrentParticipants(),
+                match.getStatus().name(),
+                match.getRemainingSlots(),
+                match.getRecruitmentStatus().name(),
+                distanceKm
         );
     }
 }

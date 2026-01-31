@@ -154,10 +154,39 @@ public class MatchQueryStepDefs {
     @그리고("응답에 경기가 {int}개 포함되어 있다")
     public void 응답에_경기가_N개_포함되어_있다(int expectedCount) {
         TestResponse response = sharedContext.getLastResponse();
-        int actualCount = response.getJsonArraySize();
+        int actualCount = response.getJsonFieldArraySize("items");
         assertThat(actualCount)
                 .as("응답에 경기가 %d개 포함되어야 합니다", expectedCount)
                 .isEqualTo(expectedCount);
+    }
+
+    @만일("서울 중심으로 경기 목록을 조회한다")
+    public void 서울_중심으로_경기_목록을_조회한다() {
+        String accessToken = sharedContext.getAccessToken();
+        String path = String.format("/api/matches?latitude=%s&longitude=%s",
+                SEOUL_LATITUDE, SEOUL_LONGITUDE);
+
+        TestResponse response;
+        if (accessToken != null) {
+            response = testAdapter.getWithAuth(path, accessToken);
+        } else {
+            response = testAdapter.get(path);
+        }
+        sharedContext.setLastResponse(response);
+    }
+
+    @그리고("응답에 거리 정보가 포함되어 있다")
+    public void 응답에_거리_정보가_포함되어_있다() {
+        TestResponse response = sharedContext.getLastResponse();
+        assertThat(response.hasJsonField("items"))
+                .as("응답에 items 필드가 포함되어야 합니다")
+                .isTrue();
+        assertThat(response.hasJsonField("totalCount"))
+                .as("응답에 totalCount 필드가 포함되어야 합니다")
+                .isTrue();
+        assertThat(response.hasJsonField("hasMore"))
+                .as("응답에 hasMore 필드가 포함되어야 합니다")
+                .isTrue();
     }
 
     private User createTestUser() {

@@ -1,4 +1,4 @@
-import { Match, MatchStatus } from '@/types';
+import { Match, MatchStatus, RecruitmentStatus } from '@/types';
 
 interface MatchCardProps {
   match: Match;
@@ -17,6 +17,18 @@ const STATUS_COLOR: Record<MatchStatus, string> = {
   IN_PROGRESS: 'bg-blue-100 text-blue-700',
   ENDED: 'bg-gray-100 text-gray-600',
   CANCELLED: 'bg-red-100 text-red-600',
+};
+
+const RECRUITMENT_LABEL: Record<RecruitmentStatus, string> = {
+  RECRUITING: '모집중',
+  ALMOST_FULL: '마감임박',
+  FULL: '마감',
+};
+
+const RECRUITMENT_COLOR: Record<RecruitmentStatus, string> = {
+  RECRUITING: 'text-green-600',
+  ALMOST_FULL: 'text-orange-500',
+  FULL: 'text-red-500',
 };
 
 export default function MatchCard({ match, onClick }: MatchCardProps) {
@@ -49,7 +61,16 @@ export default function MatchCard({ match, onClick }: MatchCardProps) {
         </span>
       </div>
 
-      <p className="text-sm text-gray-500 mb-3 line-clamp-1">{match.address}</p>
+      <div className="flex items-center gap-2 mb-3">
+        <p className="text-sm text-gray-500 line-clamp-1 flex-1">{match.address}</p>
+        {match.distanceKm != null && (
+          <span className="text-xs text-orange-500 font-medium whitespace-nowrap">
+            {match.distanceKm < 1
+              ? `${Math.round(match.distanceKm * 1000)}m`
+              : `${match.distanceKm.toFixed(1)}km`}
+          </span>
+        )}
+      </div>
 
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-3 text-gray-600">
@@ -58,12 +79,19 @@ export default function MatchCard({ match, onClick }: MatchCardProps) {
             {formatTime(match.startTime)} - {formatTime(match.endTime)}
           </span>
         </div>
-        <div className="flex items-center gap-1 text-gray-600">
-          <span className="text-orange-500 font-medium">
-            {match.currentParticipants}
+        <div className="flex items-center gap-2 text-gray-600">
+          <span className={`text-xs font-medium ${RECRUITMENT_COLOR[match.recruitmentStatus]}`}>
+            {RECRUITMENT_LABEL[match.recruitmentStatus]}
           </span>
-          <span>/</span>
-          <span>{match.maxParticipants}명</span>
+          <span className="text-sm">
+            <span className="text-orange-500 font-medium">
+              {match.currentParticipants}
+            </span>
+            /{match.maxParticipants}명
+            {match.remainingSlots > 0 && (
+              <span className="text-gray-400 ml-1">({match.remainingSlots}자리)</span>
+            )}
+          </span>
         </div>
       </div>
 

@@ -22,9 +22,20 @@ export interface Match {
   maxParticipants: number;
   currentParticipants: number;
   status: MatchStatus;
+  remainingSlots: number;
+  recruitmentStatus: RecruitmentStatus;
+  distanceKm?: number;
+}
+
+export interface MatchListResponse {
+  items: Match[];
+  totalCount: number;
+  hasMore: boolean;
 }
 
 export type MatchStatus = 'PENDING' | 'IN_PROGRESS' | 'ENDED' | 'CANCELLED';
+export type RecruitmentStatus = 'RECRUITING' | 'ALMOST_FULL' | 'FULL';
+export type MatchSortType = 'DISTANCE' | 'URGENCY';
 
 // Participation
 export interface Participation {

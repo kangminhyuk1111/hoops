@@ -109,6 +109,60 @@ public class MatchGeoRedisAdapter implements MatchGeoIndexPort {
     }
 
     @Override
+    public List<GeoMatchResult> findMatchesWithinRadius(BigDecimal longitude, BigDecimal latitude, double radiusKm, int offset, int limit) {
+        try {
+            Point center = new Point(longitude.doubleValue(), latitude.doubleValue());
+            Distance radius = new Distance(radiusKm, RedisGeoCommands.DistanceUnit.KILOMETERS);
+            Circle circle = new Circle(center, radius);
+
+            int fetchCount = offset + limit;
+
+            RedisGeoCommands.GeoRadiusCommandArgs args = RedisGeoCommands.GeoRadiusCommandArgs
+                    .newGeoRadiusArgs()
+                    .includeDistance()
+                    .sortAscending()
+                    .limit(fetchCount);
+
+            GeoResults<RedisGeoCommands.GeoLocation<String>> results =
+                    redisTemplate.opsForGeo().radius(GEO_KEY, circle, args);
+
+            if (results == null) {
+                return List.of();
+            }
+
+            return results.getContent().stream()
+                    .skip(offset)
+                    .limit(limit)
+                    .map(result -> new GeoMatchResult(
+                            parseMatchId(result.getContent().getName()),
+                            result.getDistance().getValue()))
+                    .toList();
+        } catch (Exception e) {
+            throw new RedisGeoIndexException("Failed to find matches with distance within radius", e);
+        }
+    }
+
+    @Override
+    public long countMatchesWithinRadius(BigDecimal longitude, BigDecimal latitude, double radiusKm) {
+        try {
+            Point center = new Point(longitude.doubleValue(), latitude.doubleValue());
+            Distance radius = new Distance(radiusKm, RedisGeoCommands.DistanceUnit.KILOMETERS);
+            Circle circle = new Circle(center, radius);
+
+            RedisGeoCommands.GeoRadiusCommandArgs args = RedisGeoCommands.GeoRadiusCommandArgs
+                    .newGeoRadiusArgs()
+                    .sortAscending();
+
+            GeoResults<RedisGeoCommands.GeoLocation<String>> results =
+                    redisTemplate.opsForGeo().radius(GEO_KEY, circle, args);
+
+            return results == null ? 0 : results.getContent().size();
+        } catch (Exception e) {
+            throw new RedisGeoIndexException("Failed to count matches within radius", e);
+        }
+    }
+
+    @Override
     public List<Long> findAllMatchIds() {
         try {
             Set<String> members = redisTemplate.opsForZSet().range(GEO_KEY, 0, -1);

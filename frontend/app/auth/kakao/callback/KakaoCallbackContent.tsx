@@ -38,7 +38,7 @@ export default function KakaoCallbackContent() {
         });
         setUser(userResponse.data);
 
-        router.replace('/');
+        router.replace('/home');
       }
     } catch (err) {
       console.error('카카오 로그인 실패:', err);

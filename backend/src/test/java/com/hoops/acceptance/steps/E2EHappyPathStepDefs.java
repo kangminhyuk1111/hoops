@@ -115,7 +115,11 @@ public class E2EHappyPathStepDefs {
     @그리고("응답에 경기가 {int}개 이상 포함되어 있다")
     public void 응답에_경기가_N개_이상_포함되어_있다(int minCount) {
         TestResponse response = sharedContext.getLastResponse();
-        int actualCount = response.getJsonArraySize();
+        // 경기 목록 API는 MatchListResponse 형태 (items 필드)를 사용
+        int actualCount = response.getJsonFieldArraySize("items");
+        if (actualCount == 0) {
+            actualCount = response.getJsonArraySize();
+        }
         assertThat(actualCount)
                 .as("응답에 경기가 최소 %d개 포함되어야 합니다", minCount)
                 .isGreaterThanOrEqualTo(minCount);

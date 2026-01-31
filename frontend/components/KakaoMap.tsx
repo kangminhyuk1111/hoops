@@ -16,6 +16,31 @@ interface KakaoMapProps {
   onMarkerClick?: (match: Match) => void;
 }
 
+function getMarkerColor(matchDate: string, startTime: string): string {
+  const matchDateTime = new Date(`${matchDate}T${startTime}`);
+  const now = new Date();
+  const hoursRemaining = (matchDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+  if (hoursRemaining <= 24) return '#EF4444'; // 빨강: 24시간 이내
+  if (hoursRemaining <= 72) return '#F97316'; // 주황: 3일 이내
+  return '#22C55E'; // 초록: 3일 초과
+}
+
+function createMatchMarkerImage(kakaoMaps: any, color: string) {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="0 0 28 40">
+      <path d="M14 0C6.3 0 0 6.3 0 14c0 10.5 14 26 14 26s14-15.5 14-26C28 6.3 21.7 0 14 0z" fill="${color}" stroke="#ffffff" stroke-width="2"/>
+      <circle cx="14" cy="14" r="6" fill="#ffffff"/>
+    </svg>
+  `;
+  const src = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+  return new kakaoMaps.MarkerImage(
+    src,
+    new kakaoMaps.Size(28, 40),
+    { offset: new kakaoMaps.Point(14, 40) }
+  );
+}
+
 export default function KakaoMap({ matches, center, currentLocation, onMarkerClick }: KakaoMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<any>(null);
@@ -87,10 +112,13 @@ export default function KakaoMap({ matches, center, currentLocation, onMarkerCli
     // 새 마커 생성
     matches.forEach((match) => {
       const position = new window.kakao.maps.LatLng(match.latitude, match.longitude);
+      const color = getMarkerColor(match.matchDate, match.startTime);
+      const markerImage = createMatchMarkerImage(window.kakao.maps, color);
 
       const marker = new window.kakao.maps.Marker({
         position,
         map,
+        image: markerImage,
       });
 
       // 인포윈도우 내용

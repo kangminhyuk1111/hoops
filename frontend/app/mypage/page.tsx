@@ -249,7 +249,7 @@ export default function MyPage() {
             <div className="flex flex-col items-center justify-center h-64 text-gray-400">
               <p>참가한 경기가 없습니다</p>
               <button
-                onClick={() => router.push('/')}
+                onClick={() => router.push('/home')}
                 className="mt-2 text-orange-500 text-sm font-medium"
               >
                 경기 찾기
@@ -306,7 +306,7 @@ export default function MyPage() {
       <nav className="bg-white border-t border-gray-200 z-10 flex-shrink-0">
         <div className="flex justify-around py-2">
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/home')}
             className="flex flex-col items-center py-1 px-3 text-gray-400"
           >
             <HomeIcon />

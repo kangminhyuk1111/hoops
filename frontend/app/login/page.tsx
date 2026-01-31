@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace('/');
+      router.replace('/home');
     }
   }, [isAuthenticated, router]);
 

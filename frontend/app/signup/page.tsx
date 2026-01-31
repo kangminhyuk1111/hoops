@@ -14,7 +14,7 @@ export default function SignupPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace('/');
+      router.replace('/home');
       return;
     }
 
@@ -58,7 +58,7 @@ export default function SignupPage() {
       });
       setUser(userResponse.data);
 
-      router.replace('/');
+      router.replace('/home');
     } catch (err: unknown) {
       const error = err as { response?: { status: number; data?: { message: string } } };
       if (error.response?.status === 409) {

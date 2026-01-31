@@ -51,4 +51,22 @@ public record TestResponse(int statusCode, String body, Map<String, Object> json
     public int getJsonArraySize() {
         return getJsonList("$").size();
     }
+
+    /**
+     * JSON 응답에서 특정 필드의 배열 크기를 반환합니다.
+     *
+     * @param fieldName JSON 필드명
+     * @return 해당 필드 배열의 크기
+     */
+    @SuppressWarnings("unchecked")
+    public int getJsonFieldArraySize(String fieldName) {
+        if (jsonBody == null) {
+            return 0;
+        }
+        Object field = jsonBody.get(fieldName);
+        if (field instanceof List) {
+            return ((List<Object>) field).size();
+        }
+        return 0;
+    }
 }

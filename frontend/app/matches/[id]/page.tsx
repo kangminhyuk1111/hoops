@@ -35,7 +35,7 @@ export default function MatchDetailPage() {
 
   // Check if current user is participant
   const myParticipation = participants.find(p => p.userId === user?.id);
-  const isHost = match?.hostId === user?.id;
+  const isHost = user != null && match != null && match.hostId === user.id;
   const isParticipant = !!myParticipation;
   const isPending = myParticipation?.status === 'PENDING';
   const isConfirmed = myParticipation?.status === 'CONFIRMED';
@@ -204,7 +204,7 @@ export default function MatchDetailPage() {
       toast.success('경기가 취소되었습니다');
       setShowCancelModal(false);
       setCancelReason('');
-      router.push('/');
+      router.push('/home');
     } catch (err: any) {
       toast.error(err.response?.data?.message || '경기 취소에 실패했습니다');
     } finally {

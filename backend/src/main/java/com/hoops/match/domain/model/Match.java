@@ -10,6 +10,7 @@ import com.hoops.match.domain.vo.MatchHost;
 import com.hoops.match.domain.vo.MatchLocation;
 import com.hoops.match.domain.vo.MatchSchedule;
 import com.hoops.match.domain.vo.MatchStatus;
+import com.hoops.match.domain.vo.RecruitmentStatus;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -319,5 +320,13 @@ public class Match {
         LocalDateTime thisStart = getStartDateTime();
         LocalDateTime thisEnd = getEndDateTime();
         return thisStart.isBefore(otherEnd) && otherStart.isBefore(thisEnd);
+    }
+
+    public int getRemainingSlots() {
+        return Math.max(0, this.maxParticipants - this.currentParticipants);
+    }
+
+    public RecruitmentStatus getRecruitmentStatus() {
+        return RecruitmentStatus.from(this.currentParticipants, this.maxParticipants);
     }
 }

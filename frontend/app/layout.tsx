@@ -14,8 +14,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HOOPS - 농구 경기 매칭",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://hoops.kr"),
+  title: {
+    default: "HOOPS - 농구 경기 매칭",
+    template: "%s | HOOPS",
+  },
   description: "근처 농구 경기를 찾아 참가하세요",
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    siteName: "HOOPS",
+    title: "HOOPS - 농구 경기 매칭",
+    description: "근처 농구 경기를 찾아 참가하세요",
+    images: [
+      {
+        url: "/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "HOOPS - 농구 경기 매칭",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "HOOPS - 농구 경기 매칭",
+    description: "근처 농구 경기를 찾아 참가하세요",
+    images: ["/og-image.svg"],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

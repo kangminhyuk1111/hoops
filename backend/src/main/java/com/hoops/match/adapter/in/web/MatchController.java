@@ -2,8 +2,10 @@ package com.hoops.match.adapter.in.web;
 
 import com.hoops.match.adapter.in.web.dto.CancelMatchRequest;
 import com.hoops.match.adapter.in.web.dto.CreateMatchRequest;
+import com.hoops.match.adapter.in.web.dto.MatchListResponse;
 import com.hoops.match.adapter.in.web.dto.MatchResponse;
 import com.hoops.match.adapter.in.web.dto.UpdateMatchRequest;
+import com.hoops.match.application.dto.MatchLocationQueryResult;
 import com.hoops.match.application.port.in.CancelMatchCommand;
 import com.hoops.match.application.port.in.CancelMatchUseCase;
 import com.hoops.match.application.port.in.CreateMatchUseCase;
@@ -12,6 +14,9 @@ import com.hoops.match.application.port.in.ReactivateMatchCommand;
 import com.hoops.match.application.port.in.ReactivateMatchUseCase;
 import com.hoops.match.application.port.in.UpdateMatchUseCase;
 import com.hoops.match.domain.model.Match;
+import com.hoops.match.domain.vo.MatchSortType;
+import com.hoops.match.domain.vo.MatchStatus;
+import com.hoops.match.domain.vo.SearchDistance;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -67,32 +72,41 @@ public class MatchController {
         return ResponseEntity.ok(MatchResponse.of(match));
     }
 
-    @Operation(summary = "위치 기반 경기 목록 조회", description = "지정된 위치 반경 내의 경기 목록을 조회합니다.")
+    @Operation(summary = "위치 기반 경기 목록 조회", description = "지정된 위치 반경 내의 경기 목록을 조회합니다. distance 미지정 시 기본 50km 반경으로 조회합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공")
     })
     @GetMapping
-    public ResponseEntity<List<MatchResponse>> getMatchesByLocation(
+    public ResponseEntity<MatchListResponse> getMatchesByLocation(
             @Parameter(description = "위도", example = "37.5665") @RequestParam BigDecimal latitude,
             @Parameter(description = "경도", example = "126.9780") @RequestParam BigDecimal longitude,
-            @Parameter(description = "반경 (km)", example = "5") @RequestParam BigDecimal distance,
+            @Parameter(description = "반경 (km, 허용: 1, 3, 5, 10)", example = "5") @RequestParam(required = false) Integer distance,
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "페이지 크기", example = "20") @RequestParam(defaultValue = "20") int size) {
-        BigDecimal distanceInMeters = distance.multiply(BigDecimal.valueOf(1000));
+            @Parameter(description = "페이지 크기", example = "20") @RequestParam(defaultValue = "20") int size,
+            @Parameter(description = "경기 상태 필터", example = "PENDING") @RequestParam(required = false) MatchStatus status,
+            @Parameter(description = "정렬 방식 (DISTANCE, URGENCY)", example = "DISTANCE") @RequestParam(defaultValue = "DISTANCE") String sort) {
+        Double radiusKm = null;
+        if (distance != null) {
+            SearchDistance searchDistance = SearchDistance.from(distance);
+            radiusKm = (double) searchDistance.getKm();
+        }
+        MatchSortType sortType = MatchSortType.from(sort);
 
-        List<Match> matches = matchQueryUseCase.getMatchesByLocation(
+        MatchLocationQueryResult result = matchQueryUseCase.getMatchesByLocation(
                 latitude,
                 longitude,
-                distanceInMeters,
+                radiusKm,
                 page,
-                size
+                size,
+                status,
+                sortType
         );
 
-        List<MatchResponse> response = matches.stream()
-                .map(MatchResponse::of)
+        List<MatchResponse> items = result.matches().stream()
+                .map(mwd -> MatchResponse.of(mwd.match(), mwd.distanceKm()))
                 .toList();
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new MatchListResponse(items, result.totalCount(), result.hasMore()));
     }
 
     @Operation(summary = "경기 수정", description = "경기 정보를 수정합니다. 호스트만 수정 가능합니다.")

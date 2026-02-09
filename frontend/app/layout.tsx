@@ -74,9 +74,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-200`}
         style={{ fontFamily: "'Toss Product Sans', -apple-system, BlinkMacSystemFont, sans-serif" }}
       >
-        <div className="mx-auto w-full max-w-[430px] min-h-screen bg-gray-50 shadow-xl">
-          {children}
-        </div>
+        {children}
         <Toaster
           position="bottom-center"
           toastOptions={{
